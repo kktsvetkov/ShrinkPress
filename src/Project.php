@@ -13,10 +13,13 @@ class Project
 	function __construct($build)
 	{
 		$this->build = $build;
+		Verbose::log("Project: {$build}", 1);
 	}
 
 	function start($base)
 	{
+		Verbose::log("Source: {$base}", 1);
+
 		$this->clear(self::LOG_FOUND);
 		$this->log(self::LOG_FOUND, '# ' . gmdate(\DateTime::RFC850));
 		$this->log(self::LOG_FOUND, "# {$base}" );
