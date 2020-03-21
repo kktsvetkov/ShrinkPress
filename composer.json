@@ -1,0 +1,23 @@
+{
+	"name": "kktsvetkov/shrinkpress",
+	"description": "ShrinkPress: Break WordPress Apart",
+	"require":
+	{
+		"php": ">=5.6.0",
+		"nikic/php-parser": "^4.3"
+	},
+	"authors":
+	[
+		{
+		"name": "Kaloyan Tsvetkov",
+		"homepage": "https://github.com/kktsvetkov"
+		}
+	],
+	"autoload":
+	{
+		"psr-4":
+		{
+			"ShrinkPress\\Build\\": "src"
+		}
+	}
+}
