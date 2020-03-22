@@ -28,14 +28,11 @@ class Project
 		Verbose::log("Source: {$base}", 1);
 
 		$this->clear(self::LOG_FOUND);
-		$this->log(self::LOG_FOUND, '# ' . gmdate(\DateTime::RFC850));
-		$this->log(self::LOG_FOUND, "# {$base}" );
-
 		$this->clear(self::LOG_IGNORE);
-		$this->log(self::LOG_IGNORE, '# ' . gmdate(\DateTime::RFC850));
-		$this->log(self::LOG_IGNORE, "# {$base}");
-
 		$this->clear(self::LOG_ERROR);
+
+		$this->clear(self::LOG_FUNCTIONS);
+		$this->clear(self::LOG_CLASSES);
 	}
 
 	/**
@@ -95,5 +92,13 @@ class Project
 			$local,
 			'<?php return ' . var_export($entity->getData(), true) . '; '
 			);
+	}
+
+	function functions()
+	{
+		$local = $this->build . '/' . self::LOG_FUNCTIONS;
+		$funcs = array_map('trim', file($local));
+		$funcs = array_values( array_unique($funcs) );
+		return $funcs;
 	}
 }

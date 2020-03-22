@@ -12,10 +12,7 @@ class WpFunction implements WpEntity
 	public $file;
 	public $startLine;
 	public $endLine;
-
 	public $isPrivate = false;
-
-	public $calls = [];
 	public $callers = [];
 
 	function __construct($name, array $data = [])
@@ -70,4 +67,7 @@ class WpFunction implements WpEntity
 		return $func;
 	}
 
+	// temporary
+	public $code;
+	public $guts;
 }

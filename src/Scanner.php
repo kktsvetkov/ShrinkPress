@@ -4,7 +4,6 @@ namespace ShrinkPress\Build;
 
 use PhpParser\Node;
 use PhpParser\Error;
-use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 
 class Scanner
@@ -12,13 +11,12 @@ class Scanner
 	protected $project;
 
 	protected $parser;
-
 	protected $findCalls;
 	protected $findCallbacks;
 
-	function __construct($build)
+	function __construct(Project $project)
 	{
-		$this->project = new Project($build);
+		$this->project = $project;
 	}
 
 	function scan($source)
@@ -195,15 +193,6 @@ class Scanner
 				? array( $file, $cb[1], $cb[2])
 				: array( $file, $cb[1]);
 			$this->project->write($called);
-
-			if (!empty($cb[2]))
-			{
-				$caller = new WpFunction($cb[2]);
-				$project->read($caller);
-
-				$caller->calls[] = $cb[0];
-				$project->write($caller);
-			}
 		}
 	}
 
@@ -222,6 +211,7 @@ class Scanner
 		$p = new \PhpParser\PrettyPrinter\Standard;
 		$func->code = $p->prettyPrint([$node]);
 		$func->guts = print_r($node, 1);
+		// ^
 
 		$this->project->write($func);
 	}
