@@ -19,6 +19,10 @@ class Project
 		Verbose::log("Project: {$build}", 1);
 	}
 
+	/**
+	* Starts the project from the files in $base folder
+	* @param $base $log
+	*/
 	function start($base)
 	{
 		Verbose::log("Source: {$base}", 1);
@@ -34,6 +38,10 @@ class Project
 		$this->clear(self::LOG_ERROR);
 	}
 
+	/**
+	* Clears a log
+	* @param string $log
+	*/
 	protected function clear($log)
 	{
 		$local = $this->build . '/' . $log;
@@ -44,12 +52,21 @@ class Project
 		return true;
 	}
 
+	/**
+	* Report a $file to a $log
+	* @param string $log
+	* @param string $file
+	*/
 	function log($log, $file)
 	{
 		$local = $this->build . '/' . $log;
 		file_put_contents($local, $file . "\n", FILE_APPEND);
 	}
 
+	/**
+	* Reads the harvested details about this $entity
+	* @param WpEntity $entity
+	*/
 	function read(WpEntity $entity)
 	{
 		$local = $this->build . '/' . $entity->getFile();
@@ -60,6 +77,10 @@ class Project
 		}
 	}
 
+	/**
+	* Writes the harvested details about this $entity
+	* @param WpEntity $entity
+	*/
 	function write(WpEntity $entity)
 	{
 		$local = $this->build . '/' . $entity->getFile();
