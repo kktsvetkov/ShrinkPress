@@ -154,9 +154,6 @@ class Scanner
 			// if ($node instanceof Node\Stmt\Class_)
 			// {
 			// 	$this->wp_class($node, $file);
-			} else
-			{
-				echo "\t", get_class($node), "\n";
 			}
 		}
 
@@ -172,6 +169,8 @@ class Scanner
 			Verbose::log("Callback: {$cb[0]}() at {$file}:{$cb[1]}", 3);
 
 			$called = new WpFunction($cb[0]);
+			$project->read($called);
+
 			$called->callers[] = array(
 				$file, $cb[1], $cb[2]
 				);
@@ -190,6 +189,8 @@ class Scanner
 			Verbose::log("Calls {$cb[0]}() at {$file}:{$cb[1]}", 2);
 
 			$called = new WpFunction($cb[0]);
+			$project->read($called);
+
 			$called->callers[] = !empty($cb[2])
 				? array( $file, $cb[1], $cb[2])
 				: array( $file, $cb[1]);
@@ -198,8 +199,10 @@ class Scanner
 			if (!empty($cb[2]))
 			{
 				$caller = new WpFunction($cb[2]);
+				$project->read($caller);
+
 				$caller->calls[] = $cb[0];
-				$this->project->write($caller);
+				$project->write($caller);
 			}
 		}
 	}
@@ -210,13 +213,15 @@ class Scanner
 		Verbose::log('Function: ' . (string) $node->name . '()', 1);
 
 		$func = WpFunction::fromNode($node);
+		$this->project->read($func);
+
 		$func->file = $file;
 		Verbose::log("\tat {$file}:{$func->startLine}", 2);
 
 		// tmp only
-		// $p = new \PhpParser\PrettyPrinter\Standard;
-		// $func->code = $p->prettyPrint([$node]);
-		// $func->guts = print_r($node, 1);
+		$p = new \PhpParser\PrettyPrinter\Standard;
+		$func->code = $p->prettyPrint([$node]);
+		$func->guts = print_r($node, 1);
 
 		$this->project->write($func);
 	}
