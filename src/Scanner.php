@@ -13,6 +13,9 @@ class Scanner
 
 	protected $parser;
 
+	protected $findCalls;
+	protected $findCallbacks;
+
 	function __construct($build)
 	{
 		$this->project = new Project($build);
@@ -134,7 +137,7 @@ class Scanner
 		$project = $this->project;
 
 		try {
-			$guts = $this->parser->parse($code);
+			$nodes = $this->parser->parse($code);
 		} catch (\Error $e)
 		{
 			$project->log(Project::LOG_ERROR, $file);
@@ -142,7 +145,7 @@ class Scanner
 			return false;
 		}
 
-		foreach ($guts as $node)
+		foreach ($nodes as $node)
 		{
 			if ($node instanceof Node\Stmt\Function_)
 			{
@@ -159,40 +162,44 @@ class Scanner
 
 		// find out what functions are referenced as callbacks
 		//
-		if ($callbacks = FindCallbacks::getCallbacks($guts))
+		if (empty($this->findCallbacks))
 		{
-			foreach ($callbacks as $cb)
-			{
-				Verbose::log("Callback: {$cb[0]}() at {$file}:{$cb[1]}", 3);
+			$this->findCallbacks = new Find\Callbacks;
+		}
+		$callbacks = Find\Traverser::traverse($nodes, $this->findCallbacks);
+		foreach ($callbacks as $cb)
+		{
+			Verbose::log("Callback: {$cb[0]}() at {$file}:{$cb[1]}", 3);
 
-				$called = new WpFunction($cb[0]);
-				$called->callers[] = array(
-					$file, $cb[1], $cb[2]
-					);
-				$project->write($called);
-			}
+			$called = new WpFunction($cb[0]);
+			$called->callers[] = array(
+				$file, $cb[1], $cb[2]
+				);
+			$project->write($called);
 		}
 
 		// find out all the function calls
 		//
-		if ($calls = FindCalls::getCalls( $guts ))
+		if (empty($this->findCalls))
 		{
-			foreach ($calls as $cb)
+			$this->findCalls = new Find\Calls;
+		}
+		$calls = Find\Traverser::traverse($nodes, $this->findCalls);
+		foreach ($calls as $cb)
+		{
+			Verbose::log("Calls {$cb[0]}() at {$file}:{$cb[1]}", 2);
+
+			$called = new WpFunction($cb[0]);
+			$called->callers[] = !empty($cb[2])
+				? array( $file, $cb[1], $cb[2])
+				: array( $file, $cb[1]);
+			$this->project->write($called);
+
+			if (!empty($cb[2]))
 			{
-				Verbose::log("Calls {$cb[0]}() at {$file}:{$cb[1]}", 2);
-
-				$called = new WpFunction($cb[0]);
-				$called->callers[] = !empty($cb[2])
-					? array( $file, $cb[1], $cb[2])
-					: array( $file, $cb[1]);
-				$this->project->write($called);
-
-				if (!empty($cb[2]))
-				{
-					$caller = new WpFunction($cb[2]);
-					$caller->calls[] = $cb[0];
-					$this->project->write($caller);
-				}
+				$caller = new WpFunction($cb[2]);
+				$caller->calls[] = $cb[0];
+				$this->project->write($caller);
 			}
 		}
 	}

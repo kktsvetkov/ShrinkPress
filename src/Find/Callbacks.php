@@ -1,15 +1,11 @@
 <?php
 
-namespace ShrinkPress\Build;
+namespace ShrinkPress\Build\Find;
 
 use PhpParser\Node;
-use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitorAbstract;
 
-class FindCallbacks extends NodeVisitorAbstract
+class Callbacks extends Visitor
 {
-	protected $callbacks = [];
-
 	const callback_functions = array(
 		'add_filter' => 1,
 		'has_filter' => 1,
@@ -44,32 +40,11 @@ class FindCallbacks extends NodeVisitorAbstract
 		{
 			return;
 		}
-		$this->callbacks[] = array(
+
+		$this->push(array(
 			$node->args[ $arg_pos ]->value->value,
 			$node->getStartLine(),
 			$func_name
-		);
-	}
-
-	protected static $instance;
-	protected static $traverser;
-
-	static function getCallbacks(array $nodes)
-	{
-		if (!self::$instance)
-		{
-			self::$instance = new self;
-		}
-
-		if (!self::$traverser)
-		{
-			self::$traverser = new NodeTraverser;
-			self::$traverser->addVisitor( self::$instance );
-		}
-
-		self::$instance->callbacks = array();
-
-		self::$traverser->traverse( $nodes );
-		return self::$instance->callbacks;
+		));
 	}
 }
