@@ -8,23 +8,61 @@ use PhpParser\NodeVisitorAbstract;
 
 class FindCalls extends NodeVisitorAbstract
 {
+	protected $internal = [];
+
+	function __construct()
+	{
+		$internal = get_defined_functions()['internal'];
+		$this->internal = array_flip($internal);
+	}
+
 	protected $calls = [];
+
+	protected $inside;
+
+	function enterNode(Node $node)
+	{
+		if ($node instanceof Node\Stmt\Function_)
+		{
+			$this->inside = (string) $node->name;
+		}
+	}
 
 	function leaveNode(Node $node)
 	{
-		if ($node instanceof Node\Expr\FuncCall)
+		if ($node instanceof Node\Stmt\Function_)
 		{
-			$this->calls[] = array(
-				$node->name->__toString(),
-				$node->getStartLine()
-			);
+			$this->inside = null;
 		}
+
+		if (!$node instanceof Node\Expr\FuncCall)
+		{
+			return;
+		}
+
+		if (!$node->name instanceOf Node\Name)
+		{
+			return;
+		}
+
+		$func_name = $node->name->__toString();
+		if (!empty($this->internal[ $func_name ]))
+		{
+			return;
+		}
+
+		$this->calls[] = array(
+			$func_name,
+			$node->getStartLine()
+			) + ($this->inside
+				? array(2 => $this->inside)
+				: array());
 	}
 
 	protected static $instance;
 	protected static $traverser;
 
-	static function getCalls(Node $node)
+	static function getCalls(array $nodes)
 	{
 		if (!self::$instance)
 		{
@@ -37,9 +75,8 @@ class FindCalls extends NodeVisitorAbstract
 			self::$traverser->addVisitor( self::$instance );
 		}
 
-
 		self::$instance->calls = array();
-		self::$traverser->traverse( $node->getStmts() );
+		self::$traverser->traverse( $nodes );
 		return self::$instance->calls;
 	}
 }

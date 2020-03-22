@@ -6,9 +6,12 @@ class Project
 {
 	protected $build;
 
-	const LOG_FOUND = 'found.txt';
-	const LOG_IGNORE = 'ignore.txt';
+	const LOG_FOUND = 'found.csv';
+	const LOG_IGNORE = 'ignore.csv';
 	const LOG_ERROR = 'error.txt';
+
+	const LOG_FUNCTIONS = 'functions.csv';
+	const LOG_CLASSES = 'classes.csv';
 
 	function __construct($build)
 	{
@@ -60,6 +63,13 @@ class Project
 	function write(WpEntity $entity)
 	{
 		$local = $this->build . '/' . $entity->getFile();
+
+		$dir = dirname($local);
+		if (!file_exists($dir))
+		{
+			mkdir($dir, 0777, true);
+		}
+
 		file_put_contents($local, var_export($entity->getData(), true));
 	}
 }

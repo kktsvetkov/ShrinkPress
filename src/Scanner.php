@@ -4,23 +4,18 @@ namespace ShrinkPress\Build;
 
 use PhpParser\Node;
 use PhpParser\Error;
+use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 
 class Scanner
 {
 	protected $project;
-	protected $build;
-
-	const LOG_FOUND = 'found.txt';
-	const LOG_IGNORE = 'ignore.txt';
-	const LOG_ERROR = 'error.txt';
 
 	protected $parser;
 
 	function __construct($build)
 	{
 		$this->project = new Project($build);
-		$this->build = $build;
 	}
 
 	function scan($source)
@@ -60,7 +55,7 @@ class Scanner
 
 			if ($this->skip( $found->getFileInfo() ))
 			{
-				$project->log(self::LOG_IGNORE,
+				$project->log(Project::LOG_IGNORE,
 					$ignore = $this->base($found->getPathname(), $base)
 					);
 				Verbose::log("Ignore: {$ignore}", 2);
@@ -73,7 +68,7 @@ class Scanner
 				continue;
 			}
 
-			$project->log(self::LOG_FOUND,
+			$project->log(Project::LOG_FOUND,
 				$local = $this->base($found->getPathname(), $base)
 				);
 
@@ -142,8 +137,8 @@ class Scanner
 			$guts = $this->parser->parse($code);
 		} catch (\Error $e)
 		{
-			$project->log(self::LOG_ERROR, $file);
-			$project->log(self::LOG_ERROR, $e->__toString());
+			$project->log(Project::LOG_ERROR, $file);
+			$project->log(Project::LOG_ERROR, $e->__toString());
 			return false;
 		}
 
@@ -161,42 +156,62 @@ class Scanner
 				echo "\t", get_class($node), "\n";
 			}
 		}
+
+		// find out what functions are referenced as callbacks
+		//
+		if ($callbacks = FindCallbacks::getCallbacks($guts))
+		{
+			foreach ($callbacks as $cb)
+			{
+				Verbose::log("Callback: {$cb[0]}() at {$file}:{$cb[1]}", 3);
+
+				$called = new WpFunction($cb[0]);
+				$called->callers[] = array(
+					$file, $cb[1], $cb[2]
+					);
+				$project->write($called);
+			}
+		}
+
+		// find out all the function calls
+		//
+		if ($calls = FindCalls::getCalls( $guts ))
+		{
+			foreach ($calls as $cb)
+			{
+				Verbose::log("Calls {$cb[0]}() at {$file}:{$cb[1]}", 2);
+
+				$called = new WpFunction($cb[0]);
+				$called->callers[] = !empty($cb[2])
+					? array( $file, $cb[1], $cb[2])
+					: array( $file, $cb[1]);
+				$this->project->write($called);
+
+				if (!empty($cb[2]))
+				{
+					$caller = new WpFunction($cb[2]);
+					$caller->calls[] = $cb[0];
+					$this->project->write($caller);
+				}
+			}
+		}
 	}
 
 	protected function wp_function(Node $node, $file)
 	{
+		$this->project->log(Project::LOG_FUNCTIONS, (string) $node->name);
 		Verbose::log('Function: ' . (string) $node->name . '()', 1);
 
 		$func = WpFunction::fromNode($node);
 		$func->file = $file;
-
 		Verbose::log("\tat {$file}:{$func->startLine}", 2);
 
-		// find out what functions are calls
-		//
-		if ($calls = FindCalls::getCalls($node))
-		{
-			$func->calls = $calls;
-
-			foreach ($calls as $f)
-			{
-				Verbose::log("\tcalls {$f[0]}() at {$file}:{$f[1]}", 3);
-
-				$called = new WpFunction($f[0]);
-				$called->callers[] = array(
-					$file, $f[1], (string) $node->name
-					);
-				$this->project->write($called);
-			}
-		}
-
 		// tmp only
-		$p = new \PhpParser\PrettyPrinter\Standard;
-		$func->code = $p->prettyPrint([$node]);
-		$func->guts = print_r($node, 1);
+		// $p = new \PhpParser\PrettyPrinter\Standard;
+		// $func->code = $p->prettyPrint([$node]);
+		// $func->guts = print_r($node, 1);
 
 		$this->project->write($func);
-		exit;
 	}
 
 	protected function wp_class(Node $node, $file)

@@ -30,7 +30,8 @@ class WpFunction implements WpEntity
 
 	function getFile()
 	{
-		return 'function.' . $this->name . '.php';
+		$prefix = 'function/' . substr($this->name, 0, 2) . '/';
+		return $prefix . $this->name . '.php';
 	}
 
 	function getData()
