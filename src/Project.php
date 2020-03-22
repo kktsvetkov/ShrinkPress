@@ -91,6 +91,9 @@ class Project
 			mkdir($dir, 0777, true);
 		}
 
-		file_put_contents($local, var_export($entity->getData(), true));
+		file_put_contents(
+			$local,
+			'<?php return ' . var_export($entity->getData(), true) . '; '
+			);
 	}
 }
