@@ -41,6 +41,11 @@ class Callbacks extends Visitor
 			return;
 		}
 
+		if (!$node->args[ $arg_pos ]->value instanceof Node\Scalar\String_)
+		{
+			return;
+		}
+
 		$this->push(array(
 			$node->args[ $arg_pos ]->value->value,
 			$node->getStartLine(),
