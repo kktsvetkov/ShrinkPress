@@ -8,10 +8,11 @@ class Project
 
 	const LOG_FOUND = 'found.csv';
 	const LOG_IGNORE = 'ignore.csv';
-	const LOG_ERROR = 'error.txt';
 
 	const LOG_FUNCTIONS = 'functions.csv';
 	const LOG_CLASSES = 'classes.csv';
+
+	const LOG_CHANGES = 'changes.log';
 
 	function __construct($build)
 	{
@@ -20,26 +21,10 @@ class Project
 	}
 
 	/**
-	* Starts the project from the files in $base folder
-	* @param $base $log
-	*/
-	function start($base)
-	{
-		Verbose::log("Source: {$base}", 1);
-
-		$this->clear(self::LOG_FOUND);
-		$this->clear(self::LOG_IGNORE);
-		$this->clear(self::LOG_ERROR);
-
-		$this->clear(self::LOG_FUNCTIONS);
-		$this->clear(self::LOG_CLASSES);
-	}
-
-	/**
 	* Clears a log
 	* @param string $log
 	*/
-	protected function clear($log)
+	function clear($log)
 	{
 		$local = $this->build . '/' . $log;
 		if (file_exists($local))

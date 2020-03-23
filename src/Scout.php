@@ -6,7 +6,7 @@ use PhpParser\Node;
 use PhpParser\Error;
 use PhpParser\ParserFactory;
 
-class Scanner
+class Scout
 {
 	protected $project;
 
@@ -19,6 +19,22 @@ class Scanner
 		$this->project = $project;
 	}
 
+	/**
+	* Starts the project from the files in $base folder
+	* @param $base $log
+	*/
+	protected function start($base)
+	{
+		Verbose::log("Source: {$base}", 1);
+		$project = $this->project;
+
+		$project->clear(Project::LOG_FOUND);
+		$project->clear(Project::LOG_IGNORE);
+
+		$project->clear(Project::LOG_FUNCTIONS);
+		$project->clear(Project::LOG_CLASSES);
+	}
+
 	function scan($source)
 	{
 		if (!is_dir($source))
@@ -27,8 +43,6 @@ class Scanner
 				"Argument \$source must be an existing folder, '{$source}' is not"
 			);
 		}
-
-		$project = $this->project;
 
 		// $base is used to shorten the logged filenames
 		//
@@ -39,7 +53,7 @@ class Scanner
 			$base = rtrim($source, '/') . '/';
 			$depth = 0;
 
-			$project->start($base);
+			$this->start($base);
 		} else
 		{
 			$depth++;
@@ -56,7 +70,7 @@ class Scanner
 
 			if ($this->skip( $found->getFileInfo() ))
 			{
-				$project->log(Project::LOG_IGNORE,
+				$this->project->log(Project::LOG_IGNORE,
 					$ignore = $this->base($found->getPathname(), $base)
 					);
 				Verbose::log("Ignore: {$ignore}", 2);
@@ -69,8 +83,8 @@ class Scanner
 				continue;
 			}
 
-			$project->log(Project::LOG_FOUND,
-				$local = $this->base($found->getPathname(), $base)
+			$this->project->log(Project::LOG_FOUND,
+				$local = $this->base( $found->getPathname(), $base)
 				);
 
 			Verbose::log($local, 1);
@@ -134,15 +148,7 @@ class Scanner
 
 		$project = $this->project;
 
-		try {
-			$nodes = $this->parser->parse($code);
-		} catch (\Error $e)
-		{
-			$project->log(Project::LOG_ERROR, $file);
-			$project->log(Project::LOG_ERROR, $e->__toString());
-			return false;
-		}
-
+		$nodes = $this->parser->parse($code);
 		foreach ($nodes as $node)
 		{
 			if ($node instanceof Node\Stmt\Function_)
@@ -199,13 +205,14 @@ class Scanner
 	protected function wp_function(Node $node, $file)
 	{
 		$this->project->log(Project::LOG_FUNCTIONS, (string) $node->name);
-		Verbose::log('Function: ' . (string) $node->name . '()', 1);
+		Verbose::log(
+			"Function: {$node->name}() at {$file}:" . $node->getStartLine(),
+			1);
 
 		$func = WpFunction::fromNode($node);
 		$this->project->read($func);
 
 		$func->file = $file;
-		Verbose::log("\tat {$file}:{$func->startLine}", 2);
 
 		// tmp only
 		$p = new \PhpParser\PrettyPrinter\Standard;

@@ -21,9 +21,7 @@ class Composer
 			'files' => array(
 				self::compatibility,
 				),
-		'psr-4' => array(
-			'ShrinkPress\\Load\\' => 'wp-includes/vendors/shrinkpress/load/src',
-			),
+		'psr-4' => array(),
 		),
 	);
 
@@ -44,7 +42,7 @@ class Composer
 
 	function packages()
 	{
-		return $this->source['psr-4'];
+		return $this->source['autoload']['psr-4'];
 	}
 
 	function add($package)
@@ -54,7 +52,7 @@ class Composer
 			. str_replace('\\', '/', strtolower($package))
 			. '/src';
 
-		$this->source['psr-4'][ $namespace ] = $folder;
+		$this->source['autoload']['psr-4'][ $namespace ] = $folder;
 	}
 
 }
