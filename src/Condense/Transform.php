@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build\Disintegrate;
+namespace ShrinkPress\Build\Condense;
 
 class Transform
 {
