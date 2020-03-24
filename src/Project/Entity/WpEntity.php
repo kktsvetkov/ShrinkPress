@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build;
+namespace ShrinkPress\Build\Project\Entity;
 
 interface WpEntity
 {
