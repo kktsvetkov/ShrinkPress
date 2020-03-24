@@ -35,5 +35,63 @@ class Start extends TaskAbstract
 		{
 			$source->write('.gitattributes', $gitattributes );
 		}
+
+		// add "vendor/autoload.php"
+		//
+		$composer->dumpautoload( $source->basedir() );
+
+		$code = $source->read($a = 'wp-settings.php');
+		$source->write($a, $this->plant_vendors($code) );
+
+		// compatibility file
+		//
+		$source->write(Condense\Compat::compatibility_php, '' );
+	}
+
+	const find_WPINC = array(
+		'define', '(', "'WPINC'", ',', "'wp-includes'", ')', ';'
+		);
+
+	const after_WPINC = array(
+		"\n/** @see shrinkpress */",
+		"\nrequire ABSPATH . WPINC . '/vendor/autoload.php';",
+		"\n"
+		);
+
+	protected function plant_vendors($code)
+	{
+		$wp_settings = token_get_all($code);
+		$seek = self::find_WPINC;
+
+		$modified = array();
+		$last = array();
+		foreach ($wp_settings as $token)
+		{
+			$oken = is_scalar($token) ? $token : $token[1];
+			$modified[] = $oken;
+
+			// skip T_WHITESPACE
+			//
+			if (382 == $token[0])
+			{
+				continue;
+			}
+
+			array_push($last, $oken);
+			if (count($last) > count($seek))
+			{
+				array_shift($last);
+			}
+
+			// found "define( 'WPINC', 'wp-includes' );",
+			// plant the vendors/autoload.php after it
+			//
+			if ($seek == $last)
+			{
+				$modified[] = join('', self::after_WPINC);
+			}
+		}
+
+		return join('', $modified);
 	}
 }
