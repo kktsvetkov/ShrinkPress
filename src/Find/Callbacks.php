@@ -4,6 +4,7 @@ namespace ShrinkPress\Build\Find;
 
 use PhpParser\Node;
 use ShrinkPress\Build\Verbose;
+use ShrinkPress\Build\Project\Storage;
 
 class Callbacks extends Visitor
 {
@@ -47,34 +48,38 @@ class Callbacks extends Visitor
 			return;
 		}
 
-		$node->arg_pos = $arg_pos;
-		$node->caller = $caller;
-
-		$this->push($node);
+		$callback = $node->args[ $arg_pos ]->value->value;
+		$this->result[ $callback ][] = array(
+			$node->getLine(),
+			$caller,
+			);
 	}
 
-	function push(Node $node)
+	function flush(array $result, Storage\StorageAbstract $storage)
 	{
-		$arg_pos = $node->arg_pos;
-		$caller = $node->caller;
-		$callback = $node->args[ $arg_pos ]->value->value;
-		$line = $node->getLine();
+		foreach($result as $callback => $calls)
+		{
+			$func = $storage->read(
+				$this->storage::ENTITY_FUNCTION,
+				$callback
+				);
 
-		Verbose::log("Callback: {$callback}() at {$this->filename}:{$line}", 3);
+			foreach ($calls as $call)
+			{
+				$line = $call[0];
+				$inside = $call[1];
 
-		$called = $this->storage->read(
-			$this->storage::ENTITY_FUNCTION,
-			$callback
-			);
+				Verbose::log("Callback: {$callback}() at "
+					. $this->filename . ':' . $line, 2);
 
-		$called->callers[] = array(
-			$this->filename, $line, $caller
-			);
+				$func->callers[] = array( $this->filename, $line, $inside);
+			}
 
-		$this->storage->write(
-			$this->storage::ENTITY_FUNCTION,
-			$callback,
-			$called->getData()
-			);
+			$storage->write(
+				$this->storage::ENTITY_FUNCTION,
+				$callback,
+				$func->getData()
+				);
+		}
 	}
 }

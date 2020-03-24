@@ -4,6 +4,7 @@ namespace ShrinkPress\Build\Find;
 
 use PhpParser\Node;
 use ShrinkPress\Build\Verbose;
+use ShrinkPress\Build\Project\Storage;
 
 class Functions extends Visitor
 {
@@ -14,31 +15,18 @@ class Functions extends Visitor
 			return;
 		}
 
-		$this->push($node);
-	}
-
-	function push(Node $node)
-	{
-		Verbose::log(
-			"Function: {$node->name}() at {$this->filename}:"
-				. $node->getStartLine(),
-			1);
-
-		$func = $this->storage->read(
-			$this->storage::ENTITY_FUNCTION,
-			(string) $node->name
-			);
-
-		$func->file = $this->filename;
-
-		$func->startLine = $node->getStartLine();
-		$func->endLine = $node->getEndLine();
+		$found = array(
+			'name' => (string) $node->name,
+			'startLine' => $node->getStartLine(),
+			'endLine' => $node->getEndLine(),
+		);
 
 		// is it private ?
 		//
+		$found['isPrivate'] = false;
 		if ($docComment = $node->getDocComment())
 		{
-			$func->isPrivate = (false !== strpos(
+			$found['isPrivate'] = (false !== strpos(
 				$docComment->__toString(),
 				'@access private'
 				));
@@ -46,13 +34,42 @@ class Functions extends Visitor
 
 		// tmp only
 		$p = new \PhpParser\PrettyPrinter\Standard;
-		$func->code = $p->prettyPrint([$node]);
+		$found['code'] = $p->prettyPrint([$node]);
 		// ^
 
-		$this->storage->write(
-			$this->storage::ENTITY_FUNCTION,
-			(string) $node->name,
-			$func->getData()
-			);
+		$this->result[] = $found;
+	}
+
+	function flush(array $result, Storage\StorageAbstract $storage)
+	{
+		foreach($result as $found)
+		{
+			Verbose::log(
+				"Function: {$found['name']}() at "
+				 	. $this->filename . ':'
+					. $found['startLine'],
+				1);
+
+			$func = $storage->read(
+				$storage::ENTITY_FUNCTION,
+				$found['name']
+				);
+
+			$func->file = $this->filename;
+
+			$func->startLine = $found['startLine'];
+			$func->endLine = $found['endLine'];
+			$func->isPrivate = $found['isPrivate'];
+
+			// tmp only
+			$func->code = $found['code'];
+			// ^
+
+			$storage->write(
+				$storage::ENTITY_FUNCTION,
+				$found['name'],
+				$func->getData()
+				);
+		}
 	}
 }

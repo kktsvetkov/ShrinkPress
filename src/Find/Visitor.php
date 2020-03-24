@@ -17,5 +17,21 @@ abstract class Visitor extends NodeVisitorAbstract
 		$this->storage = $storage;
 	}
 
-	abstract function push(Node $node);
+	protected $result = array();
+
+	function beforeTraverse(array $nodes)
+	{
+		$this->result = array();
+	}
+
+	abstract function flush(array $result, Storage\StorageAbstract $storage);
+
+	function afterTraverse(array $nodes)
+	{
+		if ($this->result)
+		{
+			$this->flush($this->result, $this->storage);
+			$this->result = array();
+		}
+	}
 }

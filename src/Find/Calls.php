@@ -4,6 +4,7 @@ namespace ShrinkPress\Build\Find;
 
 use PhpParser\Node;
 use ShrinkPress\Build\Verbose;
+use ShrinkPress\Build\Project\Storage;
 
 class Calls extends Visitor
 {
@@ -42,34 +43,44 @@ class Calls extends Visitor
 			return;
 		}
 
-		$func_name = $node->name->__toString();
+		$func_name = (string) $node->name;
 		if (!empty($this->internal[ $func_name ]))
 		{
 			return;
 		}
 
-		$this->push($node);
+		$this->result[ $func_name ][] = array(
+			$node->getLine(),
+			$this->inside
+			);
 	}
 
-	function push(Node $node)
+	function flush(array $result, Storage\StorageAbstract $storage)
 	{
-		$line = $node->getLine();
+		foreach($result as $func_name => $calls)
+		{
+			$func = $storage->read(
+				$this->storage::ENTITY_FUNCTION,
+				$func_name
+				);
 
-		Verbose::log("Calls {$node->name}() at {$this->filename}:{$line}", 2);
+			foreach ($calls as $call)
+			{
+				$line = $call[0];
+				$inside = $call[1];
 
-		$call = $this->storage->read(
-			$this->storage::ENTITY_FUNCTION,
-			(string) $node->name
-			);
+				Verbose::log("Calls {$func_name}() at {$this->filename}:{$line}", 2);
 
-		$call->callers[] = $this->inside
-			? array( $this->filename, $line, $this->inside)
-			: array( $this->filename, $line);
+				$func->callers[] = $inside
+					? array( $this->filename, $line, $inside)
+					: array( $this->filename, $line);
+			}
 
-		$this->storage->write(
-			$this->storage::ENTITY_FUNCTION,
-			(string) $node->name,
-			$call->getData()
-			);
+			$storage->write(
+				$this->storage::ENTITY_FUNCTION,
+				$func_name,
+				$func->getData()
+				);
+		}
 	}
 }
