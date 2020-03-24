@@ -140,7 +140,13 @@ class Source
 		return false;
 	}
 
-	function fileFactory($filename)
+	function exists($filename)
+	{
+		$local = $this->local($filename);
+		return file_exists($local);
+	}
+
+	function read($filename)
 	{
 		$local = $this->local($filename);
 		if (!file_exists($local))
@@ -151,8 +157,26 @@ class Source
 			);
 		}
 
-		$code = file_get_contents( $local );
-		return new File($filename, $code);
+		return file_get_contents( $local );
 	}
 
+	function write($filename, $contents)
+	{
+		Verbose::log("Write: {$filename}", 1);
+
+		$local = $this->local($filename);
+		$dir = dirname($local);
+		if (!file_exists($dir))
+		{
+			mkdir($dir, 0777, true);
+		}
+
+		return file_put_contents($local, $contents);
+	}
+
+	function fileFactory($filename)
+	{
+		$code = $this->read( $filename );
+		return new File($filename, $code);
+	}
 }
