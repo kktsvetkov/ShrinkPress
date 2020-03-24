@@ -10,6 +10,7 @@ class Process
 
 	function __construct()
 	{
+		$this->tasks[] = new Task\Wipe;
 		$this->tasks[] = new Task\Start;
 	}
 
