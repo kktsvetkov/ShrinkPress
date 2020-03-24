@@ -2,6 +2,8 @@
 
 namespace ShrinkPress\Build\Project\Storage;
 
+use ShrinkPress\Build\Project\Entity;
+
 class Old extends StorageAbstract
 {
 	protected $build;
@@ -21,7 +23,18 @@ class Old extends StorageAbstract
 	{
 		$local = $this->local($entity, $name);
 
-		$object = new \ShrinkPress\Build\Project\Entity\WpFunction($name);
+		switch ($entity)
+		{
+			case self::ENTITY_FUNCTION:
+				$object = new Entity\WpFunction($name);
+				break;
+
+			default:
+				throw new \UnexpectedValueException(
+					"Weird entity: {$entity}"
+				);
+				break;
+		}
 
 		if (file_exists($local))
 		{
