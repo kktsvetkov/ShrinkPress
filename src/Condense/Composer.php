@@ -2,9 +2,36 @@
 
 namespace ShrinkPress\Build\Condense;
 
+use ShrinkPress\Build\Verbose;
+
 class Composer
 {
-	const compatibility = 'wp-includes/vendors/shrinkpress/compatibility.php';
+	use Instance;
+
+	const composer_phar = 'https://getcomposer.org/composer.phar';
+
+	static function composer_phar()
+	{
+		$local = __DIR__ . '/../../composer.phar';
+		if (!file_exists($local))
+		{
+			Verbose::log('Downloading composer.phar', 2);
+			shell_exec(
+				'curl -s ' . self::composer_phar
+					. ' -O ' . escapeshellcmd($local)
+				);
+			if (!file_exists($local))
+			{
+				throw new \RuntimeException(
+					'Unable to download composer.phar'
+				);
+			}
+		}
+
+		return realpath($local);
+	}
+
+	const vendors = 'wp-includes/vendor';
 
 	const source = array(
 		'name' => 'shrinkpress/shrinkpress',
@@ -15,14 +42,12 @@ class Composer
 			'php' => '>=5.6.0',
 			),
 		'config' =>  array(
-			'vendor-dir' => 'wp-includes/vendors',
+			'vendor-dir' => self::vendors,
 			),
 		'autoload' => array(
-			'files' => array(
-				self::compatibility,
-				),
-		'psr-4' => array(),
-		),
+			'files' => array( Compat::compatibility_php ),
+			'psr-4' => array(),
+			),
 	);
 
 	protected $source;
@@ -32,22 +57,13 @@ class Composer
 		$this->source = self::source;
 	}
 
-	static protected $instance;
-
-	static function instance()
-	{
-		if (empty(self::$instance))
-		{
-			self::$instance = new self;
-		}
-
-		return self::$instance;
-	}
-
 	function json()
 	{
+		$json = $this->source;
+		$json['autoload']['psr-4'] = (object) $json['autoload']['psr-4'];
+
 		return json_encode(
-			$this->source,
+			$json,
 			JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
 		);
 	}
@@ -60,7 +76,7 @@ class Composer
 	function addShrinkPressPsr4($package)
 	{
 		$namespace = 'ShrinkPress\\' . trim($package, '\\') . '\\';
-		$folder = 'wp-includes/vendors/shrinkpress/'
+		$folder = self::vendors . '/shrinkpress/'
 			. str_replace('\\', '/', strtolower($package))
 			. '/src';
 
@@ -70,5 +86,15 @@ class Composer
 	function addPsr4($namespace, $folder)
 	{
 		$this->source['autoload']['psr-4'][ $namespace ] = $folder;
+	}
+
+	function dumpautoload($basedir)
+	{
+		$composer_phar = self::composer_phar();
+		chdir($basedir);
+		shell_exec('php '
+			. escapeshellcmd($composer_phar)
+			. ' dumpautoload'
+			);
 	}
 }
