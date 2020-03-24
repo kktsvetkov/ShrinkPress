@@ -13,7 +13,7 @@ class Old extends StorageAbstract
 
 	protected function local($entity, $name)
 	{
-		$prefix = $entity . '/' . substr($name, 0, 2) . '/';
+		$prefix = $entity . '/' . substr($name, 0, 3) . '/';
 		return $this->build . '/' . $prefix . $name . '.php';
 	}
 
@@ -26,7 +26,7 @@ class Old extends StorageAbstract
 		if (file_exists($local))
 		{
 			$data = include $local;
-			$object->load($data);
+			$object->load((array) $data);
 		}
 
 		return $object;
