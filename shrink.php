@@ -1,6 +1,4 @@
 <?php
-// git@github.com:WordPress/WordPress.git
-
 include __DIR__ . '/vendor/autoload.php';
 
 ini_set('xdebug.max_nesting_level', 3000);
