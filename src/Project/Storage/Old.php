@@ -21,7 +21,7 @@ class Old extends StorageAbstract
 	{
 		$local = $this->local($entity, $name);
 
-		$object = new \ShrinkPress\Build\WpFunction($name);
+		$object = new \ShrinkPress\Build\Project\Entity\WpFunction($name);
 
 		if (file_exists($local))
 		{
