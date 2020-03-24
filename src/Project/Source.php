@@ -10,23 +10,28 @@ class Source
 	protected $storage;
 
 	/**
-	* Opens $source folder for reading the WordPress files from
+	* Opens $basedir folder for reading the WordPress files from
 	*
-	* @param string $source filepath to the WordPress folder
+	* @param string $basedir filepath to the WordPress folder
 	* @param ShrinkPress\Build\Storage\StorageAbstract $storage
 	* @throws \InvalidArgumentException
 	*/
-	function __construct($source, Storage\StorageAbstract $storage)
+	function __construct($basedir, Storage\StorageAbstract $storage)
 	{
-		if (!is_dir($source))
+		if (!is_dir($basedir))
 		{
 			throw new \InvalidArgumentException(
-				"Argument \$source must be an existing folder, '{$source}' is not"
+				"Argument \$basedir must be an existing folder, '{$basedir}' is not"
 			);
 		}
 
-		$this->source = rtrim($source, '/') . '/';
+		$this->basedir = rtrim($basedir, '/') . '/';
 		$this->storage = $storage;
+	}
+
+	function basedir()
+	{
+		return $this->basedir;
 	}
 
 	/**
@@ -37,7 +42,7 @@ class Source
 	*/
 	protected function local($filename)
 	{
-		return $this->source . ltrim($filename, '/');
+		return $this->basedir . ltrim($filename, '/');
 	}
 
 	/**
@@ -48,9 +53,9 @@ class Source
 	*/
 	protected function remote($filename)
 	{
-		if (0 === strpos($filename, $this->source))
+		if (0 === strpos($filename, $this->basedir))
 		{
-			$filename = substr($filename, strlen($this->source));
+			$filename = substr($filename, strlen($this->basedir));
 		}
 
 		return $filename;
@@ -74,7 +79,7 @@ class Source
 			);
 		}
 
-		Verbose::log("Scan: {$folder} (in {$this->source})", 2);
+		Verbose::log("Scan: {$folder} (in {$this->basedir})", 2);
 
 		$dir = new \DirectoryIterator( $local );
 		foreach ($dir as $found)
@@ -153,7 +158,7 @@ class Source
 		{
 			throw new \InvalidArgumentException(
 				"Argument \$filename '{$filename}' does not exist"
-					. " (in {$this->source})"
+					. " (in {$this->basedir})"
 			);
 		}
 
@@ -173,4 +178,19 @@ class Source
 
 		return file_put_contents($local, $contents);
 	}
+
+	function unlink($filename)
+	{
+		$local = $this->local($filename);
+		if (!file_exists($local))
+		{
+			throw new \InvalidArgumentException(
+				"Argument \$filename '{$filename}' does not exist"
+					. " (in {$this->basedir})"
+			);
+		}
+
+		return unlink( $local );
+	}
+
 }
