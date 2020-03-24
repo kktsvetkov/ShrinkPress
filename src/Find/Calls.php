@@ -3,6 +3,7 @@
 namespace ShrinkPress\Build\Find;
 
 use PhpParser\Node;
+use ShrinkPress\Build\Verbose;
 
 class Calls extends Visitor
 {
@@ -47,13 +48,28 @@ class Calls extends Visitor
 			return;
 		}
 
-		$this->push(
-			array(
-				$func_name,
-				$node->getStartLine()
-				) + ($this->inside
-					? array(2 => $this->inside)
-					: array())
+		$this->push($node);
+	}
+
+	function push(Node $node)
+	{
+		$line = $node->getLine();
+
+		Verbose::log("Calls {$node->name}() at {$this->filename}:{$line}", 2);
+
+		$call = $this->storage->read(
+			$this->storage::ENTITY_FUNCTION,
+			(string) $node->name
+			);
+
+		$call->callers[] = $this->inside
+			? array( $this->filename, $line, $this->inside)
+			: array( $this->filename, $line);
+
+		$this->storage->write(
+			$this->storage::ENTITY_FUNCTION,
+			(string) $node->name,
+			$call->getData()
 			);
 	}
 }

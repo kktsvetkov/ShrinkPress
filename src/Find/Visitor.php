@@ -2,24 +2,20 @@
 
 namespace ShrinkPress\Build\Find;
 
+use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
+use ShrinkPress\Build\Project\Storage;
 
 abstract class Visitor extends NodeVisitorAbstract
 {
-	protected $result = array();
+	protected $filename;
+	protected $storage;
 
-	function result()
+	function load( $filename, Storage\StorageAbstract $storage)
 	{
-		return $this->result;
+		$this->filename = (string) $filename;
+		$this->storage = $storage;
 	}
 
-	function clear()
-	{
-		$this->result = array();
-	}
-
-	function push(array $match)
-	{
-		$this->result[] = $match;
-	}
+	abstract function push(Node $node);
 }

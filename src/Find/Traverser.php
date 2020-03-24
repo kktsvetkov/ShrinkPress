@@ -5,22 +5,49 @@ namespace ShrinkPress\Build\Find;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
 
+use ShrinkPress\Build\Project;
+
 class Traverser
 {
+	protected $traverser;
+	protected $visitors = array();
+
 	protected static $instance;
 
-	static function traverse(array $nodes, Visitor $visitor )
+	function __construct()
+	{
+		$this->visitors[] = new Functions;
+		$this->visitors[] = new Calls;
+		$this->visitors[] = new Callbacks;
+		$this->visitors[] = new Classes;
+		$this->visitors[] = new Globals;
+		$this->visitors[] = new Includes;
+
+		$this->traverser = new NodeTraverser;
+
+		self::$instance = $this;
+	}
+
+	static function traverse(Project\File $file, Project\Storage\StorageAbstract $storage)
 	{
 		if (!self::$instance)
 		{
-			self::$instance = new NodeTraverser;
+			new self;
 		}
 
-		$visitor->clear();
-		self::$instance->addVisitor( $visitor );
-		self::$instance->traverse( $nodes );
-		self::$instance->removeVisitor( $visitor );
+		$nodes = $file->parsed();
+		$filename = $file->filename();
 
-		return $visitor->result();
+		$traverser = self::$instance->traverser;
+		$visitors = self::$instance->visitors;
+
+		foreach ($visitors as $visitor)
+		{
+			$visitor->load( $filename, $storage );
+
+			$traverser->addVisitor( $visitor );
+			$traverser->traverse( $nodes );
+			$traverser->removeVisitor( $visitor );
+		}
 	}
 }
