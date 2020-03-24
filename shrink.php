@@ -11,15 +11,12 @@ set_error_handler(function($severity, $message, $file, $line)
 	throw new ErrorException($message, 0, $severity, $file, $line);
 }, E_ALL);
 
-// new \ShrinkPress\Build\Captain;
-// $d = new \ShrinkPress\Build\Disintegrator;
-
+$wp_source = __DIR__ . '/wordpress';
 \ShrinkPress\Build\Verbose::level(4);
 
-$wp_source = __DIR__ . '/wordpress';
-$p = new \ShrinkPress\Build\Project($sp_build = __DIR__ . '/build');
-// $s = new \ShrinkPress\Build\Scout($p);
-// $s->scan($wp_source);
+$storage = new \ShrinkPress\Build\Project\Storage\Old(__DIR__ . '/build');
+$source = new \ShrinkPress\Build\Project\Source($wp_source, $storage);
+// $source->scan();
 
-$d = new \ShrinkPress\Build\Doctor($p);
-$d->shrink($wp_source);
+$process = new \ShrinkPress\Build\Condense\Process;
+$process->condense($source, $storage);
