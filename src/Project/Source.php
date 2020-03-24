@@ -100,7 +100,7 @@ class Source
 
 			Verbose::log("Scan.found: {$original}", 1);
 
-			$file = $this->fileFactory( $original );
+			$file = new File($original, $this->read( $original ));
 			Find\Traverser::traverse($file, $this->storage);
 		}
 	}
@@ -172,11 +172,5 @@ class Source
 		}
 
 		return file_put_contents($local, $contents);
-	}
-
-	function fileFactory($filename)
-	{
-		$code = $this->read( $filename );
-		return new File($filename, $code);
 	}
 }
