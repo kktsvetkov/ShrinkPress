@@ -110,6 +110,14 @@ class Source
 		}
 	}
 
+	const skipFolders = array(
+		'wp-content',
+		'sodium_compat',
+
+		// temporary, skip wp-admin
+		'wp-admin',
+		);
+
 	protected function skipScan(\SplFileInfo $file)
 	{
 		// folders first...
@@ -121,13 +129,10 @@ class Source
 				return true;
 			}
 
-			if ('wp-content' == $file->getBasename() )
+			if (in_array( $file->getBasename(), self::skipFolders ))
 			{
 				return true;
 			}
-
-			// temporary, skip wp-admin
-			if ('wp-admin' == $file->getBasename() ) return true;
 
 			return false;
 		}
