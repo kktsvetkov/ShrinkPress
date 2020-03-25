@@ -35,11 +35,6 @@ class Functions extends Visitor
 				));
 		}
 
-		// tmp only
-		$p = new \PhpParser\PrettyPrinter\Standard;
-		$found['code'] = $p->prettyPrint([$node]);
-		// ^
-
 		$this->result[] = $found;
 	}
 
@@ -53,23 +48,11 @@ class Functions extends Visitor
 					. $found['startLine'],
 				1);
 
-			$func = $storage->read(
-				$storage::ENTITY_FUNCTION,
-				$found['name']
-				);
-
-			$func->fileOrigin = $this->filename;
+			$func = $storage->readFunction( $found['name'] );
+			$found['fileOrigin'] = $this->filename;
 			$func->load($found);
 
-			// tmp only
-			$func->code = $found['code'];
-			// ^
-
-			$storage->write(
-				$storage::ENTITY_FUNCTION,
-				$found['name'],
-				$func->getData()
-				);
+			$storage->writeFunction( $func );
 		}
 	}
 }

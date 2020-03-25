@@ -59,10 +59,7 @@ class Callbacks extends Visitor
 	{
 		foreach($result as $callback => $calls)
 		{
-			$func = $storage->read(
-				$this->storage::ENTITY_FUNCTION,
-				$callback
-				);
+			$func = $storage->readFunction( $callback );
 
 			foreach ($calls as $call)
 			{
@@ -75,11 +72,7 @@ class Callbacks extends Visitor
 				$func->callers[] = array( $this->filename, $line, $inside);
 			}
 
-			$storage->write(
-				$this->storage::ENTITY_FUNCTION,
-				$callback,
-				$func->getData()
-				);
+			$storage->writeFunction( $func );
 		}
 	}
 }

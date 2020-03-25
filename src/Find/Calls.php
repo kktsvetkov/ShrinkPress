@@ -59,10 +59,7 @@ class Calls extends Visitor
 	{
 		foreach($result as $func_name => $calls)
 		{
-			$func = $storage->read(
-				$this->storage::ENTITY_FUNCTION,
-				$func_name
-				);
+			$func = $storage->readFunction( $func_name );
 
 			foreach ($calls as $call)
 			{
@@ -76,11 +73,7 @@ class Calls extends Visitor
 					: array( $this->filename, $line);
 			}
 
-			$storage->write(
-				$this->storage::ENTITY_FUNCTION,
-				$func_name,
-				$func->getData()
-				);
+			$storage->writeFunction( $func );
 		}
 	}
 }
