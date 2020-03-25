@@ -51,7 +51,4 @@ class WpFunction implements WpEntity
 			}
 		}
 	}
-
-	// temporary
-	public $code;
 }

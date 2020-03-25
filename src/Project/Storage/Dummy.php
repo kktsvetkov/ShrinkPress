@@ -2,14 +2,16 @@
 
 namespace ShrinkPress\Build\Project\Storage;
 
+use ShrinkPress\Build\Project\Entity;
+
 class Dummy extends StorageAbstract
 {
-	function read($entity, $name)
+	function readFunction($name)
 	{
-
+		return new Entity\WpFunction($name);
 	}
 
-	function write($entity, $name, array $data)
+	function writeFunction(Entity\WpFunction $entity)
 	{
 
 	}
