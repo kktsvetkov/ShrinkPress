@@ -59,5 +59,31 @@ class Old extends StorageAbstract
 			$local,
 			'<?php return ' . var_export($data, true) . '; '
 			);
+
+		// update index
+		//
+		$indexFile = $this->build . '/' . $entity . '.php';
+		$indexData = array();
+
+		static $index = array();
+		if (empty($index[ $entity ]))
+		{
+			$index[ $entity ] = $indexFile;
+			file_put_contents($indexFile, '<?php $indexData = [];');
+		} else
+		{
+			include $indexFile ;
+		}
+
+		if (empty($indexData[ $name ]))
+		{
+			$indexData[ $name ] = $local;
+
+			file_put_contents($indexFile,
+				"\n\$indexData["
+					. json_encode($name) . '] = 1;',
+				FILE_APPEND
+			);
+		}
 	}
 }
