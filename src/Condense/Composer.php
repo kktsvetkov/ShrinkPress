@@ -73,16 +73,6 @@ class Composer
 		return $this->source['autoload']['psr-4'];
 	}
 
-	function addShrinkPressPsr4($package)
-	{
-		$namespace = 'ShrinkPress\\' . trim($package, '\\') . '\\';
-		$folder = self::vendors . '/shrinkpress/'
-			. str_replace('\\', '/', strtolower($package))
-			. '/src';
-
-		return $this->addPsr4($namespace, $folder);
-	}
-
 	function addPsr4($namespace, $folder)
 	{
 		$this->source['autoload']['psr-4'][ $namespace ] = $folder;
