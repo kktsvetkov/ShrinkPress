@@ -21,6 +21,11 @@ class WpFunction implements WpEntity
 
 	public $callers = [];
 
+	public $classNamespace;
+	public $className;
+	public $classMethod;
+	public $classFile;
+
 	function __construct($name, array $data = [])
 	{
 		$this->name = $name;
