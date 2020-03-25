@@ -21,13 +21,16 @@ class Functions extends Visitor
 			'endLine' => $node->getEndLine(),
 		);
 
-		// is it private ?
-		//
 		$found['isPrivate'] = false;
 		if ($docComment = $node->getDocComment())
 		{
+			$found['docComment'] = (string) $docComment;
+			$found['docCommentLine'] = $docComment->getLine();
+
+			// is it private ?
+			//
 			$found['isPrivate'] = (false !== strpos(
-				$docComment->__toString(),
+				$found['docComment'],
 				'@access private'
 				));
 		}
@@ -55,11 +58,8 @@ class Functions extends Visitor
 				$found['name']
 				);
 
-			$func->file = $this->filename;
-
-			$func->startLine = $found['startLine'];
-			$func->endLine = $found['endLine'];
-			$func->isPrivate = $found['isPrivate'];
+			$func->fileOrigin = $this->filename;
+			$func->load($found);
 
 			// tmp only
 			$func->code = $found['code'];
