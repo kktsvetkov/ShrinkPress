@@ -9,12 +9,15 @@ class WpFunction implements WpEntity
 {
 	public $name;
 
-	public $file;	// origin
+	public $fileOrigin;
 
 	public $startLine;
 	public $endLine;
 
 	public $isPrivate = false;
+
+	public $docComment;
+	public $docCommentLine;
 
 	public $callers = [];
 
