@@ -1,6 +1,9 @@
 {
-	"name": "Format",
-	"functions": [
-		["absint", "absint"]
-	]
+	"Format":
+	{
+		"Math":
+		[
+			["absint"]
+		]
+	}
 }
