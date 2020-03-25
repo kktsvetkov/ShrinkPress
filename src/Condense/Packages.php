@@ -1,16 +1,18 @@
 <?php
 
-namespace ShrinkPress\Build\Disintegrate;
+namespace ShrinkPress\Build\Condense;
 
 class Packages
 {
-	static protected $packages = array();
+	use Instance;
 
-	static function packages()
+	protected $packages = array();
+
+	function getPackages()
 	{
-		if (empty(self::$packages))
+		if (empty($this->packages))
 		{
-			self::$packages = array();
+			$this->packages = array();
 
 			$dir = new \DirectoryIterator( __DIR__ . '/../../packages/' );
 			foreach ($dir as $found)
@@ -23,32 +25,32 @@ class Packages
 				$key = $found->getBasename(
 					'.' . $found->getExtension()
 					);
-				self::$packages[ $key ] = $found->getRealpath();
+				$this->packages[ $key ] = $found->getRealpath();
 			}
 		}
 
-		return array_keys(self::$packages);
+		return array_keys($this->packages);
 	}
 
-	static function definition($package)
+	function definition($package)
 	{
-		if (empty(self::$packages[ $package ]))
+		if (empty($this->packages[ $package ]))
 		{
 			throw new \InvalidArgumentException(
 				"Unable to find package '{$package}'"
 			);
 		}
 
-		if (!file_exists( self::$packages[ $package ] ))
+		if (!file_exists( $this->packages[ $package ] ))
 		{
 			throw new \UnexpectedValueException(
 				"Missing file for package '{$package}': "
-					. self::$packages[ $package ]
+					. $this->packages[ $package ]
 			);
 		}
 
 		return json_decode(
-			file_get_contents(self::$packages[ $package ]),
+			file_get_contents($this->packages[ $package ]),
 			true);
 	}
 }
