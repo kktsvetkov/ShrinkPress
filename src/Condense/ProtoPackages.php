@@ -85,6 +85,8 @@ class ProtoPackages
 			);
 		}
 
-		return $this->packages[ $package ];
+		return array(
+			$package => $this->packages[ $package ]
+		);
 	}
 }

@@ -62,4 +62,6 @@ class FunctionsMap extends TaskAbstract
 			$composer->dumpautoload( $source->basedir() );
 		}
 	}
+
+	 
 }
