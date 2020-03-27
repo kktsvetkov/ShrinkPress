@@ -8,14 +8,6 @@ use ShrinkPress\Build\Project\Storage;
 
 class Calls extends Visitor
 {
-	protected $internal = [];
-
-	function __construct()
-	{
-		$internal = get_defined_functions()['internal'];
-		$this->internal = array_flip($internal);
-	}
-
 	protected $inside;
 
 	function enterNode(Node $node)
@@ -44,7 +36,7 @@ class Calls extends Visitor
 		}
 
 		$func_name = (string) $node->name;
-		if (!empty($this->internal[ $func_name ]))
+		if (Internal::isInternal( $func_name ))
 		{
 			return;
 		}

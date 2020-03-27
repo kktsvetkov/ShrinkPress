@@ -49,6 +49,11 @@ class Callbacks extends Visitor
 		}
 
 		$callback = $node->args[ $arg_pos ]->value->value;
+		if (Internal::isInternal( $callback ))
+		{
+			return;
+		}
+
 		$this->result[ $callback ][] = array(
 			$node->getLine(),
 			$caller,
