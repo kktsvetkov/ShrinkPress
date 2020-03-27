@@ -81,6 +81,11 @@ class Source
 
 		Verbose::log("Scan: {$folder} (in {$this->basedir})", 2);
 
+		if (2 > func_num_args())
+		{
+			$this->storage->beforeScan();
+		}
+
 		$dir = new \DirectoryIterator( $local );
 		foreach ($dir as $found)
 		{
@@ -99,7 +104,11 @@ class Source
 
 			if ($found->isDir())
 			{
-				$this->scan( $original );
+				// pass a meaningless second argument
+				// in order to be able to distinguish
+				// sub-calls to scan()
+				//
+				$this->scan( $original , $folder);
 				continue;
 			}
 
@@ -108,14 +117,23 @@ class Source
 			$file = new File($original, $this->read( $original ));
 			Find\Traverser::traverse($file, $this->storage);
 		}
+
+		if (1 == func_num_args())
+		{
+			$this->storage->afterScan();
+		}
 	}
 
 	const skipFolders = array(
 		'wp-content',
+
 		'sodium_compat',
+		'ID3',
+		'SimplePie',
 
 		// temporary, skip wp-admin
-		'wp-admin',
+		// 'wp-admin',
+		'vendor',
 		);
 
 	protected function skipScan(\SplFileInfo $file)
