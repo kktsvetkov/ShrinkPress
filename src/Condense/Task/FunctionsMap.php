@@ -12,8 +12,11 @@ class FunctionsMap extends TaskAbstract
 		Project\Storage\StorageAbstract $storage
 		)
 	{
-		$packages = Condense\Packages::instance();
 		$composer = Condense\Composer::instance();
+
+		// $packages = Condense\Packages::instance();
+		$packages = Condense\ProtoPackages::instance();
+		$packages->setStorage($storage);
 
 		foreach ($packages->getPackages() as $package)
 		{
