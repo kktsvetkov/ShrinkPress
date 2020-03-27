@@ -18,6 +18,14 @@ class Stash extends StorageAbstract
 		$this->build = (string) $build;
 	}
 
+	function beforeScan()
+	{
+		shell_exec('rm -rf ' . $this->build . '/function');
+		shell_exec('rm -f ' . $this->build . '/function.csv');
+	}
+
+	function afterScan() {}
+
 	protected function local($entity, $name)
 	{
 		$prefix = $entity . '/' . substr($name, 0, 3) . '/';
@@ -69,5 +77,19 @@ class Stash extends StorageAbstract
 			$index[ $name ] = count($index);
 			file_put_contents($indexFile, $name . "\n", FILE_APPEND);
 		}
+	}
+
+	function getFunctions()
+	{
+		$all = array();
+
+		if (file_exists($indexFile = $this->build . '/function.csv'))
+		{
+			$all = file($indexFile);
+			$all = array_map('trim', $all);
+			$all = array_unique($all);
+		}
+
+		return array_values($all);
 	}
 }

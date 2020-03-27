@@ -15,4 +15,12 @@ class Dummy extends StorageAbstract
 	{
 
 	}
+
+	function getFunctions()
+	{
+		return array();
+	}
+
+	function beforeScan() {}
+	function afterScan() {}
 }

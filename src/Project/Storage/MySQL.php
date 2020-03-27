@@ -11,9 +11,15 @@ class MySQL extends StorageAbstract
 	function __construct(\mysqli $mysql)
 	{
 		$this->mysql = $mysql;
+	}
+
+	function beforeScan()
+	{
 		$this->wipe();
 		$this->setup();
 	}
+
+	function afterScan() {}
 
 	protected function q($sql)
 	{
@@ -83,8 +89,12 @@ class MySQL extends StorageAbstract
 		return $object;
 	}
 
-	protected function writeFunction($name, array $data)
+	function writeFunction(Entity\WpFunction $entity)
 	{
+
+		$data = $entity->getData();
+		$name = $data['name'];
+
 		$sql = '';
 
 		$callers = $data['callers'];
@@ -118,8 +128,6 @@ class MySQL extends StorageAbstract
 				. ' ';
 		}
 
-var_dump($sql, $data);
-
 		$this->q($sql);
 		if ($callers)
 		{
@@ -147,6 +155,14 @@ var_dump($sql, $data);
 		}
 	}
 
+	function getFunctions()
+	{
+		$funcs = $this->q(
+			'SELECT name FROM shrinkpress_functions ORDER BY name'
+			);
+		return array_column($funcs, 'name');
+	}
+
 	protected function wipe()
 	{
 		$this->q(' DROP TABLE IF EXISTS shrinkpress_functions; ');
@@ -161,7 +177,7 @@ var_dump($sql, $data);
 				fileOrigin varchar(255) NOT NULL DEFAULT "",
 				startLine int(11) NOT NULL DEFAULT 0,
 				endLine int(11) NOT NULL DEFAULT 0,
-				docComment char(3) NOT NULL DEFAULT "",
+				docComment text NOT NULL,
 				docCommentLine int(11) NOT NULL DEFAULT 0,
 				classNamespace varchar(255) NOT NULL DEFAULT "",
 				className varchar(255) NOT NULL DEFAULT "",
