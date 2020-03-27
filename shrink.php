@@ -9,6 +9,9 @@ set_error_handler(function($severity, $message, $file, $line)
 	throw new ErrorException($message, 0, $severity, $file, $line);
 }, E_ALL);
 
+/////////////////////////////////////////////////////////////////////////////
+
+
 $wp_source = __DIR__ . '/wordpress';
 \ShrinkPress\Build\Verbose::level(4);
 
