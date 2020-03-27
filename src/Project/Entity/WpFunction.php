@@ -20,6 +20,7 @@ class WpFunction implements WpEntity
 	public $docCommentLine;
 
 	public $callers = [];
+	public $calls = 0;
 
 	public $classNamespace;
 	public $className;
