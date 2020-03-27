@@ -78,7 +78,7 @@ class MySQL extends StorageAbstract
 					$caller['file'],
 					$caller['line'],
 				) + (!empty($caller['caller'])
-					? array(3 => $caller['caller'])
+					? array(2 => $caller['caller'])
 					: array()
 					);
 			}
@@ -179,6 +179,7 @@ class MySQL extends StorageAbstract
 				endLine int(11) NOT NULL DEFAULT 0,
 				docComment text NOT NULL,
 				docCommentLine int(11) NOT NULL DEFAULT 0,
+				calls int(11) NOT NULL DEFAULT 0,
 				classNamespace varchar(255) NOT NULL DEFAULT "",
 				className varchar(255) NOT NULL DEFAULT "",
 				classMethod varchar(255) NOT NULL DEFAULT "",
