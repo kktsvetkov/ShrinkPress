@@ -4,6 +4,7 @@ namespace ShrinkPress\Build\Condense\Task;
 
 use ShrinkPress\Build\Project;
 use ShrinkPress\Build\Condense;
+use ShrinkPress\Build\Verbose;
 
 class SortFunctions extends TaskAbstract
 {
@@ -12,6 +13,8 @@ class SortFunctions extends TaskAbstract
 		Project\Storage\StorageAbstract $storage
 		)
 	{
+		Verbose::log('Sorting functions...', 2);
+
 		$map = array();
 		foreach ($storage->getFunctions() as $name)
 		{

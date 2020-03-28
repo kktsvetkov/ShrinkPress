@@ -2,17 +2,17 @@
 
 namespace ShrinkPress\Build\Condense;
 
+use ShrinkPress\Build\Project;
+
 class Compat
 {
 	use Instance;
 
 	const compatibility_php = Composer::vendors . '/shrinkpress/compatibility.php';
 
-	protected $functions = array();
-
-	function addFunction($old, $new)
+	function addFunction(Project\Entity\WpFunction $entity)
 	{
-		$this->functions[] = array($old, $new);
+
 	}
 
 	function addClass()
@@ -25,8 +25,10 @@ class Compat
 
 	}
 
-	function dump()
+	function head()
 	{
-
+		return '<?php '
+			. "\n /** @see shrinkpress */"
+			. "\n";
 	}
 }

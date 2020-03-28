@@ -28,10 +28,37 @@ class Transform
 	static function wpNamespace($package)
 	{
 		$namespace = 'ShrinkPress\\' . trim($package, '\\') . '\\';
-		$folder = Composer::vendors . '/shrinkpress/'
-			. str_replace('\\', '/', strtolower($package))
-			. '/src';
 
+		// "ShrinkPress\Chrono\Time" to "shrinkpress/chrono/src/Time"
+		//
+		$p = explode('\\', $package);
+		$l = array_shift($p);
+		$lib = strtolower($l) . '/src/' . (
+			!empty($p)
+				? join('/', $p)
+				: ''
+			);
+
+		$folder = Composer::vendors . '/shrinkpress/' . $lib;
 		return array($namespace, $folder);
+	}
+
+	static function wpClassFile($classNamespace, $className)
+	{
+		$c = explode('\\', $className);
+		$className = array_pop($c);
+		if ($c)
+		{
+			$classNamespace .= '//' . join('//', $c);
+		}
+
+		$classNamespace = rtrim($classNamespace, '\\');
+		return '<?php '
+			. "\n"
+			. "\nnamespace {$classNamespace};"
+			. "\n"
+			. "\nclass {$className}"
+			. "\n" . '{}'
+			. "\n";
 	}
 }

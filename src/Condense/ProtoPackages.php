@@ -3,6 +3,7 @@
 namespace ShrinkPress\Build\Condense;
 
 use ShrinkPress\Build\Project\Storage;
+use ShrinkPress\Build\Verbose;
 
 class ProtoPackages
 {
@@ -22,8 +23,8 @@ class ProtoPackages
 		$string = join('_', array_map('ucfirst', explode('-', $string)));
 		$string = join('\\', array_map('ucfirst', explode('\\', $string)));
 
-		$string = str_replace('Wordpress\Wp_Includes', 'Wp_Includes', $string);
-		$string = str_replace('Wordpress\Wp_Admin', 'Wp_Admin', $string);
+		$string = str_replace('Wp_', '', $string);
+		$string = str_replace('Wordpress', 'WordPress', $string);
 
 		if (!$string)
 		{
@@ -37,6 +38,7 @@ class ProtoPackages
 	{
 		if (empty($this->packages))
 		{
+			Verbose::log('Proto packages...', 2);
 			$this->packages = array();
 
 			$all = $this->storage->getFunctions();
@@ -56,10 +58,18 @@ class ProtoPackages
 				$dir = str_replace('/', '\\', dirname($file));
 				$namespace = self::classify($dir);
 
-				// echo "> {$name}() at {$file}\n";
-				// echo "< {$namespace}\\{$class}::{$name}()\n\n";
+				$n = explode('\\', $namespace);
+				$package = array_shift($n);
+				if ($n)
+				{
+					$class .= '\\' . join('\\', $n);
+				}
+				unset($n, $namespace);
 
-				$this->packages[ $namespace ][ $class ][] = array($name);
+				// echo "> {$name}() at {$file}\n";
+				// echo "< {$package}\\{$class}::{$name}()\n\n";
+
+				$this->packages[ $package ][ $class ][] = array($name);
 			}
 		}
 

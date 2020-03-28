@@ -45,7 +45,11 @@ class Start extends TaskAbstract
 
 		// compatibility file
 		//
-		$source->write(Condense\Compat::compatibility_php, '' );
+		$compat = Condense\Compat::instance();
+		$source->write(
+			$compat::compatibility_php,
+			$compat->head()
+			);
 	}
 
 	const find_WPINC = array(

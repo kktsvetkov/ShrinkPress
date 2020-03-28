@@ -49,7 +49,9 @@ class FunctionsMap extends TaskAbstract
 						$entity->classMethod = !empty($method[1])
 							? $method[1]
 							: Condense\Transform::wpFunction( $func );
-						$entity->classFile = $folder . "/{$entity->className}.php";
+						$entity->classFile = $folder
+							. str_replace('\\', '/', $class)
+							. '.php';
 
 						$storage->writeFunction( $entity );
 					}
@@ -63,5 +65,5 @@ class FunctionsMap extends TaskAbstract
 		}
 	}
 
-	 
+
 }
