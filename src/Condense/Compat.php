@@ -6,7 +6,7 @@ use ShrinkPress\Build\Project;
 
 class Compat
 {
-	use Instance;
+	use \ShrinkPress\Build\Assist\Instance;
 
 	const compatibility_php = Composer::vendors . '/shrinkpress/compatibility.php';
 

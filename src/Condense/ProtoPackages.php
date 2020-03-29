@@ -7,7 +7,7 @@ use ShrinkPress\Build\Verbose;
 
 class ProtoPackages
 {
-	use Instance;
+	use \ShrinkPress\Build\Assist\Instance;
 
 	function setStorage(Storage\StorageAbstract $storage)
 	{

@@ -6,7 +6,7 @@ use ShrinkPress\Build\Verbose;
 
 class Composer
 {
-	use Instance;
+	use \ShrinkPress\Build\Assist\Instance;
 
 	const composer_phar = 'https://getcomposer.org/composer.phar';
 
