@@ -90,7 +90,8 @@ class Files
 		Verbose::log("File found: {$filename}", 1);
 
 		$nodes = self::parse( $source->read( $filename ) );
-		Traverser::traverse( $filename, $nodes,	$this->storage);
+		$traverser = Traverser::instance();
+		$traverser->traverse( $filename, $nodes, $this->storage );
 	}
 
 	const skipFolders = array(

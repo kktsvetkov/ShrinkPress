@@ -21,18 +21,10 @@ class Functions extends Visitor
 			'endLine' => $node->getEndLine(),
 		);
 
-		$found['isPrivate'] = false;
 		if ($docComment = $node->getDocComment())
 		{
 			$found['docComment'] = (string) $docComment;
 			$found['docCommentLine'] = $docComment->getLine();
-
-			// is it private ?
-			//
-			$found['isPrivate'] = (false !== strpos(
-				$found['docComment'],
-				'@access private'
-				));
 		}
 
 		$this->result[] = $found;
@@ -48,11 +40,10 @@ class Functions extends Visitor
 					. $found['startLine'],
 				1);
 
-			$func = $storage->readFunction( $found['name'] );
 			$found['fileOrigin'] = $this->filename;
-			$func->load($found);
-
-			$storage->writeFunction( $func );
+			$entity = $storage->readFunction( $found['name'] );
+			$entity->load($found);
+			$storage->writeFunction( $entity );
 		}
 	}
 }

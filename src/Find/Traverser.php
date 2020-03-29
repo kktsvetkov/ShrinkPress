@@ -9,10 +9,10 @@ use ShrinkPress\Build\Project\Storage;
 
 class Traverser
 {
+	use \ShrinkPress\Build\Assist\Instance;
+
 	protected $traverser;
 	protected $visitors = array();
-
-	protected static $instance;
 
 	function __construct()
 	{
@@ -24,21 +24,12 @@ class Traverser
 		$this->visitors[] = new Includes;
 
 		$this->traverser = new NodeTraverser;
-
-		self::$instance = $this;
 	}
 
-	static function traverse( $filename, array $nodes, Storage\StorageAbstract $storage)
+	function traverse( $filename, array $nodes, Storage\StorageAbstract $storage)
 	{
-		if (!self::$instance)
-		{
-			new self;
-		}
-
-		$traverser = self::$instance->traverser;
-		$visitors = self::$instance->visitors;
-
-		foreach ($visitors as $visitor)
+		$traverser = $this->traverser;
+		foreach ($this->visitors as $visitor)
 		{
 			$visitor->load( $filename, $storage );
 
