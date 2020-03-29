@@ -49,7 +49,7 @@ class Transform
 		$className = array_pop($c);
 		if ($c)
 		{
-			$classNamespace .= '//' . join('//', $c);
+			$classNamespace .= join('\\', $c);
 		}
 
 		$classNamespace = rtrim($classNamespace, '\\');
@@ -60,5 +60,12 @@ class Transform
 			. "\nclass {$className}"
 			. "\n" . '{}'
 			. "\n";
+	}
+
+	static function tabify($code)
+	{
+		$code = str_replace("\n", "\n\t" , $code);
+		$code = "\t" . rtrim($code, "\t");
+		return $code;
 	}
 }

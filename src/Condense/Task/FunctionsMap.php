@@ -18,7 +18,8 @@ class FunctionsMap extends TaskAbstract
 		$packages = Condense\ProtoPackages::instance();
 		$packages->setStorage($storage);
 
-		foreach ($packages->getPackages() as $package)
+		$allPackages = $packages->getPackages();
+		foreach ($allPackages as $package)
 		{
 			$def = $packages->definition( $package );
 			foreach($def as $lib => $classes)

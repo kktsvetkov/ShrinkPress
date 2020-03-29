@@ -32,6 +32,7 @@ class ReplaceFunctions extends TaskAbstract
 			$this->removeOriginal();
 			$compat->addFunction($entity);
 			$this->replaceCalls();
+BREAK;
 		}
 	}
 
@@ -125,8 +126,12 @@ class ReplaceFunctions extends TaskAbstract
 			if ($i == $insertBefore)
 			{
 				$updated[] = "\n\n";
-				$updated[] = $declaration['doccoment'];
-				$updated[] = $declaration['function'];
+				$updated[] = Condense\Transform::tabify(
+					$declaration['doccoment']
+					);
+				$updated[] = Condense\Transform::tabify(
+					$declaration['function']
+					);
 				$updated[] = "\n";
 			}
 

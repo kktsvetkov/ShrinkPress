@@ -46,8 +46,7 @@ class ProtoPackages
 			{
 				$func = $this->storage->readFunction($name);
 
-				$file = $func->fileOrigin;
-				if (!$file)
+				if (!$file = $func->fileOrigin)
 				{
 					continue;
 				}
@@ -60,9 +59,10 @@ class ProtoPackages
 
 				$n = explode('\\', $namespace);
 				$package = array_shift($n);
+
 				if ($n)
 				{
-					$class .= '\\' . join('\\', $n);
+					$class = join('\\', $n) . '\\' . $class;
 				}
 				unset($n, $namespace);
 

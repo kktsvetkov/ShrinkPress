@@ -29,5 +29,7 @@ class Wipe extends TaskAbstract
 
 		chdir( $source->basedir() );
 		shell_exec('git checkout -- .');
+
+		shell_exec('rm -rf ' . Condense\Composer::vendors);
 	}
 }
