@@ -16,6 +16,7 @@ class ReplaceFunctions extends TaskAbstract
 
 		$compat = Condense\Compat::instance();
 
+$i = 0;
 		foreach ($storage->sortedFunctions as $name => $calls)
 		{
 			$entity = $storage->readFunction($name);
@@ -28,15 +29,16 @@ class ReplaceFunctions extends TaskAbstract
 
 			Verbose::log("Replace: {$entity->name}()", 1);
 
-			$this->declareMethod($entity, $source);
-			$this->removeOriginal();
+			$found = $this->removeOriginal($entity, $source);
+			$this->declareMethod($found, $entity, $source);
+
 			$compat->addFunction($entity);
 			$this->replaceCalls();
-BREAK;
+if ($i++ > 5) BREAK;
 		}
 	}
 
-	protected function getFunctionDeclaration($entity, $source)
+	protected function removeOriginal($entity, $source)
 	{
 		$code = $source->read($entity->fileOrigin);
 		$lines = explode("\n", $code);
@@ -47,6 +49,7 @@ BREAK;
 			for ($i = $entity->docCommentLine; $i < $entity->startLine; $i++)
 			{
 				$doccoment .= $lines[ $i - 1 ] . "\n";
+				unset($lines[ $i - 1 ]);
 			}
 		}
 
@@ -54,7 +57,11 @@ BREAK;
 		for ($i = $entity->startLine; $i <= $entity->endLine; $i++)
 		{
 			$function .= $lines[ $i - 1 ] . "\n";
+			unset($lines[ $i - 1 ]);
 		}
+
+		$modified = join("\n", $lines);
+		$source->write($entity->fileOrigin, $modified);
 
 		return array(
 			'doccoment' => $doccoment,
@@ -67,12 +74,8 @@ BREAK;
 		return $code;
 	}
 
-	protected function declareMethod($entity, $source)
+	protected function declareMethod($declaration, $entity, $source)
 	{
-		// get function declaration (including doccomment)
-		//
-		$declaration = $this->getFunctionDeclaration($entity, $source);
-
 		// new method name ?
 		//
 		if ($entity->name != $entity->classMethod)
@@ -144,11 +147,6 @@ BREAK;
 
 		$entity->docComment = $declaration['doccoment'];
 		$entity->functionCode = $declaration['function'];
-	}
-
-	protected function removeOriginal()
-	{
-
 	}
 
 	protected function addCompatiblity()
