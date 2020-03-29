@@ -7,16 +7,13 @@ use ShrinkPress\Build\Verbose;
 
 class Source
 {
-	protected $storage;
-
 	/**
 	* Opens $basedir folder for reading the WordPress files from
 	*
 	* @param string $basedir filepath to the WordPress folder
-	* @param ShrinkPress\Build\Storage\StorageAbstract $storage
 	* @throws \InvalidArgumentException
 	*/
-	function __construct($basedir, Storage\StorageAbstract $storage)
+	function __construct($basedir)
 	{
 		if (!is_dir($basedir))
 		{
@@ -26,7 +23,6 @@ class Source
 		}
 
 		$this->basedir = rtrim($basedir, '/') . '/';
-		$this->storage = $storage;
 	}
 
 	function basedir()
@@ -40,7 +36,7 @@ class Source
 	* @param string $filename
 	* @return string
 	*/
-	protected function local($filename)
+	function local($filename)
 	{
 		return $this->basedir . ltrim($filename, '/');
 	}
@@ -51,7 +47,7 @@ class Source
 	* @param string $filename
 	* @return string
 	*/
-	protected function remote($filename)
+	function remote($filename)
 	{
 		if (0 === strpos($filename, $this->basedir))
 		{
@@ -59,113 +55,6 @@ class Source
 		}
 
 		return $filename;
-	}
-
-	/**
-	* Scans the $folder for WordPress PHP files
-	*
-	* @param string $folder a WP project folder, e.g. "wp-includes/"
-	* @throws \InvalidArgumentException
-	*/
-	function scan($folder = '')
-	{
-		$local = $this->local($folder);
-
-		if (!is_dir($local))
-		{
-			throw new \InvalidArgumentException(
-				'Argument $folder must be an existing folder,'
-					. " '{$folder}' is not ({$local})"
-			);
-		}
-
-		Verbose::log("Scan: {$folder} (in {$this->basedir})", 2);
-
-		if (2 > func_num_args())
-		{
-			$this->storage->beforeScan();
-		}
-
-		$dir = new \DirectoryIterator( $local );
-		foreach ($dir as $found)
-		{
-			if ($found->isDot())
-			{
-				continue;
-			}
-
-			$original = $this->remote( $found->getPathname() );
-
-			if ($this->skipScan( $found->getFileInfo() ))
-			{
-				Verbose::log("Scan.ignore: {$original}", 2);
-				continue;
-			}
-
-			if ($found->isDir())
-			{
-				// pass a meaningless second argument
-				// in order to be able to distinguish
-				// sub-calls to scan()
-				//
-				$this->scan( $original , $folder);
-				continue;
-			}
-
-			Verbose::log("Scan.found: {$original}", 1);
-
-			$file = new File($original, $this->read( $original ));
-			Find\Traverser::traverse($file, $this->storage);
-		}
-
-		if (1 == func_num_args())
-		{
-			$this->storage->afterScan();
-		}
-	}
-
-	const skipFolders = array(
-		'wp-content',
-
-		'sodium_compat',
-		'ID3',
-		'SimplePie',
-
-		// temporary, skip wp-admin
-		// 'wp-admin',
-		'vendor',
-		);
-
-	protected function skipScan(\SplFileInfo $file)
-	{
-		// folders first...
-		//
-		if ($file->isDir())
-		{
-			if ('.git' == $file->getBasename() )
-			{
-				return true;
-			}
-
-			if (in_array( $file->getBasename(), self::skipFolders ))
-			{
-				return true;
-			}
-
-			return false;
-		}
-
-		// ...files second
-		//
-		if ('php' != $file->getExtension())
-		{
-			return true;
-		}
-
-		// temporary, skip class declarations
-		if (false !== strpos($file->getBasename(), 'class') ) return true;
-
-		return false;
 	}
 
 	function exists($filename)
