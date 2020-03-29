@@ -21,11 +21,12 @@ $storage = new \ShrinkPress\Build\Project\Storage\MySQL(
 // $storage = new \ShrinkPress\Build\Project\Storage\Dummy;
 // $storage = new \ShrinkPress\Build\Project\Storage\Stash(__DIR__ . '/build');
 
-$source = new \ShrinkPress\Build\Project\Source($wp_source, $storage);
+$source = new \ShrinkPress\Build\Project\Source($wp_source);
 
 if (in_array('scan', $argv))
 {
-	$source->scan();
+	$scanner = new \ShrinkPress\Build\Find\Files($source, $storage);
+	$scanner->scan();
 }
 
 if (in_array('process', $argv))
