@@ -2,11 +2,12 @@
 
 namespace ShrinkPress\Build\Condense;
 
+use ShrinkPress\Build\Assist;
 use ShrinkPress\Build\Verbose;
 
 class Composer
 {
-	use \ShrinkPress\Build\Assist\Instance;
+	use Assist\Instance;
 
 	const composer_phar = 'https://getcomposer.org/composer.phar';
 

@@ -2,12 +2,13 @@
 
 namespace ShrinkPress\Build\Condense;
 
+use ShrinkPress\Build\Assist;
 use ShrinkPress\Build\Project\Storage;
 use ShrinkPress\Build\Verbose;
 
 class ProtoPackages
 {
-	use \ShrinkPress\Build\Assist\Instance;
+	use Assist\Instance;
 
 	function setStorage(Storage\StorageAbstract $storage)
 	{

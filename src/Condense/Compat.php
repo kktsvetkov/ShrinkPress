@@ -2,11 +2,12 @@
 
 namespace ShrinkPress\Build\Condense;
 
+use ShrinkPress\Build\Assist;
 use ShrinkPress\Build\Project;
 
 class Compat
 {
-	use \ShrinkPress\Build\Assist\Instance;
+	use Assist\Instance;
 
 	const compatibility_php = Composer::vendors . '/shrinkpress/compatibility.php';
 

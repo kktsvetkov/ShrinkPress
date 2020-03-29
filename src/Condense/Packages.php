@@ -2,9 +2,11 @@
 
 namespace ShrinkPress\Build\Condense;
 
+use ShrinkPress\Build\Assist;
+
 class Packages
 {
-	use \ShrinkPress\Build\Assist\Instance;
+	use Assist\Instance;
 
 	protected $packages = array();
 
