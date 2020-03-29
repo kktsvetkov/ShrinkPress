@@ -498,6 +498,5 @@ class Internal
 
 		/* Ignore extension */
 		'debug' => 428,
-		'wp_cache_postload' => 429,
 	);
 }

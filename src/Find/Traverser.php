@@ -5,7 +5,7 @@ namespace ShrinkPress\Build\Find;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
 
-use ShrinkPress\Build\Project;
+use ShrinkPress\Build\Project\Storage;
 
 class Traverser
 {
@@ -28,15 +28,12 @@ class Traverser
 		self::$instance = $this;
 	}
 
-	static function traverse(Project\File $file, Project\Storage\StorageAbstract $storage)
+	static function traverse( $filename, array $nodes, Storage\StorageAbstract $storage)
 	{
 		if (!self::$instance)
 		{
 			new self;
 		}
-
-		$nodes = $file->parsed();
-		$filename = $file->filename();
 
 		$traverser = self::$instance->traverser;
 		$visitors = self::$instance->visitors;
