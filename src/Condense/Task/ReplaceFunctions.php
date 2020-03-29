@@ -16,7 +16,11 @@ class ReplaceFunctions extends TaskAbstract
 
 		$compat = Condense\Compat::instance();
 
-$i = 0;
+// $storage->sortedFunctions = array(
+// 	'restore_previous_locale' => 0,
+// 	'is_locale_switched' => 0,
+// );
+// $i = 0;
 		foreach ($storage->sortedFunctions as $name => $calls)
 		{
 			$entity = $storage->readFunction($name);
@@ -32,10 +36,12 @@ $i = 0;
 			$found = $this->removeOriginal($entity, $source);
 			$this->declareMethod($found, $entity, $source);
 
-			$compat->addFunction($entity);
+			$compat->addFunction($entity, $source);
 			$this->replaceCalls();
-if ($i++ > 5) BREAK;
+// if ($i++ > 5) BREAK;
 		}
+
+		$compat->dump($source);
 	}
 
 	protected function removeOriginal($entity, $source)
@@ -43,13 +49,19 @@ if ($i++ > 5) BREAK;
 		$code = $source->read($entity->fileOrigin);
 		$lines = explode("\n", $code);
 
+		// do not remote the lines for extracted entries,
+		// just make them blank in order to make future
+		// references to lines match; we can trim the
+		// phantom empty lines later;
+		//
+
 		$doccoment = '';
 		if ($entity->docCommentLine)
 		{
 			for ($i = $entity->docCommentLine; $i < $entity->startLine; $i++)
 			{
 				$doccoment .= $lines[ $i - 1 ] . "\n";
-				unset($lines[ $i - 1 ]);
+				$lines[ $i - 1 ] = '';
 			}
 		}
 
@@ -57,7 +69,7 @@ if ($i++ > 5) BREAK;
 		for ($i = $entity->startLine; $i <= $entity->endLine; $i++)
 		{
 			$function .= $lines[ $i - 1 ] . "\n";
-			unset($lines[ $i - 1 ]);
+			$lines[ $i - 1 ] = '';
 		}
 
 		$modified = join("\n", $lines);
@@ -86,24 +98,26 @@ if ($i++ > 5) BREAK;
 				);
 		}
 
-		// get shrink class
+		// get shrink class code
 		//
 		$code = '';
 		if ($source->exists($entity->classFile))
 		{
 			$code = $source->read($entity->classFile);
-		} else
+		}
+
+		if(!$code)
 		{
 			$code = Condense\Transform::wpClassFile(
 				$entity->classNamespace,
 				$entity->className
 			);
 		}
-		$tokens = token_get_all($code);
 
 		// find the end of the class where to insert it
 		//
 		$insertBefore = 0;
+		$tokens = token_get_all($code);
 		for ($i = count($tokens) -1; $i >= 0; $i--)
 		{
 			if (is_scalar($tokens[ $i ]))
@@ -128,14 +142,13 @@ if ($i++ > 5) BREAK;
 		{
 			if ($i == $insertBefore)
 			{
-				$updated[] = "\n\n";
+				$updated[] = "\n";
 				$updated[] = Condense\Transform::tabify(
 					$declaration['doccoment']
 					);
 				$updated[] = Condense\Transform::tabify(
 					$declaration['function']
 					);
-				$updated[] = "\n";
 			}
 
 			$oken = is_scalar($token) ? $token : $token[1];
