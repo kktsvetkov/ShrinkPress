@@ -2,8 +2,6 @@
 
 namespace ShrinkPress\Build\Find;
 
-use PhpParser\ParserFactory;
-
 use ShrinkPress\Build\Project\Storage;
 use ShrinkPress\Build\Project\Source;
 use ShrinkPress\Build\Verbose;
@@ -72,25 +70,13 @@ class Files
 		}
 	}
 
-	protected static $parser;
-
-	protected static function parse($code)
-	{
-		if (empty(static::$parser))
-		{
-			static::$parser = (new ParserFactory)
-				->create(ParserFactory::PREFER_PHP7);
-		}
-
-		return static::$parser->parse($code);
-	}
-
 	protected function scanFile($filename, Source $source)
 	{
 		Verbose::log("File found: {$filename}", 1);
 
-		$nodes = self::parse( $source->read( $filename ) );
 		$traverser = Traverser::instance();
+
+		$nodes = $traverser->parse( $source->read( $filename ) );
 		$traverser->traverse( $filename, $nodes, $this->storage );
 	}
 

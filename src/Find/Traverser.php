@@ -4,6 +4,7 @@ namespace ShrinkPress\Build\Find;
 
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
+use PhpParser\ParserFactory;
 
 use ShrinkPress\Build\Project\Storage;
 
@@ -37,5 +38,18 @@ class Traverser
 			$traverser->traverse( $nodes );
 			$traverser->removeVisitor( $visitor );
 		}
+	}
+
+	protected static $parser;
+
+	function parse($code)
+	{
+		if (empty(static::$parser))
+		{
+			static::$parser = (new ParserFactory)
+				->create(ParserFactory::PREFER_PHP7);
+		}
+
+		return static::$parser->parse($code);
 	}
 }
