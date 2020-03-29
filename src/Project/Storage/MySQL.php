@@ -101,7 +101,6 @@ class MySQL extends StorageAbstract
 		unset($data['callers']);
 
 		unset($data['name']);
-		unset($data['isPrivate']);
 		unset($data['code']);
 		foreach ($data as $k => $v)
 		{

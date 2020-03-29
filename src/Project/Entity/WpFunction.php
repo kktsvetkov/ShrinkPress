@@ -14,8 +14,6 @@ class WpFunction implements WpEntity
 	public $startLine;
 	public $endLine;
 
-	public $isPrivate = false;
-
 	public $docComment;
 	public $docCommentLine;
 
