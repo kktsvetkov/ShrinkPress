@@ -15,9 +15,17 @@ set_error_handler(function($severity, $message, $file, $line)
 $wp_source = __DIR__ . '/wordpress';
 \ShrinkPress\Build\Verbose::level(4);
 
-$storage = new \ShrinkPress\Build\Project\Storage\MySQL(
-	new mysqli('127.0.0.1', 'username', 'password', 'wordpress')
-	);
+// $storage = new \ShrinkPress\Build\Project\Storage\MySQL(
+// 	new mysqli('127.0.0.1', 'username', 'password', 'wordpress')
+// 	);
+$storage = new \ShrinkPress\Build\Project\Storage\PDO(
+	new PDO("mysql:host=127.0.0.1;dbname=wordpress;charset=utf8mb4",
+		'username',
+		'password',
+		array(
+		PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+		PDO::ATTR_EMULATE_PREPARES => false,
+	)));
 // $storage = new \ShrinkPress\Build\Project\Storage\Dummy;
 // $storage = new \ShrinkPress\Build\Project\Storage\Stash(__DIR__ . '/build');
 
