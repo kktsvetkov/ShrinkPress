@@ -2,28 +2,25 @@
 
 namespace ShrinkPress\Build\Project\Entity;
 
-use PhpParser\Node;
-use PhpParser\NodeTraverser;
-
+/**
+* Function declaration in WordPress
+*/
 class WpFunction implements WpEntity
 {
 	public $name;
 
-	public $fileOrigin;
+	public $fileOrigin = '';
 
-	public $startLine;
-	public $endLine;
-
-	public $docComment;
-	public $docCommentLine;
+	public $startLine = 0;
+	public $endLine = 0;
+	public $docCommentLine = 0;
 
 	public $callers = [];
-	public $calls = 0;
 
-	public $classNamespace;
-	public $className;
-	public $classMethod;
-	public $classFile;
+	public $classNamespace = '';
+	public $className = '';
+	public $classMethod = '';
+	public $classFile = '';
 
 	function __construct($name, array $data = [])
 	{
