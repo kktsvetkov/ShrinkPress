@@ -2,6 +2,7 @@
 
 namespace ShrinkPress\Build\Condense\Task;
 
+use ShrinkPress\Build\Assist;
 use ShrinkPress\Build\Project;
 use ShrinkPress\Build\Condense;
 use ShrinkPress\Build\Verbose;
@@ -15,99 +16,94 @@ class ReplaceFunctions extends TaskAbstract
 	{
 		$compat = Condense\Compat::instance();
 
-		while ($replace = SortFunctions::pop())
+SortFunctions::$map = array(
+	'wp_die' => SortFunctions::$map['wp_die'],
+	'wp_redirect' => SortFunctions::$map['wp_redirect'],
+	'absint' => SortFunctions::$map['absint'],
+);
+
+		foreach (SortFunctions::$map as $name => $calls)
 		{
-
-echo ':r ', count($replace), ' of ', count(SortFunctions::$map), "\n";
-
-			foreach ($replace as $name)
+			$entity = $storage->readFunction($name);
+			if (!$entity->fileOrigin)
 			{
-				$entity = $storage->readFunction($name);
-				if (!$entity->fileOrigin)
-				{
-					Verbose::log("No file: {$entity->name}()", 3);
-					continue;
-				}
-
-				// Verbose::log("Replace: {$entity->name}()", 1);
-
-				// $found = $this->removeOriginal($entity, $source);
-				// $this->declareMethod($found, $entity, $source);
-				//
-				// $compat->addFunction($entity, $source);
-				// $this->replaceCalls();
-
-				SortFunctions::remove( $entity->name );
+				Verbose::log("No file: {$entity->name}()", 3);
+				continue;
 			}
+
+			Verbose::log("Replace: {$entity->name}()", 1);
+
+			// extract function (and its doccomment, if any)
+			// from original file
+			//
+			$code = $source->read( $entity->fileOrigin );
+			$lines = new Assist\FileLines($code);
+
+			$doccoment = '';
+			if ($entity->docCommentLine)
+			{
+				$doccoment = $lines->extract(
+					$entity->docCommentLine,
+					$entity->startLine
+				);
+			}
+
+			$function = $lines->extract(
+				$entity->startLine,
+				$entity->endLine + 1
+				);
+			$source->write($entity->fileOrigin, $lines);
+
+			// leave the original function name for compatibility,
+			// and do this first before there are any changes
+			// to the code of the function 
+			//
+			$args = Assist\Code::arguments($function, $entity->name);
+			$compat->addFunction($args, $entity, $source);
+
+			// replace calls to other functions inside
+			//
+			if ( $calls )
+			{
+				$function = $this->replaceCalls($calls, $function);
+			}
+
+			// new method name ?
+			//
+			if ($entity->name != $entity->classMethod)
+			{
+				$function = Assist\Code::renameMethod(
+					$entity->name,
+					$entity->classMethod,
+					$function
+					);
+			}
+
+			$this->declareMethod(
+				$doccoment . $function,
+				$entity,
+				$source);
+// BREAK;
 		}
 
-		// no more functions left to replace,
-		// check if there is anything left
+		// save the replacement map inside for anyone
+		// who might want to use to convert more code
 		//
-		if (!empty(SortFunctions::$map))
-		{
-			print_r(array_keys(SortFunctions::$map));
-			exit;
-		}
-
-		$compat->dump($source);
+		$source->write(
+			$compat::functions_json,
+			json_encode(SortFunctions::$replace, JSON_PRETTY_PRINT)
+		);
 	}
 
-	protected function removeOriginal($entity, $source)
+	protected function replaceCalls(array $calls, $code)
 	{
-		$code = $source->read($entity->fileOrigin);
-		$lines = explode("\n", $code);
-
-		// do not remote the lines for extracted entries,
-		// just make them blank in order to make future
-		// references to lines match; we can trim the
-		// phantom empty lines later;
-		//
-
-		$doccoment = '';
-		if ($entity->docCommentLine)
-		{
-			for ($i = $entity->docCommentLine; $i < $entity->startLine; $i++)
-			{
-				$doccoment .= $lines[ $i - 1 ] . "\n";
-				$lines[ $i - 1 ] = '';
-			}
-		}
-
-		$function = '';
-		for ($i = $entity->startLine; $i <= $entity->endLine; $i++)
-		{
-			$function .= $lines[ $i - 1 ] . "\n";
-			$lines[ $i - 1 ] = '';
-		}
-
-		$modified = join("\n", $lines);
-		$source->write($entity->fileOrigin, $modified);
-
-		return array(
-			'doccoment' => $doccoment,
-			'function' => $function,
-			);
-	}
-
-	protected function renameMethod($method, $code)
-	{
+		print_r($calls);
 		return $code;
 	}
 
 	protected function declareMethod($declaration, $entity, $source)
 	{
-		// new method name ?
-		//
-		if ($entity->name != $entity->classMethod)
-		{
-			$declaration['function'] = $this->renameMethod(
-				$entity->classMethod,
-				$declaration['function']
-				);
-		}
-
-		// get shrink class code
+		// get new shrinkpress class code
 		//
 		$code = '';
 		if ($source->exists($entity->classFile))
@@ -153,10 +149,7 @@ echo ':r ', count($replace), ' of ', count(SortFunctions::$map), "\n";
 			{
 				$updated[] = "\n";
 				$updated[] = Condense\Transform::tabify(
-					$declaration['doccoment']
-					);
-				$updated[] = Condense\Transform::tabify(
-					$declaration['function']
+					$declaration
 					);
 			}
 
@@ -166,13 +159,5 @@ echo ':r ', count($replace), ' of ', count(SortFunctions::$map), "\n";
 
 		$code = join('', $updated);
 		$source->write($entity->classFile, $code);
-
-		$entity->docComment = $declaration['doccoment'];
-		$entity->functionCode = $declaration['function'];
-	}
-
-	protected function replaceCalls()
-	{
-
 	}
 }

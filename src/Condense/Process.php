@@ -2,30 +2,35 @@
 
 namespace ShrinkPress\Build\Condense;
 
-use ShrinkPress\Build\Project;
+use ShrinkPress\Build\Project\Storage;
+use ShrinkPress\Build\Project\Source;
 
 class Process
 {
 	protected $tasks = array();
 
-	function __construct()
+	protected $source;
+
+	protected $storage;
+
+	function __construct(Source $source, Storage\StorageAbstract $storage)
 	{
+		$this->source = $source;
+		$this->storage = $storage;
+
 		$this->tasks[] = new Task\Wipe;
 		$this->tasks[] = new Task\Start;
 
-		// $this->tasks[] = new Task\FunctionsMap;
+		$this->tasks[] = new Task\FunctionsMap;
 		$this->tasks[] = new Task\SortFunctions;
 		$this->tasks[] = new Task\ReplaceFunctions;
 	}
 
-	function condense(
-		Project\Source $source,
-		Project\Storage\StorageAbstract $storage
-		)
+	function condense()
 	{
 		foreach ($this->tasks as $task)
 		{
-			$task->condense($source, $storage);
+			$task->condense($this->source, $this->storage);
 		}
 	}
 }

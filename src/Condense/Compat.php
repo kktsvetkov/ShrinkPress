@@ -12,83 +12,53 @@ class Compat
 	const compatibility_php = Composer::vendors . '/shrinkpress/compatibility.php';
 
 	const functions_json = Composer::vendors . '/shrinkpress/functions.json';
-	protected $functions = [];
 
 	protected $filesModified = [];
 
-	function addFunction(Project\Entity\WpFunction $entity, Project\Source $source)
+	function addFunction($args, Project\Entity\WpFunction $entity, Project\Source $source)
 	{
-		$replacement = '\\' . $entity->classNamespace . $entity->className
-			. '::' . $entity->classMethod;
+		$replacement = Task\SortFunctions::$replace[ $entity->name ];
+		$args = (string) $args;
 
-		// extract arguments
+		$call_args = Assist\Code::callArguments($args);
+
+		$compat_func = "\n"
+			. "function {$entity->name}{$args}"
+			. "\n{"
+			. "\n\treturn {$replacement}{$call_args};"
+			. "\n}"
+			. "\n";
+
+		// pluggable function ?
 		//
-		$args = '';
-		$tokens = token_get_all( '<?php ' . $entity->functionCode);
-		$seek = array( 'function', $entity->name, '(');
-		$last = array();
-		$startAt = null;
-		foreach ($tokens as $i => $token)
+		$pluggable = (
+			'wp-includes/pluggable.php' == $entity->fileOrigin ||
+			'wp-includes/pluggable-deprecated.php' == $entity->fileOrigin
+			);
+		if ($pluggable)
 		{
-			$oken = is_scalar($token) ? $token : $token[1];
-
-			// skip T_WHITESPACE
-			//
-			if (382 != $token[0])
-			{
-				array_push($last, $oken);
-				if (count($last) > count($seek))
-				{
-					array_shift($last);
-				}
-
-				if ($seek == $last)
-				{
-					$startAt = $i++;
-				}
-			}
-
-			if ('{' == $oken)
-			{
-				break;
-			}
-
-			if (!is_null($startAt) && $i > $startAt)
-			{
-				$args .= $oken;
-			}
+			$compat_func =
+				"\nif ( ! function_exists( '{$entity->name}' ) ) :\n"
+				. Transform::tabify( ltrim( $compat_func ) )
+				. "endif;\n";
 		}
-
-		if (!$args)
-		{
-			print_r($entity);
-			exit;
-		}
-
-		$no_ref_args = str_replace('&', '', $args);
 
 		// append the compatibility function
 		//
 		$compat_php = $source->read(self::compatibility_php);
-		$compat_php .= "\n"
-			. "function {$entity->name}{$args}"
-			. "\n{"
-			. "\n\treturn {$replacement}{$no_ref_args};"
-			. "\n}"
-			. "\n";
-		$source->write(self::compatibility_php, $compat_php);
+		$source->write(
+			self::compatibility_php,
+			$compat_php . $compat_func
+			);
 
-		// report a modified wordpress file
+		// report a modified wordpress file, will be
+		// inspected later for additional shrinking
 		//
 		if (empty($this->filesModified[ $entity->fileOrigin ]))
 		{
 			$this->filesModified[ $entity->fileOrigin ] = 0;
 		}
 		$this->filesModified[ $entity->fileOrigin ]++;
-
-		// keep a list of modified files
-		//
-		$this->functions[ $entity->name ] = $replacement;
 	}
 
 	function addClass()
@@ -112,7 +82,7 @@ class Compat
 	{
 		$source->write(
 			self::functions_json,
-			json_encode($this->functions, JSON_PRETTY_PRINT)
+			json_encode(Task\SortFunctions::$replace, JSON_PRETTY_PRINT)
 		);
 	}
 }
