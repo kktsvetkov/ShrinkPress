@@ -13,32 +13,41 @@ class ReplaceFunctions extends TaskAbstract
 		Project\Storage\StorageAbstract $storage
 		)
 	{
-
 		$compat = Condense\Compat::instance();
 
-// $storage->sortedFunctions = array(
-// 	'restore_previous_locale' => 0,
-// 	'is_locale_switched' => 0,
-// );
-// $i = 0;
-		foreach ($storage->sortedFunctions as $name => $calls)
+		while ($replace = SortFunctions::pop())
 		{
-			$entity = $storage->readFunction($name);
 
-			if (!$entity->fileOrigin)
+echo ':r ', count($replace), ' of ', count(SortFunctions::$map), "\n";
+
+			foreach ($replace as $name)
 			{
-				Verbose::log("No file: {$entity->name}()", 3);
-				continue;
+				$entity = $storage->readFunction($name);
+				if (!$entity->fileOrigin)
+				{
+					Verbose::log("No file: {$entity->name}()", 3);
+					continue;
+				}
+
+				// Verbose::log("Replace: {$entity->name}()", 1);
+
+				// $found = $this->removeOriginal($entity, $source);
+				// $this->declareMethod($found, $entity, $source);
+				//
+				// $compat->addFunction($entity, $source);
+				// $this->replaceCalls();
+
+				SortFunctions::remove( $entity->name );
 			}
+		}
 
-			Verbose::log("Replace: {$entity->name}()", 1);
-
-			$found = $this->removeOriginal($entity, $source);
-			$this->declareMethod($found, $entity, $source);
-
-			$compat->addFunction($entity, $source);
-			$this->replaceCalls();
-// if ($i++ > 5) BREAK;
+		// no more functions left to replace,
+		// check if there is anything left
+		//
+		if (!empty(SortFunctions::$map))
+		{
+			print_r(array_keys(SortFunctions::$map));
+			exit;
 		}
 
 		$compat->dump($source);
@@ -160,11 +169,6 @@ class ReplaceFunctions extends TaskAbstract
 
 		$entity->docComment = $declaration['doccoment'];
 		$entity->functionCode = $declaration['function'];
-	}
-
-	protected function addCompatiblity()
-	{
-
 	}
 
 	protected function replaceCalls()

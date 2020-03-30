@@ -30,24 +30,22 @@ class Compat
 		$startAt = null;
 		foreach ($tokens as $i => $token)
 		{
-			// skip T_WHITESPACE
-			//
-			if (382 == $token[0])
-			{
-				continue;
-			}
-
 			$oken = is_scalar($token) ? $token : $token[1];
 
-			array_push($last, $oken);
-			if (count($last) > count($seek))
+			// skip T_WHITESPACE
+			//
+			if (382 != $token[0])
 			{
-				array_shift($last);
-			}
+				array_push($last, $oken);
+				if (count($last) > count($seek))
+				{
+					array_shift($last);
+				}
 
-			if ($seek == $last)
-			{
-				$startAt = $i++;
+				if ($seek == $last)
+				{
+					$startAt = $i++;
+				}
 			}
 
 			if ('{' == $oken)
@@ -61,13 +59,21 @@ class Compat
 			}
 		}
 
+		if (!$args)
+		{
+			print_r($entity);
+			exit;
+		}
+
+		$no_ref_args = str_replace('&', '', $args);
+
 		// append the compatibility function
 		//
 		$compat_php = $source->read(self::compatibility_php);
 		$compat_php .= "\n"
 			. "function {$entity->name}{$args}"
 			. "\n{"
-			. "\n\treturn {$replacement}{$args};"
+			. "\n\treturn {$replacement}{$no_ref_args};"
 			. "\n}"
 			. "\n";
 		$source->write(self::compatibility_php, $compat_php);
