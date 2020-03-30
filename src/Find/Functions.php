@@ -23,7 +23,6 @@ class Functions extends Visitor
 
 		if ($docComment = $node->getDocComment())
 		{
-			$found['docComment'] = (string) $docComment;
 			$found['docCommentLine'] = $docComment->getLine();
 		}
 
