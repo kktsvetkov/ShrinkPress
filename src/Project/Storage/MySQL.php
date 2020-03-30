@@ -36,21 +36,6 @@ class MySQL extends StorageAbstract
 		return $r->fetch_all(MYSQLI_ASSOC);
 	}
 
-	function write($entity, $name, array $data)
-	{
-		switch ($entity)
-		{
-			case self::ENTITY_FUNCTION:
-				return $this->writeFunction($name, $data);
-				break;
-
-			default:
-				throw new \UnexpectedValueException(
-					"Weird entity: {$entity}"
-				);
-		}
-	}
-
 	protected function existsFunction($name)
 	{
 		$sql = 'SELECT * FROM shrinkpress_functions WHERE name = "'
@@ -176,9 +161,7 @@ class MySQL extends StorageAbstract
 				fileOrigin varchar(255) NOT NULL DEFAULT "",
 				startLine int(11) NOT NULL DEFAULT 0,
 				endLine int(11) NOT NULL DEFAULT 0,
-				docComment text NOT NULL,
 				docCommentLine int(11) NOT NULL DEFAULT 0,
-				calls int(11) NOT NULL DEFAULT 0,
 				classNamespace varchar(255) NOT NULL DEFAULT "",
 				className varchar(255) NOT NULL DEFAULT "",
 				classMethod varchar(255) NOT NULL DEFAULT "",
