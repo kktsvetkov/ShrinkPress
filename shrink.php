@@ -11,7 +11,6 @@ set_error_handler(function($severity, $message, $file, $line)
 
 /////////////////////////////////////////////////////////////////////////////
 
-
 $wp_source = __DIR__ . '/wordpress';
 \ShrinkPress\Build\Verbose::level(4);
 
@@ -36,6 +35,6 @@ if (in_array('scan', $argv))
 
 if (in_array('process', $argv))
 {
-	$process = new \ShrinkPress\Build\Condense\Process;
-	$process->condense($source, $storage);
+	$process = new \ShrinkPress\Build\Condense\Process($source, $storage);
+	$process->condense();
 }
