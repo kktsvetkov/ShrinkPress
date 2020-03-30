@@ -22,8 +22,6 @@ $storage = new \ShrinkPress\Build\Project\Storage\PDO(
 		PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 		PDO::ATTR_EMULATE_PREPARES => false,
 	)));
-// $storage = new \ShrinkPress\Build\Project\Storage\Dummy;
-// $storage = new \ShrinkPress\Build\Project\Storage\Stash(__DIR__ . '/build');
 
 $source = new \ShrinkPress\Build\Project\Source($wp_source);
 
