@@ -5,10 +5,8 @@ namespace ShrinkPress\Build\Project\Entity;
 /**
 * The calls made to a WordPress function from fitler and\or action hooks
 */
-class WpHook implements WpEntity
+class WpHook extends WpEntity
 {
-	public $name;
-
 	public $filename;
 	public $line;
 
