@@ -10,6 +10,7 @@ use ShrinkPress\Build\Verbose;
 class SortFunctions extends TaskAbstract
 {
 	static $map = [];
+
 	static $replace = [];
 
 	function condense(
@@ -19,8 +20,6 @@ class SortFunctions extends TaskAbstract
 	{
 		Verbose::log('Building functions map...', 2);
 
-		// build map of who is calling who
-		//
 	 	$all = $storage->getFunctions();
 		foreach ($all as $name)
 		{
@@ -32,37 +31,35 @@ class SortFunctions extends TaskAbstract
 				continue;
 			}
 
+			// build a map of who is replacing who
+			//
 			self::$replace[ $name ] =
 				'\\' . $entity->classNamespace . $entity->className
 				. '::' . $entity->classMethod;
 
-			if (empty( self::$map[ $name ] ))
+
+			// build a map of who is calling who
+			//
+			if (empty(static::$map[ $name ]))
 			{
-				self::$map[ $name ] = array();
+				static::$map[ $name ] = array();
 			}
 
-			foreach($entity->callers as $call)
+			foreach ($entity->callers as $call)
 			{
-				if (empty($call[2]))
-				{
-					continue;
-				}
+                               if (empty($call[2]))
+                               {
+                                       continue;
+                               }
 
-				$func = $call[2];
-				if (empty( self::$map[ $func ][ $name ] ))
-				{
-					self::$map[ $func ][ $name ] = array();
-				}
+                               $func = $call[2];
+                               if (empty( self::$map[ $func ] ))
+                               {
+                                       self::$map[ $func ] = array();
+                               }
 
-				self::$map[ $func ][ $name ][] = $call[1];
+                               self::$map[ $func ][ $call[1] ][] = $name;
 			}
 		}
-
-		// save a map
-		//
-		// $source->write(
-		// 	Condense\Composer::vendors . '/shrinkpress/map.functions.json',
-		// 	json_encode( self::$map, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES )
-		// 	);
 	}
 }
