@@ -15,26 +15,35 @@ class ReplaceFunctions extends TaskAbstract
 		)
 	{
 		$compat = Condense\Compat::instance();
+		$composer = Condense\Composer::instance();
 
-SortFunctions::$map = array(
-	'wp_die' => SortFunctions::$map['wp_die'],
-	'wp_redirect' => SortFunctions::$map['wp_redirect'],
-	'absint' => SortFunctions::$map['absint'],
+SortFunctions::$replace = array(
+	'wp_die' => SortFunctions::$replace['wp_die'],
+	'wp_redirect' => SortFunctions::$replace['wp_redirect'],
+	'absint' => SortFunctions::$replace['absint'],
+	'apply_filters' => SortFunctions::$replace['apply_filters'],
+	'wp_doing_ajax' => SortFunctions::$replace['wp_doing_ajax'],
 );
 
-		foreach (SortFunctions::$map as $name => $calls)
+		foreach (SortFunctions::$replace as $name => $replacement)
 		{
 			$entity = $storage->readFunction($name);
-			if (!$entity->fileOrigin)
-			{
-				Verbose::log("No file: {$entity->name}()", 3);
-				continue;
-			}
+			Verbose::log("Replace: {$name}() with {$replacement}()", 1);
 
-			Verbose::log("Replace: {$entity->name}()", 1);
+			// stupid hack so that we can run this
+			// without callling FunctionsMap
+			//
+			list($composerNamespace, $composerFolder) =
+				Condense\Transform::wpNamespace(
+					str_replace('ShrinkPress\\', '', $entity->classNamespace)
+				);
+			$composer->addPsr4(
+				$composerNamespace,
+				$composerFolder
+				);
 
 			// extract function (and its doccomment, if any)
-			// from original file
+			// from original file, and replace them with blank lines
 			//
 			$code = $source->read( $entity->fileOrigin );
 			$lines = new Assist\FileLines($code);
@@ -56,16 +65,20 @@ SortFunctions::$map = array(
 
 			// leave the original function name for compatibility,
 			// and do this first before there are any changes
-			// to the code of the function 
+			// to the code of the function
 			//
 			$args = Assist\Code::arguments($function, $entity->name);
 			$compat->addFunction($args, $entity, $source);
 
 			// replace calls to other functions inside
 			//
-			if ( $calls )
+			if (!empty(SortFunctions::$map[ $name ]))
 			{
-				$function = $this->replaceCalls($calls, $function);
+				$function = $this->replaceCalls(
+					$function,
+					SortFunctions::$map[ $name ],
+					$entity->startLine
+				);
 			}
 
 			// new method name ?
@@ -83,7 +96,6 @@ SortFunctions::$map = array(
 				$doccoment . $function,
 				$entity,
 				$source);
-// BREAK;
 		}
 
 		// save the replacement map inside for anyone
@@ -93,11 +105,93 @@ SortFunctions::$map = array(
 			$compat::functions_json,
 			json_encode(SortFunctions::$replace, JSON_PRETTY_PRINT)
 		);
+
+		// stupid hack so that we can run this
+		// without callling FunctionsMap
+		//
+		$source->write('composer.json', $composer->json() );
+		$composer->dumpautoload( $source->basedir() );
 	}
 
-	protected function replaceCalls(array $calls, $code)
+	protected function replaceCalls($code, array $calls, $offset )
 	{
-		print_r($calls);
+		$found = array();
+$lines = [-$offset => -1];
+		$tokens = token_get_all('<?php ' . $code);
+		array_shift($tokens);
+
+		$code = '';
+		foreach ($tokens as $i => $token)
+		{
+			$oken = is_scalar($token) ? $token : $token[1];
+
+			if (is_scalar($token))
+			{
+				$code .= $oken;
+				continue;
+			}
+
+			// not our line of code ?
+			//
+			$line = $offset + $token[2] - 1;
+$lines[$line] = 1;
+			if (empty($calls[ $line ]))
+			{
+				$code .= $oken;
+				continue;
+			}
+
+			if ("''" == $oken)
+			{
+				$code .= $oken;
+				continue;
+			}
+
+			if (!in_array($token[0], array(323, 319)))
+			{
+				$code .= $oken;
+				continue;
+			}
+
+			$seek = (319 == $token[0])
+				? $oken
+				: trim($oken, "'");
+
+			// not something we are looking at this line
+			//
+			if (!in_array($seek, $calls[ $line ]))
+			{
+				$code .= $oken;
+				continue;
+			}
+
+			// just in case, make sure there is a replacement
+			//
+			if (empty(SortFunctions::$replace[ $seek ]))
+			{
+				$code .= $oken;
+				continue;
+			}
+
+			$replacement = SortFunctions::$replace[ $seek ];
+			if (323 == $token[0])
+			{
+				$replacement = "'"
+					. str_replace('\\', '\\\\', $replacement)
+					. "'";
+			}
+
+			$code .= $replacement;
+
+			// mark as found
+			//
+			$found[ $line ][] = $seek;
+		}
+
+print_r($calls);
+print_r($found);
+print_r(array_keys($lines));
+
 		return $code;
 	}
 
