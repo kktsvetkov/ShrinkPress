@@ -2,9 +2,35 @@
 
 namespace ShrinkPress\Build\Project\Entity;
 
-interface WpEntity
+abstract class WpEntity
 {
-	function getData();
+	public $name;
 
-	function load(array $data);
+	function __construct($name, array $data = [])
+	{
+		$this->name = $name;
+
+		if ($data)
+		{
+			$this->load($data);
+		}
+	}
+
+	function getData()
+	{
+		return get_object_vars($this);
+	}
+
+	function load(array $data)
+	{
+		foreach ($data as $k => $v)
+		{
+			if (property_exists($this, $k))
+			{
+				$this->$k = $v;
+			}
+		}
+
+		return $this;
+	}
 }
