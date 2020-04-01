@@ -14,7 +14,7 @@ set_error_handler(function($severity, $message, $file, $line)
 $wp_source = __DIR__ . '/wordpress';
 \ShrinkPress\Build\Verbose::level(4);
 
-$storage = new \ShrinkPress\Build\Project\Storage\PDO(
+$storage = new \ShrinkPress\Build\Storage\PDO(
 	new PDO("mysql:host=127.0.0.1;dbname=wordpress;charset=utf8mb4",
 		'username',
 		'password',
@@ -23,7 +23,7 @@ $storage = new \ShrinkPress\Build\Project\Storage\PDO(
 		PDO::ATTR_EMULATE_PREPARES => false,
 	)));
 
-$source = new \ShrinkPress\Build\Project\Source($wp_source);
+$source = new \ShrinkPress\Build\Source($wp_source);
 
 if (in_array('scan', $argv))
 {
