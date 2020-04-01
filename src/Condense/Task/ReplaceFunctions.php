@@ -21,9 +21,26 @@ SortFunctions::$replace = array(
 	'wp_die' => SortFunctions::$replace['wp_die'],
 	'wp_redirect' => SortFunctions::$replace['wp_redirect'],
 	'absint' => SortFunctions::$replace['absint'],
-	'apply_filters' => SortFunctions::$replace['apply_filters'],
+	// 'apply_filters' => SortFunctions::$replace['apply_filters'],
 	'wp_doing_ajax' => SortFunctions::$replace['wp_doing_ajax'],
+	'wp_is_json_request' => SortFunctions::$replace['wp_is_json_request'],
+	'is_feed' => SortFunctions::$replace['is_feed'],
+	'is_trackback' => SortFunctions::$replace['is_trackback'],
+	'_doing_it_wrong' => SortFunctions::$replace['_doing_it_wrong'],
+	'status_header' => SortFunctions::$replace['status_header'],
+	'the_title' => SortFunctions::$replace['the_title'],
+	'get_the_title' => SortFunctions::$replace['get_the_title'],
+	'wp_sanitize_redirect' => SortFunctions::$replace['wp_sanitize_redirect'],
+	'get_status_header_desc' => SortFunctions::$replace['get_status_header_desc'],
+	'wp_get_server_protocol' => SortFunctions::$replace['wp_get_server_protocol'],
+
+	'wxr_authors_list' => SortFunctions::$replace['wxr_authors_list'],
+	'wxr_category_description' => SortFunctions::$replace['wxr_category_description'],
+	'wxr_cat_name' => SortFunctions::$replace['wxr_cat_name'],
+	'wxr_cdata' => SortFunctions::$replace['wxr_cdata'],
 );
+unset( SortFunctions::$replace['apply_filters'] );
+unset( SortFunctions::$replace['apply_actions'] );
 
 		foreach (SortFunctions::$replace as $name => $replacement)
 		{
@@ -33,13 +50,10 @@ SortFunctions::$replace = array(
 			// stupid hack so that we can run this
 			// without callling FunctionsMap
 			//
-			list($composerNamespace, $composerFolder) =
-				Condense\Transform::wpNamespace(
-					str_replace('ShrinkPress\\', '', $entity->classNamespace)
-				);
+			$s = Project\Entity\ShrinkPressClass::fromWpFunction($entity);
 			$composer->addPsr4(
-				$composerNamespace,
-				$composerFolder
+				$s->classPackage(),
+				$s->packageFolder()
 				);
 
 			// extract function (and its doccomment, if any)
@@ -79,6 +93,20 @@ SortFunctions::$replace = array(
 					SortFunctions::$map[ $name ],
 					$entity->startLine
 				);
+
+				foreach(SortFunctions::$map[ $name ] as $methods)
+				{
+					foreach ($methods as $method)
+					{
+						if (!empty(SortFunctions::$replace[ $method ]))
+						{
+							UseNamespaces::add(
+								$s->classFile(),
+								SortFunctions::$replace[ $method ]
+							);
+						}
+					}
+				}
 			}
 
 			// new method name ?
@@ -115,8 +143,6 @@ SortFunctions::$replace = array(
 
 	protected function replaceCalls($code, array $calls, $offset )
 	{
-		$found = array();
-$lines = [-$offset => -1];
 		$tokens = token_get_all('<?php ' . $code);
 		array_shift($tokens);
 
@@ -134,7 +160,7 @@ $lines = [-$offset => -1];
 			// not our line of code ?
 			//
 			$line = $offset + $token[2] - 1;
-$lines[$line] = 1;
+
 			if (empty($calls[ $line ]))
 			{
 				$code .= $oken;
@@ -182,15 +208,7 @@ $lines[$line] = 1;
 			}
 
 			$code .= $replacement;
-
-			// mark as found
-			//
-			$found[ $line ][] = $seek;
 		}
-
-print_r($calls);
-print_r($found);
-print_r(array_keys($lines));
 
 		return $code;
 	}

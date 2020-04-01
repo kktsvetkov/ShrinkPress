@@ -95,6 +95,8 @@ class Code
 					break;
 			}
 		}
+
+		$result = rtrim($result, ', ');
 		return '(' . $result . ')';
 	}
 

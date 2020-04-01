@@ -9,6 +9,7 @@ class FileLines
 	function __construct($code)
 	{
 		$this->lines = explode("\n", $code);
+		$this->lines[] = '';
 	}
 
 	function __toString()

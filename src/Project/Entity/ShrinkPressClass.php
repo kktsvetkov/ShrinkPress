@@ -15,6 +15,10 @@ class ShrinkPressClass extends WpEntity
 
 	public $subNamespace = '';
 
+	public $uses = array();
+
+	public $methods = array();
+
 	static function fromClass($class)
 	{
 		$c = explode('\\', trim($class, '\\'));
@@ -46,7 +50,9 @@ class ShrinkPressClass extends WpEntity
 			return null;
 		}
 
-		return self::fromClass($entity->classNamespace . $entity->className);
+		return self::fromClass(
+			$entity->classNamespace . $entity->className
+			);
 	}
 
 	function load(array $data)
@@ -101,5 +107,16 @@ class ShrinkPressClass extends WpEntity
 	function __toString()
 	{
 		return $this->className();
+	}
+
+	function uses($method)
+	{
+		$use = self::fromClassMethod($method);
+		$this->uses[ $use->classNamespace() ] = $method;
+	}
+
+	function method($name, $code)
+	{
+		$this->methods[ $name ] = $code;
 	}
 }
