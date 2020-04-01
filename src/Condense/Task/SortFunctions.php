@@ -3,9 +3,9 @@
 namespace ShrinkPress\Build\Condense\Task;
 
 use ShrinkPress\Build\Project\Storage;
-use ShrinkPress\Build\Project\Source;
 use ShrinkPress\Build\Condense;
 use ShrinkPress\Build\Verbose;
+use ShrinkPress\Build\Source;
 
 class SortFunctions extends TaskAbstract
 {

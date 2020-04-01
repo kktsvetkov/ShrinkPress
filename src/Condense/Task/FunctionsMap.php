@@ -5,11 +5,12 @@ namespace ShrinkPress\Build\Condense\Task;
 use ShrinkPress\Build\Project;
 use ShrinkPress\Build\Condense;
 use ShrinkPress\Build\Verbose;
+use ShrinkPress\Build\Source;
 
 class FunctionsMap extends TaskAbstract
 {
 	function condense(
-		Project\Source $source,
+		Source $source,
 		Project\Storage\StorageAbstract $storage
 		)
 	{

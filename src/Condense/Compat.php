@@ -4,6 +4,7 @@ namespace ShrinkPress\Build\Condense;
 
 use ShrinkPress\Build\Assist;
 use ShrinkPress\Build\Project;
+use ShrinkPress\Build\Source;
 
 class Compat
 {
@@ -15,7 +16,7 @@ class Compat
 
 	protected $filesModified = [];
 
-	function addFunction($args, Project\Entity\WpFunction $entity, Project\Source $source)
+	function addFunction($args, Project\Entity\WpFunction $entity, Source $source)
 	{
 		$replacement = Task\SortFunctions::$replace[ $entity->name ];
 		$args = (string) $args;

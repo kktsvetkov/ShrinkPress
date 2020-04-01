@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build\Project;
+namespace ShrinkPress\Build;
 
 use ShrinkPress\Build\Verbose;
 
@@ -26,29 +26,33 @@ class Source
 		$this->basedir = rtrim($basedir, '/') . '/';
 	}
 
+	/**
+	* Get the sourde folder
+	* @return string
+	*/
 	function basedir()
 	{
 		return $this->basedir;
 	}
 
 	/**
-	* Converts a WP project filename into a real one
+	* Converts a relative project filename into a full filepath
 	*
 	* @param string $filename
 	* @return string
 	*/
-	function local($filename)
+	function full($filename)
 	{
 		return $this->basedir . ltrim($filename, '/');
 	}
 
 	/**
-	* Converts a real filename into a WP project filename
+	* Converts a full filepath into a source-relative local filename
 	*
 	* @param string $filename
 	* @return string
 	*/
-	function remote($filename)
+	function local($filename)
 	{
 		if (0 === strpos($filename, $this->basedir))
 		{
@@ -58,16 +62,28 @@ class Source
 		return $filename;
 	}
 
+	/**
+	* Checks if a file exists in the source folder
+	*
+	* @param string $filename
+	* @return boolean
+	*/
 	function exists($filename)
 	{
-		$local = $this->local($filename);
-		return file_exists($local);
+		$full = $this->full($filename);
+		return file_exists( $full );
 	}
 
+	/**
+	* Reads contents of a file from the source folder
+	*
+	* @param string $filename
+	* @return boolean
+	*/
 	function read($filename)
 	{
-		$local = $this->local($filename);
-		if (!file_exists($local))
+		$full = $this->full($filename);
+		if (!file_exists( $full ))
 		{
 			throw new \InvalidArgumentException(
 				"Argument \$filename '{$filename}' does not exist"
@@ -75,27 +91,39 @@ class Source
 			);
 		}
 
-		return file_get_contents( $local );
+		return file_get_contents( $full );
 	}
 
+	/**
+	* Writes contents to a file in the source folder
+	*
+	* @param string $filename
+	* @return boolean
+	*/
 	function write($filename, $contents)
 	{
 		Verbose::log("Write: {$filename}", 1);
 
-		$local = $this->local($filename);
-		$dir = dirname($local);
+		$full = $this->full($filename);
+		$dir = dirname( $full );
 		if (!file_exists($dir))
 		{
-			mkdir($dir, 0777, true);
+			mkdir($dir, 02777, true);
 		}
 
-		return file_put_contents($local, $contents);
+		return file_put_contents($full, $contents);
 	}
 
+	/**
+	* Deletes a file from the source folder
+	*
+	* @param string $filename
+	* @return boolean
+	*/
 	function unlink($filename)
 	{
-		$local = $this->local($filename);
-		if (!file_exists($local))
+		$full = $this->full($filename);
+		if (!file_exists( $full ))
 		{
 			throw new \InvalidArgumentException(
 				"Argument \$filename '{$filename}' does not exist"
@@ -103,7 +131,7 @@ class Source
 			);
 		}
 
-		return unlink( $local );
+		return unlink( $full );
 	}
 
 }

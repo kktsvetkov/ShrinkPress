@@ -3,7 +3,7 @@
 namespace ShrinkPress\Build\Find;
 
 use ShrinkPress\Build\Project\Storage;
-use ShrinkPress\Build\Project\Source;
+use ShrinkPress\Build\Source;
 use ShrinkPress\Build\Verbose;
 
 class Files

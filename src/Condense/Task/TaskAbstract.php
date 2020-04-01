@@ -3,11 +3,12 @@
 namespace ShrinkPress\Build\Condense\Task;
 
 use ShrinkPress\Build\Project;
+use ShrinkPress\Build\Source;
 
 abstract class TaskAbstract
 {
 	abstract function condense(
-		Project\Source $source,
+		Source $source,
 		Project\Storage\StorageAbstract $storage
 		);
 }

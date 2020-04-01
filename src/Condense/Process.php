@@ -3,7 +3,7 @@
 namespace ShrinkPress\Build\Condense;
 
 use ShrinkPress\Build\Project\Storage;
-use ShrinkPress\Build\Project\Source;
+use ShrinkPress\Build\Source;
 
 class Process
 {
