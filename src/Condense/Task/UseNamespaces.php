@@ -2,8 +2,9 @@
 
 namespace ShrinkPress\Build\Condense\Task;
 
-use ShrinkPress\Build\Project;
+use ShrinkPress\Build\Storage;
 use ShrinkPress\Build\Condense;
+use ShrinkPress\Build\Project;
 use ShrinkPress\Build\Source;
 
 class UseNamespaces extends TaskAbstract
@@ -23,7 +24,7 @@ class UseNamespaces extends TaskAbstract
 
 	function condense(
 		Source $source,
-		Project\Storage\StorageAbstract $storage
+		Storage\StorageAbstract $storage
 		)
 	{
 		file_put_contents(

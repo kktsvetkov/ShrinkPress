@@ -3,7 +3,7 @@
 namespace ShrinkPress\Build\Condense;
 
 use ShrinkPress\Build\Assist;
-use ShrinkPress\Build\Project\Storage;
+use ShrinkPress\Build\Storage;
 use ShrinkPress\Build\Verbose;
 
 class ProtoPackages

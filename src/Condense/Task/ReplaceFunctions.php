@@ -3,16 +3,17 @@
 namespace ShrinkPress\Build\Condense\Task;
 
 use ShrinkPress\Build\Assist;
-use ShrinkPress\Build\Project;
 use ShrinkPress\Build\Condense;
-use ShrinkPress\Build\Verbose;
+use ShrinkPress\Build\Project;
 use ShrinkPress\Build\Source;
+use ShrinkPress\Build\Storage;
+use ShrinkPress\Build\Verbose;
 
 class ReplaceFunctions extends TaskAbstract
 {
 	function condense(
 		Source $source,
-		Project\Storage\StorageAbstract $storage
+		Storage\StorageAbstract $storage
 		)
 	{
 		$compat = Condense\Compat::instance();

@@ -2,7 +2,7 @@
 
 namespace ShrinkPress\Build\Condense\Task;
 
-use ShrinkPress\Build\Project\Storage;
+use ShrinkPress\Build\Storage;
 use ShrinkPress\Build\Condense;
 use ShrinkPress\Build\Verbose;
 use ShrinkPress\Build\Source;
