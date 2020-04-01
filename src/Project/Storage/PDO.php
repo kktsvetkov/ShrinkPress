@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build\Project\Storage;
+namespace ShrinkPress\Build\Storage;
 
 use ShrinkPress\Build\Project\Entity;
 
