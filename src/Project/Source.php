@@ -2,11 +2,12 @@
 
 namespace ShrinkPress\Build\Project;
 
-use ShrinkPress\Build\Find;
 use ShrinkPress\Build\Verbose;
 
 class Source
 {
+	protected $basedir;
+
 	/**
 	* Opens $basedir folder for reading the WordPress files from
 	*
