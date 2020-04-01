@@ -4,7 +4,7 @@ namespace ShrinkPress\Build\Find;
 
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
-use ShrinkPress\Build\Project\Storage;
+use ShrinkPress\Build\Storage;
 
 abstract class Visitor extends NodeVisitorAbstract
 {

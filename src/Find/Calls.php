@@ -4,7 +4,7 @@ namespace ShrinkPress\Build\Find;
 
 use PhpParser\Node;
 use ShrinkPress\Build\Verbose;
-use ShrinkPress\Build\Project\Storage;
+use ShrinkPress\Build\Storage;
 use ShrinkPress\Build\Assist\Internal;
 
 class Calls extends Visitor

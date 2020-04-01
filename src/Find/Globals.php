@@ -3,7 +3,7 @@
 namespace ShrinkPress\Build\Find;
 
 use PhpParser\Node;
-use ShrinkPress\Build\Project\Storage;
+use ShrinkPress\Build\Storage;
 
 class Globals extends Visitor
 {

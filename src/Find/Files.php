@@ -2,7 +2,7 @@
 
 namespace ShrinkPress\Build\Find;
 
-use ShrinkPress\Build\Project\Storage;
+use ShrinkPress\Build\Storage;
 use ShrinkPress\Build\Source;
 use ShrinkPress\Build\Verbose;
 

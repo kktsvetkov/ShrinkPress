@@ -6,7 +6,7 @@ use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 
-use ShrinkPress\Build\Project\Storage;
+use ShrinkPress\Build\Storage;
 
 class Traverser
 {
