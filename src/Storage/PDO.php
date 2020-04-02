@@ -38,6 +38,11 @@ class PDO extends StorageAbstract
 		return PDO\WpFunction::all($this->pdo);
 	}
 
+	function readCalls($functionName)
+	{
+		return PDO\WpCall::read($functionName, $this->pdo);
+	}
+
 	function writeCall( Entity\WpCall $call )
 	{
 		return PDO\WpCall::write($call, $this->pdo);

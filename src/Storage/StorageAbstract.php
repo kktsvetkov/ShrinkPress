@@ -2,13 +2,17 @@
 
 namespace ShrinkPress\Build\Storage;
 
-use ShrinkPress\Build\Project\Entity;
+use ShrinkPress\Build\Parse\Entity;
 
 abstract class StorageAbstract
 {
 	abstract function clean();
 
 	abstract function getFunctions();
-	abstract function readFunction($name);
-	abstract function writeFunction(Entity\WpFunction $entity);
+	abstract function readFunction( $functionName );
+	abstract function writeFunction( Entity\WpFunction $entity );
+
+	abstract function readCalls( $functionName );
+	abstract function writeCall( Entity\WpCall $call );
+
 }
