@@ -7,7 +7,10 @@ namespace ShrinkPress\Build\Parse\Entity;
 */
 class WpCall extends EntityAbstract
 {
-	public $name;
+	public $functionName = '';
 
-	public $callers = [];
+	function __construct( $functionName )
+	{
+		$this->functionName = (string) $functionName;
+	}
 }
