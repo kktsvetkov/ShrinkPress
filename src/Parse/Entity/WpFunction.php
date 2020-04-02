@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build\Project\Entity;
+namespace ShrinkPress\Build\Parse\Entity;
 
 /**
 * Function declaration in WordPress
@@ -8,6 +8,11 @@ namespace ShrinkPress\Build\Project\Entity;
 class WpFunction extends EntityAbstract
 {
 	public $functionName = '';
+
+	function __construct( $functionName )
+	{
+		$this->functionName = (string) $functionName;
+	}
 
 	public $end = 0;
 
@@ -19,4 +24,9 @@ class WpFunction extends EntityAbstract
 	public $className = '';
 	public $classMethod = '';
 	public $classFile = '';
+
+	function __toString()
+	{
+		return (string) $this->functionName;
+	}
 }
