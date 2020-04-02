@@ -46,10 +46,10 @@ class Functions extends VisitorAbstract
 			$entity->line = $found['startLine'];
 			$entity->end = $found['endLine'];
 
-			$entity->functionName = $found['startLine'];
+			$entity->functionName = $found['functionName'];
 			$entity->docCommentLine = $found['docCommentLine'];
 
-			// $storage->writeFunction( $entity );
+			$storage->writeFunction( $entity );
 		}
 	}
 }

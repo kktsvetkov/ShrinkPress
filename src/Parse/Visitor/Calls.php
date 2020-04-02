@@ -6,26 +6,12 @@ use PhpParser\Node;
 use ShrinkPress\Build\Verbose;
 use ShrinkPress\Build\Storage;
 use ShrinkPress\Build\Assist\Internal;
+use ShrinkPress\Build\Parse\Entity\WpCall;
 
 class Calls extends VisitorAbstract
 {
-	protected $inside;
-
-	function enterNode(Node $node)
-	{
-		if ($node instanceof Node\Stmt\Function_)
-		{
-			$this->inside = (string) $node->name;
-		}
-	}
-
 	function leaveNode(Node $node)
 	{
-		if ($node instanceof Node\Stmt\Function_)
-		{
-			$this->inside = null;
-		}
-
 		if (!$node instanceof Node\Expr\FuncCall)
 		{
 			return;
@@ -36,37 +22,29 @@ class Calls extends VisitorAbstract
 			return;
 		}
 
-		$func_name = (string) $node->name;
-		if (Internal::isInternal( $func_name ))
+		$functionName = (string) $node->name;
+		if (Internal::isInternal( $functionName ))
 		{
 			return;
 		}
 
-		$this->result[ $func_name ][] = array(
-			$node->getLine(),
-			$this->inside
-			);
+		$this->result[ $functionName ][] = $node->getLine();
 	}
 
 	function flush(array $result, Storage\StorageAbstract $storage)
 	{
-		foreach($result as $func_name => $calls)
+		foreach($result as $functionName => $lines)
 		{
-			$func = $storage->readFunction( $func_name );
+			$entity = new WpCall( $functionName );
+			$entity->filename = $this->filename;
 
-			foreach ($calls as $call)
+			foreach ($lines as $line)
 			{
-				$line = $call[0];
-				$inside = $call[1];
+				Verbose::log("Calls {$functionName}() at {$this->filename}:{$line}", 2);
 
-				Verbose::log("Calls {$func_name}() at {$this->filename}:{$line}", 2);
-
-				$func->callers[] = $inside
-					? array( $this->filename, $line, $inside)
-					: array( $this->filename, $line);
+				$entity->line = $line;
+				$storage->writeCall( $entity );
 			}
-
-			$storage->writeFunction( $func );
 		}
 	}
 }
