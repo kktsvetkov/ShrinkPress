@@ -27,8 +27,10 @@ $source = new \ShrinkPress\Build\Source($wp_source);
 
 if (in_array('scan', $argv))
 {
-	$scanner = new \ShrinkPress\Build\Find\Files($source, $storage);
-	$scanner->scan();
+	$storage->clean();
+
+	$scanner = new \ShrinkPress\Build\Parse\Scanner($source, $storage);
+	$scanner->scanFolder('');
 }
 
 if (in_array('process', $argv))
