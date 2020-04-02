@@ -13,14 +13,6 @@ class PDO extends StorageAbstract
 		$this->pdo = $pdo;
 	}
 
-	function beforeScan()
-	{
-		$this->wipe();
-		$this->setup();
-	}
-
-	function afterScan() {}
-
 	protected function existsFunction($name)
 	{
 		$sql = 'SELECT * FROM pdo_shrinkpress_functions WHERE name = ? LIMIT 0, 1';
@@ -132,14 +124,9 @@ class PDO extends StorageAbstract
 		return $q->fetchAll($this->pdo::FETCH_COLUMN, 0);
 	}
 
-	protected function wipe()
+	function clean()
 	{
 		$this->pdo->prepare(' DROP TABLE IF EXISTS pdo_shrinkpress_functions; ')->execute();
-		$this->pdo->prepare(' DROP TABLE IF EXISTS pdo_shrinkpress_functions_calls; ')->execute();
-	}
-
-	protected function setup()
-	{
 		$this->pdo->prepare('CREATE TABLE pdo_shrinkpress_functions (
 				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				name varchar(255) NOT NULL,
@@ -156,6 +143,7 @@ class PDO extends StorageAbstract
 			KEY classID (classNamespace, className)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4; ')->execute();
 
+		$this->pdo->prepare(' DROP TABLE IF EXISTS pdo_shrinkpress_functions_calls; ')->execute();
 		$this->pdo->prepare('CREATE TABLE pdo_shrinkpress_functions_calls (
 				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				function_id bigint(20) unsigned NOT NULL,

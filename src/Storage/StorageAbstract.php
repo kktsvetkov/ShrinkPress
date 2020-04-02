@@ -6,8 +6,7 @@ use ShrinkPress\Build\Project\Entity;
 
 abstract class StorageAbstract
 {
-	abstract function beforeScan();
-	abstract function afterScan();
+	abstract function clean();
 
 	abstract function getFunctions();
 	abstract function readFunction($name);
