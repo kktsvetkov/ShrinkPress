@@ -104,7 +104,11 @@ class Scanner
 	const skipFolders = array(
 		'.git',
 		'wp-content',
-		'vendor',
+		'wp-admin/css',
+		'wp-admin/images',
+		'wp-admin/js',
+		'wp-includes/js',
+		'wp-includes/vendor',
 		);
 
 	/**

@@ -5,6 +5,7 @@ namespace ShrinkPress\Build\Parse\Entity;
 class WpClass extends EntityAbstract
 {
 	public $className = '';
+	public $namespace = '';
 
 	function __construct( $className )
 	{
