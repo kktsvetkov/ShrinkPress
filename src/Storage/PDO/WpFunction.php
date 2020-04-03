@@ -18,7 +18,7 @@ class WpFunction
 			return false;
 		}
 
-		return $q->fetch( $this->pdo::FETCH_ASSOC );
+		return $q->fetch( $pdo::FETCH_ASSOC );
 	}
 
 	static function write( Entity\WpFunction $entity, \PDO $pdo )
@@ -62,7 +62,7 @@ class WpFunction
 		$q = $pdo->query(
 			'SELECT functionName FROM pdo_shrinkpress_functions ORDER BY functionName'
 			);
-		return $q->fetchAll($this->pdo::FETCH_COLUMN, 0);
+		return $q->fetchAll($pdo::FETCH_COLUMN, 0);
 	}
 
 	static function clean(\PDO $pdo)

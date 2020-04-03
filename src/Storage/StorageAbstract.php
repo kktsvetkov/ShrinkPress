@@ -15,4 +15,8 @@ abstract class StorageAbstract
 	abstract function readCalls( $functionName );
 	abstract function writeCall( Entity\WpCall $call );
 
+	abstract function getClasses();
+	abstract function readClass( $className );
+	abstract function writeClass( Entity\WpClass $entity );
+
 }

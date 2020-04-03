@@ -27,7 +27,7 @@ class WpCall
 		$q = $pdo->prepare( $sql );
 		$q->execute([ (string) $functionName ]);
 
-		$calls = $q->fetchAll($this->pdo::FETCH_ASSOC);
+		$calls = $q->fetchAll($pdo::FETCH_ASSOC);
 		$result = array();
 
 		foreach ($calls as $call)
