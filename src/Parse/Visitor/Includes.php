@@ -21,7 +21,6 @@ class Includes extends VisitorAbstract
 	function __construct()
 	{
 		$this->prettyPrinter = new \PhpParser\PrettyPrinter\Standard;
-		fclose(fopen(__FILE__ . '.txt', 'w'));
 	}
 
 	function leaveNode(Node $node)
@@ -41,11 +40,7 @@ class Includes extends VisitorAbstract
 			return;
 		}
 
-$node->expr->filename = $this->filename;
-file_put_contents(__FILE__ . '.txt', print_r($node->expr, 1), FILE_APPEND);
-
-		$includedFile = $this->prettyPrinter->prettyPrintFile([$node->expr]);
-
+		$includedFile = '';
 		if ($node->expr instanceOf Node\Scalar\String_)
 		{
 			$includedFile = (string) $node->expr->value;
@@ -53,14 +48,22 @@ file_put_contents(__FILE__ . '.txt', print_r($node->expr, 1), FILE_APPEND);
 		if (!empty($node->expr->right) && $node->expr->right instanceOf Node\Scalar\String_)
 		{
 			$includedFile = (string) $node->expr->right->value;
+
+			if ('.maintenance' == $includedFile)
+			{
+				return;
+			}
+		} else
+		{
+			return;
 		}
 
+		$includeFolder = '';
 		$found = array(
 			'includedFile' => $includedFile,
 			'includeType' => self::include_type[ $node->type ],
 			'startLine' => $node->getStartLine(),
 			'docCommentLine' => 0,
-			'fromFolder' => '',
 		);
 
 		if ($docComment = $node->getDocComment())
@@ -70,52 +73,67 @@ file_put_contents(__FILE__ . '.txt', print_r($node->expr, 1), FILE_APPEND);
 
 		if (!empty($node->expr->left))
 		{
-			$found['fromFolder'] = $this->from_folder($node->expr->left);
+			$includeFolder = $this->include_folder($node->expr->left);
+
+			if ('WP_CONTENT_DIR' == $includeFolder)
+			{
+				return;
+			}
+
+			if ('WP_PLUGIN_DIR' == $includeFolder)
+			{
+				return;
+			}
+		}
+
+		if ($includeFolder = trim($includeFolder, '/'))
+		{
+			$found['includedFile'] = $includeFolder
+				. '/'
+				. ltrim($found['includedFile'], '/');
 		}
 
 		$this->result[] = $found;
 	}
 
-	protected function from_folder(Node $node)
+	protected function include_folder(Node $node)
 	{
 		if ($node instanceOf Node\Scalar\MagicConst\Dir)
 		{
 			$folder = dirname($this->filename);
-			$fromFolder = ('.' != $folder) ? $folder : '';
+			$includeFolder = ('.' != $folder) ? $folder : '';
 		} else
 
 		if ($node instanceOf Node\Expr\ConstFetch)
 		{
-			$fromFolder = (string) $node->name;
-			switch ($fromFolder)
+			$includeFolder = (string) $node->name;
+			switch ($includeFolder)
 			{
 				case 'ABSPATH':
-					$fromFolder = '';
+					$includeFolder = '';
 					break;
 
 				case 'WPINC':
-					$fromFolder = 'wp-includes';
+					$includeFolder = 'wp-includes';
 					break;
 			}
 		} else
 		{
-			$fromFolder = $this->prettyPrinter->prettyPrintFile([$node]);
+			$includeFolder = $this->prettyPrinter->prettyPrintFile([$node]);
 
-			if ("<?php\n\ndirname(__DIR__)" == $fromFolder)
+			if ("<?php\n\ndirname(__DIR__)" == $includeFolder)
 			{
 				$folder = dirname(dirname($this->filename));
-				$fromFolder = ('.' != $folder) ? $folder : '';
+				$includeFolder = ('.' != $folder) ? $folder : '';
 			}
 
 			if ("<?php\n\nABSPATH . WPINC")
 			{
-				$fromFolder = 'wp-includes';
+				$includeFolder = 'wp-includes';
 			}
 		}
 
-// json_encode("");exit;
-
-		return $fromFolder;
+		return $includeFolder;
 	}
 
 	function flush(array $result, Storage\StorageAbstract $storage)
@@ -134,7 +152,6 @@ file_put_contents(__FILE__ . '.txt', print_r($node->expr, 1), FILE_APPEND);
 			$entity->line = $found['startLine'];
 
 			$entity->includedFile = ltrim($found['includedFile'], '/');
-			$entity->fromFolder = trim($found['fromFolder'], '/');
 			$entity->includeType = $found['includeType'];
 			$entity->docCommentLine = $found['docCommentLine'];
 

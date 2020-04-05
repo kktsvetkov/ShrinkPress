@@ -8,8 +8,6 @@ class WpInclude extends EntityAbstract
 
 	public $includedType = '';
 
-	public $fromFolder = '';
-
 	function __construct( $includedFile )
 	{
 		$this->includedFile = (string) $includedFile;
