@@ -22,4 +22,6 @@ abstract class StorageAbstract
 	abstract function readIncludes( $includedFile );
 	abstract function writeInclude( Entity\WpInclude $entity );
 
+	abstract function readGlobal( $globalName );
+	abstract function writeGlobal( Entity\WpGlobal $entity );
 }

@@ -23,12 +23,12 @@ class WpInclude
 		]);
 	}
 
-	static function read( $functionName, \PDO $pdo )
+	static function read( $includedFile, \PDO $pdo )
 	{
-		$sql = 'SELECT * FROM pdo_shrinkpress_includes WHERE functionName = ? ';
+		$sql = 'SELECT * FROM pdo_shrinkpress_includes WHERE includedFile = ? ';
 
 		$q = $pdo->prepare( $sql );
-		$q->execute([ (string) $functionName ]);
+		$q->execute([ (string) $includedFile ]);
 
 		$calls = $q->fetchAll($pdo::FETCH_ASSOC);
 		$result = array();

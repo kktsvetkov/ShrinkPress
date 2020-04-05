@@ -99,11 +99,26 @@ class PDO extends StorageAbstract
 		return PDO\WpInclude::write($entity, $this->pdo);
 	}
 
+	//
+	// Globals
+	//
+
+	function readGlobal( $globalName )
+	{
+		return PDO\WpGlobal::read($globalName, $this->pdo);
+	}
+
+	function writeGlobal( Entity\WpGlobal $entity )
+	{
+		return PDO\WpGlobal::write($entity, $this->pdo);
+	}
+
 	function clean()
 	{
 		// PDO\WpFunction::clean($this->pdo);
 		// PDO\WpCall::clean($this->pdo);
 		// PDO\WpClass::clean($this->pdo);
-		PDO\WpInclude::clean($this->pdo);
+		// PDO\WpInclude::clean($this->pdo);
+		PDO\WpGlobal::clean($this->pdo);
 	}
 }
