@@ -129,6 +129,14 @@ class Scanner
 	}
 
 	/**
+	* @see \ShrinkPress\Build\Parse\Scanner::skipFile()
+	*/
+	const skipFiles = array(
+		'wp-config.php',
+		'wp-config-sample.php',
+		);
+
+	/**
 	* Whether to ignore the file when scanning
 	* @param string $filename
 	* @return boolean
@@ -136,6 +144,11 @@ class Scanner
 	protected function skipFile($filename)
 	{
 		$filename = (string) $filename;
+
+		if (in_array( $filename, static::skipFiles ))
+		{
+			return true;
+		}
 
 		if ('php' != \pathinfo($filename, PATHINFO_EXTENSION))
 		{

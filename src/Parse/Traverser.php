@@ -23,9 +23,9 @@ class Traverser
 		// $this->visitors[] = new Visitor\Functions;
 		// $this->visitors[] = new Visitor\Calls;
 		// $this->visitors[] = new Visitor\Callbacks;
-		$this->visitors[] = new Visitor\Classes;
+		// $this->visitors[] = new Visitor\Classes;
 		// $this->visitors[] = new Visitor\Globals;
-		// $this->visitors[] = new Visitor\Includes;
+		$this->visitors[] = new Visitor\Includes;
 
 		$this->traverser = new NodeTraverser;
 		$this->parser = (new ParserFactory)
