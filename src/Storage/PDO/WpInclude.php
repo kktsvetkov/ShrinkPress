@@ -10,8 +10,8 @@ class WpInclude
 	static function write( Entity\WpInclude $entity, \PDO $pdo )
 	{
 		$sql = 'INSERT IGNORE INTO pdo_shrinkpress_includes
-			(includedFile, filename, line, includeType, fromFolder, docCommentLine)
-			VALUES (?, ?, ?, ?, ?, ?); ';
+			(includedFile, filename, line, includeType, docCommentLine)
+			VALUES (?, ?, ?, ?, ?); ';
 
 		$q = $pdo->prepare($sql);
 		$q->execute([
@@ -19,7 +19,6 @@ class WpInclude
 			$entity->filename,
 			$entity->line,
 			$entity->includeType,
-			$entity->fromFolder,
 			$entity->docCommentLine,
 		]);
 	}
@@ -41,7 +40,6 @@ class WpInclude
 			$entity->line = $call['line'];
 
 			$entity->includeType = $call['includeType'];
-			$entity->fromFolder = $call['fromFolder'];
 			$entity->docCommentLine = $call['docCommentLine'];
 
 			$result[] = $entity;
@@ -56,7 +54,6 @@ class WpInclude
 		$pdo->prepare('CREATE TABLE pdo_shrinkpress_includes (
 				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				includedFile varchar(255) NOT NULL,
-				fromFolder varchar(255) NOT NULL DEFAULT "",
 				filename varchar(255) NOT NULL DEFAULT "",
 				`line` int(11) NOT NULL DEFAULT 0,
 				docCommentLine int(11) NOT NULL DEFAULT 0,
