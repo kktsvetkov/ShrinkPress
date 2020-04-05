@@ -85,10 +85,25 @@ class PDO extends StorageAbstract
 		return PDO\WpClass::all($this->pdo);
 	}
 
+	//
+	// Includes
+	//
+
+	function readIncludes( $includedFile )
+	{
+		return PDO\WpInclude::read($includedFile, $this->pdo);
+	}
+
+	function writeInclude( Entity\WpInclude $entity )
+	{
+		return PDO\WpInclude::write($entity, $this->pdo);
+	}
+
 	function clean()
 	{
-		PDO\WpFunction::clean($this->pdo);
-		PDO\WpCall::clean($this->pdo);
-		PDO\WpClass::clean($this->pdo);
+		// PDO\WpFunction::clean($this->pdo);
+		// PDO\WpCall::clean($this->pdo);
+		// PDO\WpClass::clean($this->pdo);
+		PDO\WpInclude::clean($this->pdo);
 	}
 }

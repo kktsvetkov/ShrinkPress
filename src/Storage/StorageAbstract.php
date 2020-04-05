@@ -19,4 +19,7 @@ abstract class StorageAbstract
 	abstract function readClass( $className );
 	abstract function writeClass( Entity\WpClass $entity );
 
+	abstract function readIncludes( $includedFile );
+	abstract function writeInclude( Entity\WpInclude $entity );
+
 }
