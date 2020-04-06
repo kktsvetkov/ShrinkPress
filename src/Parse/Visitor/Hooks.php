@@ -6,8 +6,9 @@ use PhpParser\Node;
 use ShrinkPress\Build\Verbose;
 use ShrinkPress\Build\Storage;
 use ShrinkPress\Build\Assist\Internal;
+use ShrinkPress\Build\Parse\Entity\WpCallback;
 
-class Callbacks extends VisitorAbstract
+class Hooks extends VisitorAbstract
 {
 	const callback_functions = array(
 		'add_filter' => 1,
@@ -55,30 +56,35 @@ class Callbacks extends VisitorAbstract
 			return;
 		}
 
-		$this->result[ $callback ][] = array(
-			$node->getLine(),
-			$caller,
+		$this->result[] = array(
+			'hookName' => !empty($node->args[ 0 ]->value->value)
+				? $node->args[ 0 ]->value->value
+				: json_encode( $node->args[ 0 ] ),
+			'functionName' => $callback,
+			'line' => $node->getLine(),
+			'hookFunction' => $caller,
 			);
 	}
 
 	function flush(array $result, Storage\StorageAbstract $storage)
 	{
-		foreach($result as $callback => $calls)
+		foreach($result as $found)
 		{
-			$func = $storage->readFunction( $callback );
+			Verbose::log(
+				"Callback: {$found['functionName']}() at "
+				 	. $this->filename . ':'
+					. $found['line'],
+				1);
 
-			foreach ($calls as $call)
-			{
-				$line = $call[0];
-				$inside = $call[1];
+			$entity = new WpCallback( $found['functionName'] );
 
-				Verbose::log("Callback: {$callback}() at "
-					. $this->filename . ':' . $line, 2);
+			$entity->filename = $this->filename;
+			$entity->line = $found['line'];
 
-				$func->callers[] = array( $this->filename, $line, $inside);
-			}
+			$entity->hookName = $found['hookName'];
+			$entity->hookFunction = $found['hookFunction'];
 
-			$storage->writeFunction( $func );
+			$storage->writeCallback( $entity );
 		}
 	}
 }
