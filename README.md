@@ -26,7 +26,7 @@ Here's what I want to do:
 The result must be compatible with existing plugins and themes, although with
 some assistance via some sort of a migration tool.
 
-Use [wp-dev tests|https://github.com/WordPress/wordpress-develop/tree/master/tests/phpunit] to validate the result as well.
+Use [wp-dev tests](https://github.com/WordPress/wordpress-develop/tree/master/tests/phpunit) to validate the result as well.
 
 ## Bundled Packages in WordPress  
 Let's try and list libraries bundled inside WordPress:
