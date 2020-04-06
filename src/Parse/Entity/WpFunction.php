@@ -18,8 +18,6 @@ class WpFunction extends EntityAbstract
 
 	public $docCommentLine = 0;
 
-	public $callers = [];
-
 	public $classNamespace = '';
 	public $className = '';
 	public $classMethod = '';
