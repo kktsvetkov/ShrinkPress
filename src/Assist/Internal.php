@@ -651,7 +651,7 @@ class Internal
 		'mysql_fetch_field' => -1,
 		'mysql_close' => -1,
 
-		'Sodium\randombytes_buf' => -1,
-		'wp_cache_postload' => -1,
+		// 'Sodium\randombytes_buf' => -1,
+		// 'wp_cache_postload' => -1,
 	);
 }
