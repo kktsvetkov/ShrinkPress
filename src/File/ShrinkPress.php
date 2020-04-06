@@ -6,54 +6,66 @@ use ShrinkPress\Build\Verbose;
 
 class ShrinkPress extends FileAbstract
 {
-	public $classVendor = 'ShrinkPress';
-
-	public $classPackage = 'Unknown';
-
+	public $vendorName = 'ShrinkPress';
+	public $packageName = 'Unknown';
 	public $subNamespace = '';
-
 	public $className;
 
 	public $uses = array();
 
 	public $methods = array();
 
-	static function fromClass($fullClass)
+	static function fromClass($fullClassName)
 	{
-		$fullClass = (string) $fullClass;
-		$c = explode('\\', trim($fullClass, '\\'));
+		$fullClassName = (string) $fullClassName;
+		$c = explode('\\', trim($fullClassName, '\\'));
 
 		$sp = new self('dummy');
 
 		$sp->className = array_pop($c);
-		$sp->classVendor = array_shift($c);
-		$sp->classPackage = array_shift($c);
+		$sp->vendorName = array_shift($c);
+		$sp->packageName = array_shift($c);
 		$sp->subNamespace = $c
 			? join('\\', $c)
 			: '';
 
 		$sp->filename = $sp->classFile();
+
+		$composerJson = ComposerJson::instance();
+		$composerJson->addPsr4(
+			$sp->classPackage(),
+			$sp->packageFolder()
+			);
+
 		return $sp;
+	}
+
+	static function fromClassMethod($fullMethodName)
+	{
+		$fullMethodName = (string) $fullMethodName;
+
+		$r = explode('::', $fullMethodName);
+		return self::fromClass( array_shift($r) );
 	}
 
 	function packageFolder()
 	{
 		return ComposerJson::vendors
-			. '/' . strtolower($this->classVendor)
-			. '/' . $this->classPackage
+			. '/' . strtolower($this->vendorName)
+			. '/' . $this->packageName
 			. '/src/';
 	}
 
 	function classFile()
 	{
-		$sub = '';
+		$subNamespace = '';
 		if ($this->subNamespace)
 		{
-			$sub = str_replace('\\', '/', $this->subNamespace) . '/';
+			$subNamespace = str_replace('\\', '/', $this->subNamespace) . '/';
 		}
 
 		return $this->packageFolder()
-			. $sub
+			. $subNamespace
 			. $this->className . '.php';
 	}
 
@@ -66,11 +78,29 @@ class ShrinkPress extends FileAbstract
 
 	function classPackage()
 	{
-		return $this->vendor . '\\' . $this->package . '\\';
+		return $this->vendorName . '\\' . $this->packageName . '\\';
 	}
 
 	function classNamespace()
 	{
-		return '\\' . $this->classPackage() . $this->subNamespace;
+		return $this->classPackage() . $this->subNamespace;
+	}
+
+	function useClass($fullClassName)
+	{
+		$fullClassName = (string) $fullClassName;
+		$sp = self::fromClass( $fullClassName );
+
+		$this->uses[ $sp->classNamespace() ] = true;
+		return $this;
+	}
+
+	function useMethod($fullMethodName)
+	{
+		$fullMethodName = (string) $fullMethodName;
+		$sp = self::fromClassMethod( $fullMethodName );
+
+		$this->uses[ $sp->classNamespace() ] = true;
+		return $this;
 	}
 }
