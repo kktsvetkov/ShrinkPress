@@ -113,12 +113,27 @@ class PDO extends StorageAbstract
 		return PDO\WpGlobal::write($entity, $this->pdo);
 	}
 
+	//
+	// Callbacks
+	//
+
+	function readCallback( $functionName )
+	{
+		return PDO\WpCallback::read($functionName, $this->pdo);
+	}
+
+	function writeCallback( Entity\WpCallback $entity )
+	{
+		return PDO\WpCallback::write($entity, $this->pdo);
+	}
+
 	function clean()
 	{
 		// PDO\WpFunction::clean($this->pdo);
 		// PDO\WpCall::clean($this->pdo);
 		// PDO\WpClass::clean($this->pdo);
 		// PDO\WpInclude::clean($this->pdo);
-		PDO\WpGlobal::clean($this->pdo);
+		// PDO\WpGlobal::clean($this->pdo);
+		PDO\WpCallback::clean($this->pdo);
 	}
 }

@@ -24,4 +24,7 @@ abstract class StorageAbstract
 
 	abstract function readGlobal( $globalName );
 	abstract function writeGlobal( Entity\WpGlobal $entity );
+
+	abstract function readCallback( $functionName );
+	abstract function writeCallback( Entity\WpCallback $entity );
 }
