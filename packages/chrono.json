@@ -1,5 +1,16 @@
 {
-	"Chrono":
+	"package": "ShrinkPress\\Chrono",
+	"description": "Date\\Time, Timezones",
+	"url": "https://make.wordpress.org/core/components/date-time/",
+	"classes":
+	[
+		"Convert"
+	],
+	"movedClasses":
+	[
+
+	],
+	"movedFunctions":
 	{
 		"Convert":
 		[
