@@ -2,10 +2,13 @@
 
 namespace ShrinkPress\Build\File;
 
+use ShrinkPress\Build\Assist;
 use ShrinkPress\Build\Verbose;
 
 class ComposerJson extends FileAbstract
 {
+	use Assist\Instance;
+
 	const vendors = 'wp-includes/vendor';
 
 	const source = array(
@@ -28,7 +31,8 @@ class ComposerJson extends FileAbstract
 
 	function __construct()
 	{
-
+		$register = Register::instance();
+		$register->addFile($this);
 	}
 
 	protected $psr4 = array();

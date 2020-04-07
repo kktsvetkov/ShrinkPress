@@ -9,6 +9,10 @@ abstract class FileAbstract implements \JsonSerializable
 	function __construct($filename)
 	{
 		$this->filename = (string) $filename;
+
+		$register = Register::instance();
+		$register->restore($this->filename, $this);
+		$register->addFile($this);
 	}
 
 	function filename()

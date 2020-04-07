@@ -31,7 +31,13 @@ class Register
 	function addFile(FileAbstract $file)
 	{
 		$key = $file->filename();
-		$this->files[ $key ] = $file;
+		if (empty($this->files[ $key ]))
+		{
+			$this->files[ $key ] = $file;
+
+			$allfiles = FilesList::instance();
+			$allfiles->addFile($key);
+		}
 
 		return $this;
 	}
@@ -56,44 +62,39 @@ class Register
 		if ($json = $this->build->read($saved))
 		{
 			$file->restore((array) json_decode($json, true));
+			$this->addFile( $file );
 			return true;
 		}
 
 		return false;
 	}
 
-	function save( $filename = '')
+	function save( $filename )
 	{
 		$filename = (string) $filename;
-		if ($filename)
-		{
-			if (!empty($this->files[ $filename ]))
-			{
-				$this->build->write(
-					$filename . '.shrink',
-					json_encode( $this->files[ $filename ] )
-					);
-				return $this;
-			}
 
+		if (empty($this->files[ $filename ]))
+		{
 			throw new \InvalidArgumentException(
 				"File {$filename} not in register"
-			);
-		}
-
-		foreach($this->files as $filename => $file)
-		{
-			$this->build->write(
-				$filename . '.shrink',
-				json_encode($file, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
 				);
 		}
+
+		$this->build->write(
+			$filename . '.shrink',
+			json_encode(
+				$this->files[ $filename ],
+				JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+			));
 
 		return $this;
 	}
 
 	function __destruct()
 	{
-		$this->save();
+		foreach($this->files as $filename => $file)
+		{
+			$this->save($filename);
+		}
 	}
 }
