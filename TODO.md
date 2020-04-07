@@ -24,6 +24,13 @@
 
 * look for performance-related ideas: https://petitions.classicpress.net/?view=most-wanted
 
+* Autoloading WordPress:
+	https://core.trac.wordpress.org/ticket/36335
+	https://github.com/mikeschinkel/autoloading-wordpress
+
+* https://composer.rarst.net/
+* https://github.com/Modius22/FreshPress/tree/master
+
 ## Shrinking: Classes
 
 - see https://getcomposer.org/doc/04-schema.md#classmap
