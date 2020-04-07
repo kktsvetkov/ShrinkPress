@@ -25,6 +25,10 @@ $storage = new \ShrinkPress\Build\Storage\PDO(
 
 $source = new \ShrinkPress\Build\Source($wp_source);
 
+$register = \ShrinkPress\Build\File\Register::instance();
+$build = new \ShrinkPress\Build\Source(__DIR__ . '/build');
+$register->setBuildSource($build);
+
 if (in_array('scan', $argv))
 {
 	$storage->clean();
@@ -35,6 +39,16 @@ if (in_array('scan', $argv))
 
 if (in_array('process', $argv))
 {
-	$process = new \ShrinkPress\Build\Condense\Process($source, $storage);
-	$process->condense();
+	// $process = new \ShrinkPress\Build\Condense\Process($source, $storage);
+	// $process->condense();
+	$process = new \ShrinkPress\Build\Unparse\Process;
+	$process->condense($source, $storage);
 }
+
+/////////////////////////////////////////////////////////////////////////////
+
+// register_shutdown_function(function()
+// {
+// 	echo '<pre style="background:khaki">';
+// 	print_r(get_included_files());
+// });
