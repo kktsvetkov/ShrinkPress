@@ -9,15 +9,8 @@ class Builder
 {
 	protected $tasks = array();
 
-	protected $source;
-
-	protected $storage;
-
-	function __construct(Source $source, Storage\StorageAbstract $storage)
+	function __construct()
 	{
-		$this->source = $source;
-		$this->storage = $storage;
-
 		// $this->tasks[] = new Task\Wipe;
 		// $this->tasks[] = new Task\Start;
 		//
@@ -28,11 +21,11 @@ class Builder
 		// $this->tasks[] = new Task\UseNamespaces;
 	}
 
-	function build()
+	function build(Source $source, Storage\StorageAbstract $storage)
 	{
 		foreach ($this->tasks as $task)
 		{
-			$task->condense($this->source, $this->storage);
+			$task->condense($source, $storage);
 		}
 	}
 }
