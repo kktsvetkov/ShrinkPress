@@ -67,6 +67,8 @@ class Classes extends VisitorAbstract
 					. $found['startLine'],
 				1);
 
+			$this->wp_file->addClass($found);
+
 			$entity = $storage->readClass( $found['className'] );
 
 			$entity->filename = $this->filename;

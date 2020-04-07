@@ -12,10 +12,18 @@ abstract class VisitorAbstract extends NodeVisitorAbstract
 	protected $filename;
 	protected $storage;
 
+	protected $wp_file;
+
 	function load( $filename, Storage\StorageAbstract $storage)
 	{
 		$this->filename = (string) $filename;
 		$this->storage = $storage;
+
+		$register = \ShrinkPress\Build\File\Register::instance();
+		if (!$this->wp_file = $register->getFile($this->filename))
+		{
+			$this->wp_file = new \ShrinkPress\Build\File\WordPress($this->filename);
+		}
 	}
 
 	protected $result = array();
@@ -34,5 +42,9 @@ abstract class VisitorAbstract extends NodeVisitorAbstract
 			$this->flush($this->result, $this->storage);
 			$this->result = array();
 		}
+
+		$register = \ShrinkPress\Build\File\Register::instance();
+		$register->addFile($this->wp_file);
+		$register->save( $this->wp_file->filename() );
 	}
 }

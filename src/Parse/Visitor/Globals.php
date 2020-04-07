@@ -75,6 +75,7 @@ class Globals extends VisitorAbstract
 				 	. $this->filename . ':'
 					. $found['startLine'],
 				1);
+			$this->wp_file->addGlobal($found);
 
 			$entity = new WpGlobal( $found['globalName'] );
 
