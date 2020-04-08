@@ -11,6 +11,12 @@ class Builder
 
 	function __construct()
 	{
+		// build conversion maps
+		//
+		$this->tasks[] = new Task\FunctionsMap;
+		$this->tasks[] = new Task\ClassMap;
+		$this->tasks[] = new Task\GlobalsMap;
+
 		// restore original WordPress,
 		// delete new files
 		//
@@ -29,13 +35,24 @@ class Builder
 		//
 		$this->tasks[] = new Task\PlantComposer;
 
-		// // $this->tasks[] = new Task\FunctionsMap;
 		// $this->tasks[] = new Task\SortFunctions;
 		// $this->tasks[] = new Task\ReplaceFunctions;
-		//
-		// $this->tasks[] = new Task\UseNamespaces;
 
-		// $this->tasks[] = new Task\CreateMigrationPlugin;
+		// delete files which are now
+		// empty after the conversion
+		//
+		$this->tasks[] = new Task\CleanEmptyIncludes;
+
+		// both "pluggable.php" and "pluggable-deprecated.php"
+		// will have empty "IF (function_exists(...)) .... ENDIF"
+		// statements in them from the moved functions
+		//
+		$this->tasks[] = new Task\CleanPluggable;
+
+		// put the functions, classes and globalvars
+		// maps into a plugin, "shrinkpress_migration"
+		//
+		$this->tasks[] = new Task\CreateMigrationPlugin;
 	}
 
 	function build(Source $source, Storage\StorageAbstract $storage)

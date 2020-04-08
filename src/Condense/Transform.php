@@ -62,10 +62,5 @@ class Transform
 			. "\n";
 	}
 
-	static function tabify($code)
-	{
-		$code = str_replace("\n", "\n\t" , $code);
-		$code = "\t" . rtrim($code, "\t");
-		return $code;
-	}
+
 }
