@@ -46,6 +46,14 @@ class WpGlobal
 		return $result;
 	}
 
+	static function all(\PDO $pdo)
+	{
+		$q = $pdo->query(
+			'SELECT globalName FROM pdo_shrinkpress_globals GROUP BY globalName ORDER BY globalName'
+			);
+		return $q->fetchAll($pdo::FETCH_COLUMN, 0);
+	}
+
 	static function clean(\PDO $pdo)
 	{
 		$pdo->prepare(' DROP TABLE IF EXISTS pdo_shrinkpress_globals; ')->execute();

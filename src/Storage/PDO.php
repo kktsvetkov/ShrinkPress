@@ -103,6 +103,11 @@ class PDO extends StorageAbstract
 	// Globals
 	//
 
+	function getGlobals()
+	{
+		return PDO\WpGlobal::all($this->pdo);
+	}
+
 	function readGlobal( $globalName )
 	{
 		return PDO\WpGlobal::read($globalName, $this->pdo);
@@ -129,11 +134,11 @@ class PDO extends StorageAbstract
 
 	function clean()
 	{
-		// PDO\WpFunction::clean($this->pdo);
-		// PDO\WpCall::clean($this->pdo);
-		// PDO\WpClass::clean($this->pdo);
-		// PDO\WpInclude::clean($this->pdo);
-		// PDO\WpGlobal::clean($this->pdo);
+		PDO\WpFunction::clean($this->pdo);
+		PDO\WpCall::clean($this->pdo);
+		PDO\WpClass::clean($this->pdo);
+		PDO\WpInclude::clean($this->pdo);
+		PDO\WpGlobal::clean($this->pdo);
 		PDO\WpCallback::clean($this->pdo);
 	}
 }
