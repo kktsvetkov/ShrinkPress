@@ -11,12 +11,6 @@ class Builder
 
 	function __construct()
 	{
-		// build conversion maps
-		//
-		$this->tasks[] = new Task\FunctionsMap;
-		$this->tasks[] = new Task\ClassMap;
-		$this->tasks[] = new Task\GlobalsMap;
-
 		// restore original WordPress,
 		// delete new files
 		//
@@ -34,6 +28,10 @@ class Builder
 		// insert the "vendor/autoload.php" include
 		//
 		$this->tasks[] = new Task\PlantComposer;
+
+		// build conversion maps
+		//
+		$this->tasks[] = new Task\PackagesMap;
 
 		// $this->tasks[] = new Task\SortFunctions;
 		// $this->tasks[] = new Task\ReplaceFunctions;
