@@ -74,16 +74,6 @@ class ProtoPackages
 			}
 		}
 
-		// foreach ($this->packages as $namespace => $classes)
-		// {
-		// 	$json = __DIR__ . '/../../packages/proto/'
-		// 		. md5($namespace) . '.json';
-		//
-		// 	file_put_contents($json, json_encode(array(
-		// 		$namespace => $classes
-		// 		), JSON_PRETTY_PRINT));
-		// }
-
 		return array_keys($this->packages);
 	}
 

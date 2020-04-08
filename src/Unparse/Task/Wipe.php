@@ -1,9 +1,9 @@
 <?php
 
-namespace ShrinkPress\Build\Condense\Task;
+namespace ShrinkPress\Build\Unparse\Task;
 
+use ShrinkPress\Build\File;
 use ShrinkPress\Build\Storage;
-use ShrinkPress\Build\Condense;
 use ShrinkPress\Build\Source;
 
 class Wipe extends TaskAbstract
@@ -12,13 +12,9 @@ class Wipe extends TaskAbstract
 		'composer.json',
 		'.gitignore',
 		'.gitattributes',
-		Condense\Compat::compatibility_php,
 		);
 
-	function condense(
-		Source $source,
-		Storage\StorageAbstract $storage
-		)
+	function build( Source $source, Storage\StorageAbstract $storage )
 	{
 		foreach (self::purge as $file)
 		{
@@ -31,6 +27,6 @@ class Wipe extends TaskAbstract
 		chdir( $source->basedir() );
 		shell_exec('git checkout -- .');
 
-		shell_exec('rm -rf ' . Condense\Composer::vendors);
+		shell_exec('rm -rf ' . File\ComposerJson::vendors);
 	}
 }
