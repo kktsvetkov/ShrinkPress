@@ -1,0 +1,44 @@
+{
+	":package": "ShrinkPress\\HTTP",
+
+	"Browser":
+	{
+		"movedClass": "",
+
+		"movedFunctions":
+		[
+
+		],
+		"movedGlobals":
+		[
+			["is_chrome"],
+			["is_edge"],
+			["is_gecko"],
+			["is_IE"],
+			["is_iphone"],
+			["is_lynx"],
+			["is_macIE"],
+			["is_NS4"],
+			["is_opera"],
+			["is_safari"],
+			["is_winIE"]
+		]
+	},
+
+	"WebServer":
+	{
+		"movedClass": "",
+
+		"movedFunctions":
+		[
+
+		],
+		"movedGlobals":
+		[
+			["is_IIS"],
+			["is_iis7"],
+			["is_nginx"],
+			["is_apache"]
+		]
+	}
+}

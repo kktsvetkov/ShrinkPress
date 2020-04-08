@@ -1,22 +1,18 @@
 {
-	"package": "ShrinkPress\\Chrono",
-	"description": "Date\\Time, Timezones",
-	"url": "https://make.wordpress.org/core/components/date-time/",
-	"classes":
-	[
-		"Convert"
-	],
-	"movedClasses":
-	[
+	":package": "ShrinkPress\\Chrono",
+	":description": "Date\\Time, Timezones",
+	":url": "https://make.wordpress.org/core/components/date-time/",
 
-	],
-	"movedFunctions":
+	"Convert":
 	{
-		"Convert":
+		"movedClass": "",
+
+		"movedFunctions":
 		[
 			["get_date_from_gmt"],
 			["iso8601_timezone_to_offset"],
 			["iso8601_to_datetime"]
+
 		]
 	}
 }

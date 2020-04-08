@@ -1,0 +1,18 @@
+{
+	":package": "ShrinkPress\\Database",
+	":description": "Database",
+	":url": "https://make.wordpress.org/core/components/database/",
+
+	"wpdb":
+	{
+		"movedClass": "wpdb"
+	},
+
+	"wpdb\\Last":
+	{
+		"movedGlobals":
+		[
+			["wpdb"]
+		]
+	}
+}

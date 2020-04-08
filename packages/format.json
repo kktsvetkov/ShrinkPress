@@ -1,9 +1,17 @@
 {
-	"Format":
+	":package": "ShrinkPress\\Format",
+
+	"Math":
 	{
-		"Math":
+		"movedClass": "",
+
+		"movedFunctions":
 		[
 			["absint"]
+		],
+		"movedGlobals":
+		[
+
 		]
 	}
 }
