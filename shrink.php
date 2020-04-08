@@ -37,12 +37,10 @@ if (in_array('scan', $argv))
 	$scanner->scanFolder('');
 }
 
-if (in_array('process', $argv))
+if (in_array('build', $argv))
 {
-	// $process = new \ShrinkPress\Build\Condense\Process($source, $storage);
-	// $process->condense();
-	$process = new \ShrinkPress\Build\Unparse\Process;
-	$process->condense($source, $storage);
+	$process = new \ShrinkPress\Build\Unparse\Builder;
+	$process->build($source, $storage);
 }
 
 /////////////////////////////////////////////////////////////////////////////
