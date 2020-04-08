@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build\Assis;
+namespace ShrinkPress\Build\Assist;
 
 use ShrinkPress\Build\Verbose;
 
@@ -30,7 +30,7 @@ class ComposerPhar
 		return realpath($local);
 	}
 
-	function dumpautoload($basedir)
+	static function dumpautoload($basedir)
 	{
 		$basedir = (string) $basedir;
 		if (!is_dir($basedir))
