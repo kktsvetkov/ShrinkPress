@@ -17,9 +17,6 @@ class PackagesMap extends TaskAbstract
 
 	function build( Source $source, Storage\StorageAbstract $storage )
 	{
-		// $globals = $storage->getGlobals();
-		// print_r($globals)
-
 		$dir = new \DirectoryIterator( self::packagesFolder );
 		foreach ($dir as $found)
 		{
@@ -39,16 +36,20 @@ class PackagesMap extends TaskAbstract
 			}
 		}
 
+		$this->functionsMissing($storage);
 		ksort($this->functionsMigration);
 		$source->write(
 			File\ComposerJson::vendors . '/shrinkpress/migrate/functions.json',
-			json_encode($this->functionsMigration)
-		);
-		$source->write(
-			File\ComposerJson::vendors . '/shrinkpress/migrate/classes.json',
-			json_encode($this->classesMigration)
+			json_encode($this->functionsMigration, JSON_PRETTY_PRINT)
 		);
 
+		ksort($this->classesMigration);
+		$source->write(
+			File\ComposerJson::vendors . '/shrinkpress/migrate/classes.json',
+			json_encode($this->classesMigration, JSON_PRETTY_PRINT)
+		);
+
+		$this->globalsMissing($storage);
 		ksort($this->globalsMigration);
 		$source->write(
 			File\ComposerJson::vendors . '/shrinkpress/migrate/globals.json',
@@ -140,6 +141,38 @@ class PackagesMap extends TaskAbstract
 
 				$this->functionsMigration[ $functionName ] = $fullMethodName;
 			}
+		}
+	}
+
+	protected function globalsMissing(Storage\StorageAbstract $storage)
+	{
+		$globals = $storage->getGlobals();
+		$globalsMissing = array_diff(
+			$globals,
+			array_keys($this->globalsMigration)
+			);
+		foreach ($globalsMissing as $global)
+		{
+			$this->globalsMigration[ $global ] =
+				'ShrinkPress\\Scope\\Globals::$' . $global;
+		}
+
+		unset($this->globalsMigration[ 'HTTP_RAW_POST_DATA' ]);
+		unset($this->globalsMigration[ 'GETID3_ERRORARRAY' ]);
+		unset($this->globalsMigration[ 'PHP_SELF' ]);
+	}
+
+	protected function functionsMissing(Storage\StorageAbstract $storage)
+	{
+		$functions = $storage->getFunctions();
+		$functionsMissing = array_diff(
+			$functions,
+			array_keys($this->functionsMigration)
+			);
+		foreach ($functionsMissing as $function)
+		{
+			$this->functionsMigration[ $function ] =
+				'ShrinkPress\\Scope\\Functions::' . $function;
 		}
 	}
 }
