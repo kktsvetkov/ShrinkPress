@@ -1,0 +1,13 @@
+{
+	":package": "ShrinkPress\\HTML",
+	":description": "HTML generation and manipulation",
+	":url": "https://make.wordpress.org/core/components/themes/",
+
+	"Attr":
+	{
+		"movedFunctions":
+		[
+			["esc_attr"]
+		]
+	}
+}

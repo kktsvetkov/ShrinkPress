@@ -1,0 +1,20 @@
+{
+	":package": "ShrinkPress\\Template",
+	":description": "Template, Themes",
+	":url": "https://make.wordpress.org/core/components/themes/",
+
+	"Calendar":
+	{
+		"movedGlobals":
+		[
+			["monthnum"],
+			["year"],
+			["m", "YearMonth"]
+		],
+
+		"movedFunctions":
+		[
+			["get_calendar"]
+		]
+	}
+}

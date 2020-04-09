@@ -1,0 +1,22 @@
+{
+	":package": "ShrinkPress\\Blocks",
+	":description": "Blocks",
+	":url": "https://make.wordpress.org/core/components/editor/",
+
+	"Register":
+	{
+		"movedFunctions":
+		[
+			["register_block_type"]
+		]
+	},
+
+	"Calendar":
+	{
+		"movedFunctions":
+		[
+			["render_block_core_calendar", "render"],
+			["register_block_core_calendar", "register"]
+		]
+	}
+}

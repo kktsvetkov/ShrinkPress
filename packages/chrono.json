@@ -1,6 +1,6 @@
 {
 	":package": "ShrinkPress\\Chrono",
-	":description": "Date\\Time, Timezones",
+	":description": "Date\\Time, Timezones, Weeks, Months, etc.",
 	":url": "https://make.wordpress.org/core/components/date-time/",
 
 	"Convert":
@@ -13,6 +13,14 @@
 			["iso8601_timezone_to_offset"],
 			["iso8601_to_datetime"]
 
+		]
+	},
+
+	"Week":
+	{
+		"movedFunctions":
+		[
+			["calendar_week_mod"]
 		]
 	}
 }

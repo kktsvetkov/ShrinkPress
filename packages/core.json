@@ -1,0 +1,13 @@
+{
+	":package": "ShrinkPress\\Core",
+	":description": "WordPress Framework",
+	":url": "https://make.wordpress.org/core/components/general/",
+
+	"Option":
+	{
+		"movedFunctions":
+		[
+			["get_option", "get"]
+		]
+	}
+}

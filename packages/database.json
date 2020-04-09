@@ -8,11 +8,19 @@
 		"movedClass": "wpdb"
 	},
 
-	"wpdb\\Last":
+	"wpdb\\Instance":
 	{
 		"movedGlobals":
 		[
 			["wpdb"]
+		]
+	},
+
+	"Upgrade":
+	{
+		"movedFunctions":
+		[
+			["dbDelta"]
 		]
 	}
 }
