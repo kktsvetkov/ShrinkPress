@@ -3,7 +3,6 @@
 namespace ShrinkPress\Build\File;
 
 use ShrinkPress\Build\Assist;
-use ShrinkPress\Build\Source;
 
 class Register
 {
@@ -11,7 +10,7 @@ class Register
 
 	protected $build;
 
-	function setBuildSource(Source $build)
+	function setBuildSource(Assist\Umbrella $build)
 	{
 		$this->build = $build;
 	}
@@ -59,11 +58,14 @@ class Register
 		$filename = (string) $filename;
 		$saved = $filename . '.shrink';
 
-		if ($json = $this->build->read($saved))
+		if ($this->build->exists($saved))
 		{
-			$file->restore((array) json_decode($json, true));
-			$this->addFile( $file );
-			return true;
+			if ($json = $this->build->read($saved))
+			{
+				$file->restore((array) json_decode($json, true));
+				$this->addFile( $file );
+				return true;
+			}
 		}
 
 		return false;

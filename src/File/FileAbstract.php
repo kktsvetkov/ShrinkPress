@@ -11,8 +11,8 @@ abstract class FileAbstract implements \JsonSerializable
 		$this->filename = (string) $filename;
 
 		$register = Register::instance();
-		$register->restore($this->filename, $this);
 		$register->addFile($this);
+		$register->restore($this->filename, $this);
 	}
 
 	function filename()
