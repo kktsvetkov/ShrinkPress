@@ -31,6 +31,25 @@
 * https://composer.rarst.net/
 * https://github.com/Modius22/FreshPress/tree/master
 
+## Types of PHP files in WordPress
+
+Different files have different roles, and then need to be parsed and unparsed
+differently. There are files with similar characteristics, which can be treated
+the same, and then there are special files, one of their kind, that need special
+treatment.
+
+Being backwards-compatible WordPress does not seem to delete old files, so a
+file-based process would seem to work on different versions of the project.
+
+* wp-admin/ controllers: pages loaded in the admin panel;
+* external classes
+* wp-includes/default-filters.php where filters are added in bulk
+* wp-includes/pluggable.php with fallback function definitions
+* wp-includes/pluggable-deprecated.php: fallback function definitions that are deprecated
+* wp-includes/blocks/ block definitions
+* wp-includes/compat.php: polyfills for different PHP versions
+* wp-includes/widgets/ widget definitions
+
 ## Shrinking: Classes
 
 - see https://getcomposer.org/doc/04-schema.md#classmap
