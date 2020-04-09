@@ -3,7 +3,6 @@
 namespace ShrinkPress\Build\File;
 
 use ShrinkPress\Build\Assist;
-use ShrinkPress\Build\Verbose;
 
 class ComposerJson extends FileAbstract
 {
