@@ -13,7 +13,7 @@ class CreateComposer extends TaskAbstract
 	{
 		// start with composer.json ...
 		//
-		$composerJson = Entity\File\Composer_JSON::instance();
+		$composerJson = Entity\Files\Composer_JSON::instance();
 		$source->write('composer.json', json_encode(
 			$composerJson->jsonSerialize(),
 			JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES

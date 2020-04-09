@@ -2,7 +2,7 @@
 
 namespace ShrinkPress\Build\Unparse\Task;
 
-use ShrinkPress\Build\Entity;
+use ShrinkPress\Build\Entity\Files\Composer_JSON;
 use ShrinkPress\Build\Storage;
 use ShrinkPress\Build\Source;
 
@@ -27,6 +27,6 @@ class Wipe extends TaskAbstract
 		chdir( $source->basedir() );
 		shell_exec('git checkout -- .');
 
-		shell_exec('rm -rf ' . Entity\File\Composer_JSON::vendors);
+		shell_exec('rm -rf ' . Composer_JSON::vendors);
 	}
 }
