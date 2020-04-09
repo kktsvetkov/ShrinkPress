@@ -2,7 +2,7 @@
 
 namespace ShrinkPress\Build\Unparse\Task;
 
-use ShrinkPress\Build\File;
+use ShrinkPress\Build\Entity\File;
 use ShrinkPress\Build\Storage;
 use ShrinkPress\Build\Source;
 use ShrinkPress\Build\Verbose;
@@ -39,20 +39,20 @@ class PackagesMap extends TaskAbstract
 		$this->functionsMissing($storage);
 		ksort($this->functionsMigration);
 		$source->write(
-			File\ComposerJson::vendors . '/shrinkpress/migrate/functions.json',
+			File\Composer_JSON::vendors . '/shrinkpress/migrate/functions.json',
 			json_encode($this->functionsMigration, JSON_PRETTY_PRINT)
 		);
 
 		ksort($this->classesMigration);
 		$source->write(
-			File\ComposerJson::vendors . '/shrinkpress/migrate/classes.json',
+			File\Composer_JSON::vendors . '/shrinkpress/migrate/classes.json',
 			json_encode($this->classesMigration, JSON_PRETTY_PRINT)
 		);
 
 		$this->globalsMissing($storage);
 		ksort($this->globalsMigration);
 		$source->write(
-			File\ComposerJson::vendors . '/shrinkpress/migrate/globals.json',
+			File\Composer_JSON::vendors . '/shrinkpress/migrate/globals.json',
 			json_encode($this->globalsMigration, JSON_PRETTY_PRINT)
 		);
 	}
