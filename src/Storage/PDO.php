@@ -122,7 +122,7 @@ class PDO extends StorageAbstract
 	// Callbacks
 	//
 
-	function readCallback( $functionName )
+	function readCallbacks( $functionName )
 	{
 		return PDO\WpCallback::read($functionName, $this->pdo);
 	}
