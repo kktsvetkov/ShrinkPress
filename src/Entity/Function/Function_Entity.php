@@ -2,7 +2,7 @@
 
 namespace ShrinkPress\Build\Entity\Class;
 
-interface Function_Entity
+interface Function_Entity extends \JsonSerializable
 {
 	function functionName();
 

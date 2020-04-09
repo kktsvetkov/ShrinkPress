@@ -2,7 +2,7 @@
 
 namespace ShrinkPress\Build\Entity\File;
 
-abstract class File_Abstract implements File_Entity, \JsonSerializable
+abstract class File_Abstract implements File_Entity
 {
 	protected $filename;
 

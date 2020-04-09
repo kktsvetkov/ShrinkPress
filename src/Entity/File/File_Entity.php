@@ -2,7 +2,7 @@
 
 namespace ShrinkPress\Build\Entity\File;
 
-interface File_Entity
+interface File_Entity extends \JsonSerializable
 {
 	function filename();
 

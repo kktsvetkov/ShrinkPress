@@ -4,7 +4,7 @@ namespace ShrinkPress\Build\Entity\File;
 
 use ShrinkPress\Build\Assist;
 
-class Composer_JSON implements File_Entity, \JsonSerializable
+class Composer_JSON implements File_Entity 
 {
 	use Assist\Instance;
 
