@@ -28,7 +28,7 @@ abstract class VisitorAbstract extends NodeVisitorAbstract
 		}
 
 		self::$entity_files_register->addFile(
-			$this->entity_file = new Entity\File\PHP_File(
+			$this->entity_file = new Entity\Files\PHP_File(
 				$this->filename
 				)
 		);
@@ -49,6 +49,8 @@ abstract class VisitorAbstract extends NodeVisitorAbstract
 		{
 			$this->flush($this->result, $this->storage);
 			$this->result = array();
+
+			self::$entity_files_register->save();
 		}
 	}
 }

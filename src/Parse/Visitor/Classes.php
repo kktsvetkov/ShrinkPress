@@ -5,6 +5,7 @@ namespace ShrinkPress\Build\Parse\Visitor;
 use PhpParser\Node;
 use ShrinkPress\Build\Verbose;
 use ShrinkPress\Build\Storage;
+use ShrinkPress\Build\Entity;
 
 class Classes extends VisitorAbstract
 {
@@ -54,6 +55,8 @@ class Classes extends VisitorAbstract
 		$this->result[] = $found;
 	}
 
+	protected static $entity_classes_register;
+
 	function flush(array $result, Storage\StorageAbstract $storage)
 	{
 		foreach($result as $found)
@@ -66,6 +69,15 @@ class Classes extends VisitorAbstract
 				 	. $this->filename . ':'
 					. $found['startLine'],
 				1);
+
+			if (empty(self::$entity_classes_register))
+			{
+				self::$entity_classes_register = Entity\Register\Classes::instance();
+			}
+
+			$class_entity = new Entity\Classes\WordPress_Class( $found['className'] );
+			$class_entity->load($found);
+			self::$entity_classes_register->addClass($class_entity)->save();
 
 			$entity = $storage->readClass( $found['className'] );
 
