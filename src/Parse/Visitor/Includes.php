@@ -146,8 +146,6 @@ class Includes extends VisitorAbstract
 					. $found['startLine'],
 				1);
 
-			$this->wp_file->addInclude($found);
-
 			$entity = new WpInclude( $found['includedFile'] );
 
 			$entity->filename = $this->filename;

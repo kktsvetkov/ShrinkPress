@@ -7,23 +7,31 @@ use PhpParser\NodeVisitorAbstract;
 
 use ShrinkPress\Build\Storage;
 
+use \ShrinkPress\Build\Entity;
+
 abstract class VisitorAbstract extends NodeVisitorAbstract
 {
 	protected $filename;
 	protected $storage;
 
-	protected $wp_file;
+	static protected $entity_files_register;
+	protected $entity_file;
 
 	function load( $filename, Storage\StorageAbstract $storage)
 	{
 		$this->filename = (string) $filename;
 		$this->storage = $storage;
 
-		$register = \ShrinkPress\Build\File\Register::instance();
-		if (!$this->wp_file = $register->getFile($this->filename))
+		if (empty(self::$entity_files_register))
 		{
-			$this->wp_file = new \ShrinkPress\Build\File\WordPress($this->filename);
+			self::$entity_files_register = Entity\Register\Files::instance();
 		}
+
+		self::$entity_files_register->addFile(
+			$this->entity_file = new Entity\File\PHP_File(
+				$this->filename
+				)
+		);
 	}
 
 	protected $result = array();
@@ -42,9 +50,5 @@ abstract class VisitorAbstract extends NodeVisitorAbstract
 			$this->flush($this->result, $this->storage);
 			$this->result = array();
 		}
-
-		$register = \ShrinkPress\Build\File\Register::instance();
-		$register->addFile($this->wp_file);
-		$register->save( $this->wp_file->filename() );
 	}
 }
