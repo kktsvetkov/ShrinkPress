@@ -51,11 +51,11 @@
 			["wp_admin_bar_edit_menu", "edit_menu"],
 			["wp_admin_bar_new_content_menu", "new_content_menu"],
 			["wp_admin_bar_comments_menu", "comments_menu"],
-			["wp_admin_bar_appearance_menu"],
-			["wp_admin_bar_updates_menu"],
-			["wp_admin_bar_search_menu"],
-			["wp_admin_bar_recovery_mode_menu"],
-			["wp_admin_bar_add_secondary_groups"]
+			["wp_admin_bar_appearance_menu", "appearance_menu"],
+			["wp_admin_bar_updates_menu", "updates_menu"],
+			["wp_admin_bar_search_menu", "search_menu"],
+			["wp_admin_bar_recovery_mode_menu", "recovery_mode_menu"],
+			["wp_admin_bar_add_secondary_groups", "add_secondary_groups"]
 		]
 	}
 }
