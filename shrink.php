@@ -11,8 +11,23 @@ set_error_handler(function($severity, $message, $file, $line)
 
 /////////////////////////////////////////////////////////////////////////////
 
+use ShrinkPress\Build;
+
 $wp_source = __DIR__ . '/wordpress';
-\ShrinkPress\Build\Verbose::level(4);
+Build\Verbose::level(4);
+
+$entity_source = Build\Entity\Source::instance();
+$entity_source->setSource(
+	new Build\Assist\Umbrella($wp_source)
+	);
+
+$entity_stash = \ShrinkPress\Build\Entity\Stash::instance();
+$entity_stash->setStash(
+	new \ShrinkPress\Build\Assist\Umbrella(__DIR__ . '/entities')
+	);
+$entity_files_register = \ShrinkPress\Build\Entity\Register\Files::instance();
+$composer_json = Build\Entity\File\Composer_JSON::instance();
+$entity_files_register->addFile($composer_json);
 
 $storage = new \ShrinkPress\Build\Storage\PDO(
 	new PDO("mysql:host=127.0.0.1;dbname=wordpress;charset=utf8mb4",
