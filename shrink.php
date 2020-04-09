@@ -26,7 +26,7 @@ $storage = new \ShrinkPress\Build\Storage\PDO(
 $source = new \ShrinkPress\Build\Source($wp_source);
 
 $register = \ShrinkPress\Build\File\Register::instance();
-$build = new \ShrinkPress\Build\Source(__DIR__ . '/build/parsed');
+$build = new \ShrinkPress\Build\Assist\Umbrella(__DIR__ . '/build/parsed');
 $register->setBuildSource($build);
 
 if (in_array('scan', $argv))
