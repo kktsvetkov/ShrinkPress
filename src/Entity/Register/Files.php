@@ -2,7 +2,7 @@
 
 namespace ShrinkPress\Build\Entity\Register;
 
-use ShrinkPress\Build\Entity\File;
+use ShrinkPress\Build\Entity\Files\File_Entity;
 use ShrinkPress\Build\Assist;
 
 class Files extends Register_Abstract
@@ -19,7 +19,7 @@ class Files extends Register_Abstract
 		return $this->getKeys();
 	}
 
-	function addFile(File\File_Entity $file)
+	function addFile(File_Entity $file)
 	{
 		return $this->addEntity($file->filename(), $file);
 	}
@@ -27,12 +27,5 @@ class Files extends Register_Abstract
 	function getFile($filename)
 	{
 		return $this->getEntity( $filename );
-	}
-
-	protected function findEntity($key, array $data)
-	{
-		// what type should we resurrect the entity ? composer, php, what ?
-		//
-		return false;
 	}
 }

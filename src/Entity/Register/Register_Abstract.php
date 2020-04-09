@@ -89,7 +89,12 @@ abstract class Register_Abstract Implements \JsonSerializable
 			. '.json';
 	}
 
-	protected function load()
+	protected function stashEntityFilename($key)
+	{
+		return $key;
+	}
+
+	function load()
 	{
 		$stash = Stash::instance();
 		if (!$stash->exists( $stashFilename = $this->stashFilename() ))
@@ -111,7 +116,7 @@ abstract class Register_Abstract Implements \JsonSerializable
 		$stashFolder = $this->stashFolder();
 		foreach ($data as $key => $entityClass)
 		{
-			$stashEntity = $stashFolder . $key;
+			$stashEntity = $stashFolder . $this->stashEntityFilename($key);
 
 			if (!$stash->exists( $stashEntity ))
 			{
@@ -137,15 +142,11 @@ abstract class Register_Abstract Implements \JsonSerializable
 				$entity->load($data);
 			}
 		}
-
-		print_r($this);
 	}
-
-	abstract protected function findEntity($key, array $data);
 
 	const json_encode_options = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES;
 
-	protected function save()
+	function save()
 	{
 		$stash = Stash::instance();
 		$stash->write(
@@ -160,7 +161,7 @@ abstract class Register_Abstract Implements \JsonSerializable
 		foreach ($this->register as $key => $entity)
 		{
 			$stash->write(
-				$stashFolder . $key ,
+				$stashFolder . $this->stashEntityFilename($key) ,
 				json_encode(
 					$entity->jsonSerialize(),
 					self::json_encode_options

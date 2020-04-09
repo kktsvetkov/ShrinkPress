@@ -1,10 +1,10 @@
 <?php
 
-namespace ShrinkPress\Build\Entity\File;
+namespace ShrinkPress\Build\Entity\Files;
 
 use ShrinkPress\Build\Assist;
 
-class Composer_JSON implements File_Entity 
+class Composer_JSON implements File_Entity
 {
 	use Assist\Instance;
 
