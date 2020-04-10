@@ -25,9 +25,6 @@ $entity_stash = \ShrinkPress\Build\Entity\Stash::instance();
 $entity_stash->setStash(
 	new \ShrinkPress\Build\Assist\Umbrella(__DIR__ . '/entities')
 	);
-$entity_files_register = \ShrinkPress\Build\Entity\Register\Files::instance();
-$composer_json = Build\Entity\File\Composer_JSON::instance();
-$entity_files_register->addFile($composer_json);
 
 $storage = new \ShrinkPress\Build\Storage\PDO(
 	new PDO("mysql:host=127.0.0.1;dbname=wordpress;charset=utf8mb4",
@@ -40,16 +37,15 @@ $storage = new \ShrinkPress\Build\Storage\PDO(
 
 $source = new \ShrinkPress\Build\Source($wp_source);
 
-$register = \ShrinkPress\Build\File\Register::instance();
-$build = new \ShrinkPress\Build\Assist\Umbrella(__DIR__ . '/build/parsed');
-$register->setBuildSource($build);
-
 if (in_array('scan', $argv))
 {
-	$storage->clean();
+	if (in_array('clean', $argv))
+	{
+		$storage->clean();
+	}
 
 	$scanner = new \ShrinkPress\Build\Parse\Scanner($source, $storage);
-	$scanner->scanFolder('');
+	$scanner->scanFolder('wp-includes/');
 }
 
 if (in_array('build', $argv))
