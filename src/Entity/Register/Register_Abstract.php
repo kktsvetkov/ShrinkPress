@@ -91,7 +91,7 @@ abstract class Register_Abstract Implements \JsonSerializable
 
 	protected function stashEntityFilename($key)
 	{
-		return $key;
+		return $key . '.json';
 	}
 
 	function load()

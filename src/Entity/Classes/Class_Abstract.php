@@ -19,4 +19,11 @@ abstract class Class_Abstract implements Class_Entity
 	{
 		return $this->className;
 	}
+
+	public $extends;
+
+	public $filename;
+	public $docCommentLine;
+	public $startLine;
+	public $endLine;
 }

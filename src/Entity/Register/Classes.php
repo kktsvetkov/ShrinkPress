@@ -31,6 +31,6 @@ class Classes extends Register_Abstract
 
 	protected function stashEntityFilename($key)
 	{
-		return $key . '.class';
+		return str_replace('\\', '/', $key) . '.json';
 	}
 }
