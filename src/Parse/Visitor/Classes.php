@@ -55,30 +55,34 @@ class Classes extends VisitorAbstract
 		$this->result[] = $found;
 	}
 
-	protected static $entity_classes_register;
-
 	function flush(array $result, Storage\StorageAbstract $storage)
 	{
 		foreach($result as $found)
 		{
-			$ns = !empty($found['namespace'])
-				? "{$found['namespace']}//"
-				: '';
+			$found_class = (!empty($found['namespace'])
+				? $found['namespace'] . '\\'
+				: '') . $found['className'];
 			Verbose::log(
-				"Class: {$ns}{$found['className']} at "
+				"Class: {$found_class} at "
 				 	. $this->filename . ':'
 					. $found['startLine'],
 				1);
 
-			if (empty(self::$entity_classes_register))
-			{
-				self::$entity_classes_register = Entity\Register\Classes::instance();
-			}
+			// new class entity
+			//
+			$class_entity = new Entity\Classes\WordPress_Class( $found_class );
+			$class_entity->load(array(
+				'extends' => $found['extends'],
+				'startLine' => $found['startLine'],
+				'endLine' => $found['endLine'],
+				'docCommentLine' => $found['docCommentLine'],
+			));
 
-			$class_entity = new Entity\Classes\WordPress_Class( $found['className'] );
-			$class_entity->load($found);
-			self::$entity_classes_register->addClass($class_entity)->save();
+			$entity_file = Entity\Register\Files::instance()->getFile( $this->filename );
+			$entity_file->addClass( $class_entity );
 
+			// old class entity
+			//
 			$entity = $storage->readClass( $found['className'] );
 
 			$entity->filename = $this->filename;

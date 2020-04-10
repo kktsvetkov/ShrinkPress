@@ -14,21 +14,16 @@ abstract class VisitorAbstract extends NodeVisitorAbstract
 	protected $filename;
 	protected $storage;
 
-	static protected $entity_files_register;
-	protected $entity_file;
-
 	function load( $filename, Storage\StorageAbstract $storage)
 	{
 		$this->filename = (string) $filename;
 		$this->storage = $storage;
 
-		if (empty(self::$entity_files_register))
-		{
-			self::$entity_files_register = Entity\Register\Files::instance();
-		}
-
-		self::$entity_files_register->addFile(
-			$this->entity_file = new Entity\Files\PHP_File(
+		// change it, file is creatd at traverser and
+		// here it is just pulled from the register
+		//
+		Entity\Register\Files::instance()->addFile(
+			new Entity\Files\WordPress_PHP(
 				$this->filename
 				)
 		);
@@ -50,7 +45,7 @@ abstract class VisitorAbstract extends NodeVisitorAbstract
 			$this->flush($this->result, $this->storage);
 			$this->result = array();
 
-			self::$entity_files_register->save();
+			Entity\Register\Files::instance()->save();
 		}
 	}
 }

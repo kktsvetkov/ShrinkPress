@@ -8,6 +8,7 @@ use PhpParser\ParserFactory;
 
 use ShrinkPress\Build\Storage;
 use ShrinkPress\Build\Parse\Visitor;
+use ShrinkPress\Build\Entity\Files;
 
 class Traverser
 {
@@ -34,6 +35,15 @@ class Traverser
 
 	function traverse( $filename, array $nodes, Storage\StorageAbstract $storage)
 	{
+		// $entity_files_register = Entity\Register\Files::instance();
+// var_dump(Files\WordPress_PHP::factory($filename));
+// return;
+		// $entity_files_register->addFile(
+		// new Entity\Files\WordPress_PHP(
+		// 	$filename
+		// 	)
+		// );
+
 		$traverser = $this->traverser;
 		foreach ($this->visitors as $visitor)
 		{
