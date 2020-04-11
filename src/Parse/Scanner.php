@@ -55,7 +55,6 @@ class Scanner
 			$local = $source->local( $found->getPathname() );
 			if ($found->isDir())
 			{
-// CONTINUE;
 				if ($this->skipFolder( $local ))
 				{
 					Verbose::log("Folder ignored: {$local}", 2);

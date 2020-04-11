@@ -77,9 +77,7 @@ class Classes extends VisitorAbstract
 				'endLine' => $found['endLine'],
 				'docCommentLine' => $found['docCommentLine'],
 			));
-
-			$entity_file = Entity\Register\Files::instance()->getFile( $this->filename );
-			$entity_file->addClass( $class_entity );
+			$this->getFile()->addClass( $class_entity );
 
 			// old class entity
 			//

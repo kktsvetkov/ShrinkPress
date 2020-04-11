@@ -6,8 +6,7 @@ use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
 use ShrinkPress\Build\Storage;
-
-use \ShrinkPress\Build\Entity;
+use ShrinkPress\Build\Entity;
 
 abstract class VisitorAbstract extends NodeVisitorAbstract
 {
@@ -18,15 +17,6 @@ abstract class VisitorAbstract extends NodeVisitorAbstract
 	{
 		$this->filename = (string) $filename;
 		$this->storage = $storage;
-
-		// change it, file is creatd at traverser and
-		// here it is just pulled from the register
-		//
-		Entity\Register\Files::instance()->addFile(
-			new Entity\Files\WordPress_PHP(
-				$this->filename
-				)
-		);
 	}
 
 	protected $result = array();
@@ -47,5 +37,10 @@ abstract class VisitorAbstract extends NodeVisitorAbstract
 
 			Entity\Register\Files::instance()->save();
 		}
+	}
+
+	function getFile()
+	{
+		return Entity\Register\Files::instance()->getFile( $this->filename );
 	}
 }
