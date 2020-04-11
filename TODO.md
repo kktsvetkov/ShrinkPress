@@ -30,6 +30,38 @@
 
 * https://composer.rarst.net/
 * https://github.com/Modius22/FreshPress/tree/master
+* https://github.com/codepotent/update-manager
+
+* is it possible to make plugins have composer.json dependencies ? and install them upon installing the plugins.
+
+* collect @package and @subpackage values! those will help to organise the package
+
+## Phase 1
+
+* reduced, limited set of changes
+* still do all of the main changes: functions, classes, globals
+* no core plugin extraction
+* classes are only moved to composer packages, class-map loaded, NOT renamed
+* functions are moved as static methods to classes, NOT renamed
+* globals are copied to static properties, with same name, NOT removed
+* leave includes "as is", we are going to rely just on them being reduced
+* exclude wp-admin/ !
+* only wp-includes and root folder files
+* no need for migration plugin
+
+## Phase 2
+
+* rename methods
+* rename classes
+* remove globals
+* extract internal components as separate libs
+
+## Phase 3
+
+* extract core parts as plugins
+* plugins dependencies
+* alternative updates/downloads
+* composer dependencies downloads 
 
 ## Types of PHP files in WordPress
 
@@ -43,12 +75,14 @@ file-based process would seem to work on different versions of the project.
 
 * wp-admin/ controllers: pages loaded in the admin panel;
 * external classes
+* wp-includes/default-constants.php
 * wp-includes/default-filters.php where filters are added in bulk
 * wp-includes/pluggable.php with fallback function definitions
 * wp-includes/pluggable-deprecated.php: fallback function definitions that are deprecated
 * wp-includes/blocks/ block definitions
 * wp-includes/compat.php: polyfills for different PHP versions
 * wp-includes/widgets/ widget definitions
+* deprecated file
 
 ## Shrinking: Classes
 
