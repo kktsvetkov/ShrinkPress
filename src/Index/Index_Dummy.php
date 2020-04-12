@@ -13,7 +13,7 @@ class Index_Dummy extends Index_Abstract
 
 	function readFile( $filename )
 	{
-		return false;
+		return Entity\Files\WordPress_PHP::factory( $filename );
 	}
 
 	function writeFile( Entity\Files\File_Entity $entity )
