@@ -4,23 +4,18 @@ namespace ShrinkPress\Build\Parse;
 
 use ShrinkPress\Build\Assist;
 use ShrinkPress\Build\Entity;
-use ShrinkPress\Build\Storage;
-use ShrinkPress\Build\Source;
-use ShrinkPress\Build\Verbose;
+use ShrinkPress\Build\Index;
 
 class Scanner
 {
 	protected $source;
 
-	protected $storage;
+	protected $index;
 
-	protected $traverser;
-
-	function __construct(Source $source, Storage\StorageAbstract $storage)
+	function __construct(Source $source, Index\Index_Abstract $index)
 	{
 		$this->source = $source;
-		$this->storage = $storage;
-		$this->traverser = Traverser::instance();
+		$this->index = $index;
 	}
 
 	/**
@@ -42,7 +37,7 @@ class Scanner
 		}
 
 		$basedir = $source->basedir();
-		Verbose::log("Scan: {$folder} (in {$basedir})", 2);
+		Assist\Verbose::log("Scan: {$folder} (in {$basedir})", 2);
 
 		$result = array();
 
@@ -59,7 +54,7 @@ class Scanner
 			{
 				if ($this->skipFolder( $local ))
 				{
-					Verbose::log("Folder ignored: {$local}", 2);
+					Assist\Verbose::log("Folder ignored: {$local}", 2);
 				} else
 				{
 					$sub = $this->scanFolder($local);
@@ -71,7 +66,7 @@ class Scanner
 
 			if ($this->skipFile( $local ))
 			{
-				Verbose::log("File ignored: {$local}", 2);
+				Assist\Verbose::log("File ignored: {$local}", 2);
 				continue;
 			}
 
@@ -88,16 +83,15 @@ class Scanner
 	*/
 	function scanFile($filename)
 	{
-		Verbose::log("Scan: {$filename}", 1);
+		Assist\Verbose::log("Scan: {$filename}", 1);
 
 		$code = $this->source->read( $filename );
 
 		$entity_file = Entity\Files\WordPress_PHP::factory( $filename );
-		$entity_file->size = strlen($code);
 		Assist\Code::extractPackage($code, $entity_file);
-		Entity\Register\Files::instance()->addFile($entity_file);
+		$this->index->writeFile($entity_file);
 
-		$traverser = $this->traverser;
+		$traverser = Traverser::instance();
 		$traverser->traverse(
 			$filename,
 			$nodes = $traverser->parse( $code ),
