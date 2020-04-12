@@ -6,12 +6,13 @@ use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 
-use ShrinkPress\Build\Storage;
+use ShrinkPress\Build\Assist;
+use ShrinkPress\Build\Index;
 use ShrinkPress\Build\Parse\Visitor;
 
 class Traverser
 {
-	use \ShrinkPress\Build\Assist\Instance;
+	use Assist\Instance;
 
 	protected $parser;
 	protected $traverser;
@@ -32,7 +33,7 @@ class Traverser
 			->create(ParserFactory::PREFER_PHP7);
 	}
 
-	function traverse( $filename, array $nodes, Storage\StorageAbstract $storage)
+	function traverse( $filename, array $nodes, Index\Index_Abstract $storage)
 	{
 		$traverser = $this->traverser;
 		foreach ($this->visitors as $visitor)

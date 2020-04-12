@@ -95,7 +95,7 @@ class Scanner
 		$traverser->traverse(
 			$filename,
 			$nodes = $traverser->parse( $code ),
-			$this->storage
+			$this->index
 			);
 
 		return $nodes;
