@@ -37,11 +37,6 @@ abstract class Register_Abstract Implements \JsonSerializable
 	{
 		$key = (string) $key;
 		$this->register[ $key ] = $entity;
-		// if (empty($this->register[ $key ]))
-		// {
-		// 	$this->register[ $key ] = $entity;
-		// }
-
 		return $this;
 	}
 
