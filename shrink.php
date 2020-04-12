@@ -13,22 +13,10 @@ set_error_handler(function($severity, $message, $file, $line)
 
 use ShrinkPress\Build;
 
-$p = new Build\Entity\Funcs\WordPress_Func('p');
-
 $wp_source = __DIR__ . '/wordpress';
-Build\Verbose::level(4);
+Build\Assist\Verbose::level(4);
 
-$entity_source = Build\Entity\Source::instance();
-$entity_source->setSource(
-	new Build\Assist\Umbrella($wp_source)
-	);
-
-$entity_stash = \ShrinkPress\Build\Entity\Stash::instance();
-$entity_stash->setStash(
-	new \ShrinkPress\Build\Assist\Umbrella(__DIR__ . '/entities')
-	);
-
-$storage = new \ShrinkPress\Build\Storage\PDO(
+$index1 = new Build\Index\Index_PDO(
 	new PDO("mysql:host=127.0.0.1;dbname=wordpress;charset=utf8mb4",
 		'username',
 		'password',
@@ -37,7 +25,18 @@ $storage = new \ShrinkPress\Build\Storage\PDO(
 		PDO::ATTR_EMULATE_PREPARES => false,
 	)));
 
-$source = new \ShrinkPress\Build\Source($wp_source);
+$index2 = new Build\Index\Index_Stash(
+	new Build\Assist\Umbrella(__DIR__ . '/entities')
+);
+
+$index3 = new Build\Index\Index_Dummy;
+
+$index4 = new Build\Index\Index_Nested;
+$index4->addNested($index1);
+$index4->addNested($index2);
+$index4->addNested($index3);
+
+$index = $index2;
 
 if (in_array('scan', $argv))
 {
@@ -46,15 +45,17 @@ if (in_array('scan', $argv))
 		$storage->clean();
 	}
 
-	$scanner = new \ShrinkPress\Build\Parse\Scanner($source, $storage);
+	$source = new Build\Parse\Source($wp_source);
+	$scanner = new Build\Parse\Scanner($source, $index);
 	$scanner->scanFolder('wp-includes/');
 	// $scanner->scanFolder('');
 }
 
 if (in_array('build', $argv))
 {
-	$process = new \ShrinkPress\Build\Unparse\Builder;
-	$process->build($source, $storage);
+	$source = new Build\Unparse\Source($wp_source);
+	$process = new Build\Unparse\Builder;
+	$process->build($source, $index);
 }
 
 /////////////////////////////////////////////////////////////////////////////
