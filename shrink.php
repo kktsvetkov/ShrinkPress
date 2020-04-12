@@ -13,6 +13,8 @@ set_error_handler(function($severity, $message, $file, $line)
 
 use ShrinkPress\Build;
 
+$p = new Build\Entity\Funcs\WordPress_Func('p');
+
 $wp_source = __DIR__ . '/wordpress';
 Build\Verbose::level(4);
 
@@ -46,6 +48,7 @@ if (in_array('scan', $argv))
 
 	$scanner = new \ShrinkPress\Build\Parse\Scanner($source, $storage);
 	$scanner->scanFolder('wp-includes/');
+	// $scanner->scanFolder('');
 }
 
 if (in_array('build', $argv))
