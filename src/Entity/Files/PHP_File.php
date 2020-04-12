@@ -6,6 +6,8 @@ use ShrinkPress\Build\Entity;
 
 class PHP_File Extends File_Abstract
 {
+	public $size = 0;
+
 	protected $classes = array();
 
 	function addClass(Entity\Classes\Class_Entity $class)

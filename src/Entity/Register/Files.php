@@ -21,6 +21,7 @@ class Files extends Register_Abstract
 
 	function addFile(File_Entity $file)
 	{
+		Packages::instance()->addPackage($file)->save();
 		return $this->addEntity($file->filename(), $file);
 	}
 

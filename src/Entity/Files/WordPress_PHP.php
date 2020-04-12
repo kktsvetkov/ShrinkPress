@@ -7,6 +7,9 @@ use ShrinkPress\Build\Entity;
 
 class WordPress_PHP Extends PHP_File
 {
+	public $docPackage = '';
+	public $docSubPackage = '';
+
 	const factory_map = array(
 		':external' => External_Lib::class,
 		'wp-includes/compat.php' => Compat::class,

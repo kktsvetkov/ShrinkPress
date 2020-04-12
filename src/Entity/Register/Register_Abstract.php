@@ -36,10 +36,11 @@ abstract class Register_Abstract Implements \JsonSerializable
 	protected function addEntity($key, $entity)
 	{
 		$key = (string) $key;
-		if (empty($this->register[ $key ]))
-		{
-			$this->register[ $key ] = $entity;
-		}
+		$this->register[ $key ] = $entity;
+		// if (empty($this->register[ $key ]))
+		// {
+		// 	$this->register[ $key ] = $entity;
+		// }
 
 		return $this;
 	}
