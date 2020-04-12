@@ -12,18 +12,36 @@ class Index_Stash extends Index_Abstract
 	function __construct(Assist\Umbrella $umbrella)
 	{
 		$this->umbrella = $umbrella;
+
+		// restore ?
+		//
+		$registers = array('files', 'functions');
+		foreach ($registers as $entityType)
+		{
+			if ($keys = $this->stashLoad( $entityType . '.json' ))
+			{
+				$this->keys[ $entityType ] = $keys;
+			}
+		}
 	}
 
-	protected function stashFilename($entityType)
-	{
-		$entityType = (string) $entityType;
-		return 'register.' . $entityType . '.json';
-	}
+	protected $keys = [];
 
 	protected function stashEntityFilename($entityType, $entityName)
 	{
 		$entityType = (string) $entityType;
 		$entityName = (string) $entityName;
+
+		if (!isset($this->keys[ $entityType ]))
+		{
+			$this->keys[ $entityType ] = array();
+		}
+
+		if (empty($this->keys[ $entityType ][ $entityName ]))
+		{
+			$this->keys[ $entityType ][ $entityName ] = time();
+		}
+
 		return $entityType . '/' . $entityName . '.json';
 	}
 
@@ -32,35 +50,95 @@ class Index_Stash extends Index_Abstract
 		$stashFilename = (string) $stashFilename;
 		if (!$this->umbrella->exists( $stashFilename ))
 		{
-			return false;
+			return [];
 		}
 
 		if (!$json = $this->umbrella->read( $stashFilename ))
 		{
-			return false;
+			return [];
 		}
 
 		return (array) json_decode($json, true);
 	}
 
+	const json_encode_options = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES;
+
+	protected function stashSave($entityType, $entityName, $entity)
+	{
+		$entityType = (string) $entityType;
+		$entityName = (string) $entityName;
+
+		$stashEntityFilename = $this->stashEntityFilename($entityType, $entityName);
+
+		$data = $entity->jsonSerialize();
+		$data[':class'] = get_class($entity);
+
+		$this->umbrella->write(
+			$stashEntityFilename,
+			json_encode( $data, self::json_encode_options )
+			);
+
+		$this->umbrella->write(
+			$entityType . '.json',
+			json_encode( $this->keys[ $entityType ], self::json_encode_options )
+			);
+
+		return $this;
+	}
+
 	function getFiles()
 	{
-		return $this->stashLoad( $this->stashFilename('files') );
+		return $this->stashLoad( 'files.json' );
 	}
 
 	function readFile( $filename )
 	{
-		return false;
+		$data = $this->stashLoad( $this->stashEntityFilename('files', $filename) );
+		if (!empty($data[':class']))
+		{
+			$entity = new $data[':class']( $filename );
+		} else
+		{
+			$entity = Entity\Files\WordPress_PHP::factory( $filename );
+		}
+
+		return $entity->load( $data );
 	}
 
 	function writeFile( Entity\Files\File_Entity $entity )
 	{
+		return $this->stashSave( 'files', $entity->filename(), $entity);
+	}
 
+	function getPackages()
+	{
+		return $this->stashLoad( 'packages.json' );
+	}
+
+	function readPackage( $packageName )
+	{
+		$data = $this->stashLoad(
+			$this->stashEntityFilename('packages', $packageName)
+			);
+		if (!empty($data[':class']))
+		{
+			$entity = new $data[':class']( $packageName );
+		} else
+		{
+			$entity = new Entity\Packages\WordPress_Package( $packageName );
+		}
+
+		return $entity->load( $data );
+	}
+
+	function writePackage( Entity\Packages\Package_Entity $entity )
+	{
+		return $this->stashSave( 'packages', $entity->packageName(), $entity);
 	}
 
 	function getClasses()
 	{
-		return $this->stashLoad( $this->stashFilename('classes') );
+		return $this->stashLoad( 'classes.json' );
 	}
 
 	function readClass( $className )
@@ -75,7 +153,7 @@ class Index_Stash extends Index_Abstract
 
 	function getIncludes()
 	{
-		return $this->stashLoad( $this->stashFilename('includes') );
+		return $this->stashLoad( 'includes.json' );
 	}
 
 	function readIncludes( $includedFile )
@@ -90,7 +168,7 @@ class Index_Stash extends Index_Abstract
 
 	function getGlobals()
 	{
-		return $this->stashLoad( $this->stashFilename('globals') );
+		return $this->stashLoad( 'globals.json' );
 	}
 
 	function readGlobal( $globalName )
@@ -105,17 +183,28 @@ class Index_Stash extends Index_Abstract
 
 	function getFunctions()
 	{
-		return $this->stashLoad( $this->stashFilename('functions') );
+		return $this->stashLoad( 'functions.json' );
 	}
 
 	function readFunction( $functionName )
 	{
-		return false;
+		$data = $this->stashLoad(
+			$this->stashEntityFilename('functions', $functionName)
+			);
+		if (!empty($data[':class']))
+		{
+			$entity = new $data[':class']( $functionName );
+		} else
+		{
+			$entity = new Entity\Funcs\WordPress_Func( $functionName );
+		}
+
+		return $entity->load( $data );
 	}
 
 	function writeFunction( Entity\Funcs\Function_Entity $entity )
 	{
-
+		return $this->stashSave( 'functions', $entity->functionName(), $entity);
 	}
 
 	function readCalls( $functionName )

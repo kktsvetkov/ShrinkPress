@@ -67,6 +67,21 @@ class Index_Nested extends Index_Abstract
 		return $this->nestedAll( __FUNCTION__, $entity );
 	}
 
+	function getPackages()
+	{
+		return $this->nestedFirst( __FUNCTION__ );
+	}
+
+	function readPackage( $packageName )
+	{
+		return $this->nestedFirst( __FUNCTION__, $packageName );
+	}
+
+	function writePackage( Entity\Packages\Package_Entity $entity )
+	{
+		return $this->nestedAll( __FUNCTION__, $entity );
+	}
+
 	function getClasses()
 	{
 		return $this->nestedFirst( __FUNCTION__);

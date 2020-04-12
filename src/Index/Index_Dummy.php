@@ -21,6 +21,21 @@ class Index_Dummy extends Index_Abstract
 
 	}
 
+	function getPackages()
+	{
+		return [];
+	}
+
+	function readPackage( $packageName )
+	{
+		return new Entity\Packages\WordPress_Package( $packageName );
+	}
+
+	function writePackage( Entity\Packages\Package_Entity $entity )
+	{
+
+	}
+
 	function getClasses()
 	{
 		return [];

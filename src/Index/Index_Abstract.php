@@ -10,6 +10,34 @@ abstract class Index_Abstract
 	abstract function readFile( $filename );
 	abstract function writeFile( Entity\Files\File_Entity $entity );
 
+	abstract function getPackages();
+	abstract function readPackage( $packageName );
+	abstract function writePackage( Entity\Packages\Package_Entity $entity );
+	function getPackage( $packageName )
+	{
+		if ($entity = $this->readPackage( $packageName ))
+		{
+			return $entity;
+		}
+
+		return new Entity\Packages\WordPress_Package( $packageName );
+	}
+	function fullPackageName(Entity\Files\File_Entity $entity)
+	{
+		if (empty($entity->docPackage))
+		{
+			return 'Unknown';
+		}
+
+		$fullPackageName = $entity->docPackage
+			. ($entity->docSubPackage
+				? ".{$entity->docSubPackage}"
+				: ''
+			);
+
+		return $fullPackageName;
+	}
+
 	abstract function getClasses();
 	abstract function readClass( $className );
 	abstract function writeClass( Entity\Classes\Class_Entity $entity );
