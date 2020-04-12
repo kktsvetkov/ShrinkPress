@@ -3,6 +3,7 @@
 namespace ShrinkPress\Build\Entity\Register;
 
 use ShrinkPress\Build\Entity\Funcs\Function_Entity;
+use ShrinkPress\Build\Entity\Funcs\WordPress_Func;
 use ShrinkPress\Build\Assist;
 
 class Functions extends Register_Abstract
@@ -24,9 +25,15 @@ class Functions extends Register_Abstract
 		return $this->addEntity($func->functionName(), $func);
 	}
 
-	function getFunction($func)
+	function getFunction($functionName)
 	{
-		return $this->getEntity( $func );
+		if ($entity = $this->getEntity( $functionName ))
+		{
+			return $entity;
+		}
+
+		$this->addFunction( $entity = new WordPress_Func( $functionName ) );
+		return $entity;
 	}
 
 	protected function stashEntityFilename($key)
