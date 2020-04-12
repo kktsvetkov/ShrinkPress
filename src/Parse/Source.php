@@ -6,12 +6,6 @@ use ShrinkPress\Build\Assist;
 
 class Source Extends Assist\Umbrella
 {
-	function read($filename)
-	{
-		Assist\Verbose::log("Read: {$filename}", 3);
-		return parent::read($filename);
-	}
-
 	function write($filename, $contents)
 	{
 		throw new \RuntimeException(

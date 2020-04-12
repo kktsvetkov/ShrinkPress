@@ -3,11 +3,11 @@
 namespace ShrinkPress\Build\Parse\Visitor;
 
 use PhpParser\Node;
-use ShrinkPress\Build\Verbose;
-use ShrinkPress\Build\Storage;
-use ShrinkPress\Build\Entity\Register;
 
-class Functions extends VisitorAbstract
+use ShrinkPress\Build\Assist;
+use ShrinkPress\Build\Index;
+
+class Functions extends Visitor_Abstract
 {
 	function leaveNode(Node $node)
 	{
@@ -16,8 +16,8 @@ class Functions extends VisitorAbstract
 			return;
 		}
 
+		$functionName = (string) $node->name;
 		$found = array(
-			'functionName' => (string) $node->name,
 			'startLine' => $node->getStartLine(),
 			'endLine' => $node->getEndLine(),
 			'docCommentLine' => 0,
@@ -28,44 +28,24 @@ class Functions extends VisitorAbstract
 			$found['docCommentLine'] = $docComment->getLine();
 		}
 
-		$this->result[] = $found;
+		$this->result[ $functionName ] = $found;
 	}
 
-	function flush(array $result, Storage\StorageAbstract $storage)
+	function flush(array $result, Index\Index_Abstract $index)
 	{
-		foreach($result as $found)
+		foreach($result as $functionName => $found)
 		{
-			Verbose::log(
-				"Function: {$found['functionName']}() at "
+			Assist\Verbose::log(
+				"Function: {$functionName}() at "
 				 	. $this->filename . ':'
 					. $found['startLine'],
 				1);
 
-			// new function entity
-			//
-			$func_entity = Register\Functions::instance()->getFunction(
-				$found['functionName']
-				);
-			$func_entity->load(array(
-				'filename' => $this->filename,
-				'startLine' => $found['startLine'],
-				'endLine' => $found['endLine'],
-				'docCommentLine' => $found['docCommentLine'],
-			));
-			$this->getFile()->addFunction( $func_entity );
+			$entity = $index->getFunction( $functionName )->load( $found );
+			$index->writeFunction( $entity );
 
-			// old function entity
-			//
-			$entity = $storage->readFunction( $found['functionName'] );
-
-			$entity->filename = $this->filename;
-			$entity->line = $found['startLine'];
-			$entity->end = $found['endLine'];
-
-			$entity->functionName = $found['functionName'];
-			$entity->docCommentLine = $found['docCommentLine'];
-
-			$storage->writeFunction( $entity );
+			$file = $index->readFile( $this->filename )->addFunction( $entity );
+			$index->writeFile( $file );
 		}
 	}
 }

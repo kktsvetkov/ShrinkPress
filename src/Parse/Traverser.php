@@ -22,23 +22,23 @@ class Traverser
 	function __construct()
 	{
 		$this->visitors[] = new Visitor\Functions;
-		$this->visitors[] = new Visitor\Calls;
-		$this->visitors[] = new Visitor\Hooks;
-		$this->visitors[] = new Visitor\Classes;
-		$this->visitors[] = new Visitor\Globals;
-		$this->visitors[] = new Visitor\Includes;
+		// $this->visitors[] = new Visitor\Calls;
+		// $this->visitors[] = new Visitor\Hooks;
+		// $this->visitors[] = new Visitor\Classes;
+		// $this->visitors[] = new Visitor\Globals;
+		// $this->visitors[] = new Visitor\Includes;
 
 		$this->traverser = new NodeTraverser;
 		$this->parser = (new ParserFactory)
 			->create(ParserFactory::PREFER_PHP7);
 	}
 
-	function traverse( $filename, array $nodes, Index\Index_Abstract $storage)
+	function traverse( $filename, array $nodes, Index\Index_Abstract $index)
 	{
 		$traverser = $this->traverser;
 		foreach ($this->visitors as $visitor)
 		{
-			$visitor->load( $filename, $storage );
+			$visitor->load( $filename, $index );
 
 			$traverser->addVisitor( $visitor );
 			$traverser->traverse( $nodes );
