@@ -36,19 +36,23 @@ $index4->addNested($index1);
 $index4->addNested($index2);
 $index4->addNested($index3);
 
-$index = $index3;
+$index = $index2;
 
 if (in_array('scan', $argv))
 {
 	if (in_array('clean', $argv))
 	{
-		$storage->clean();
+		$index->clean();
 	}
 
 	$source = new Build\Parse\Source($wp_source);
 	$scanner = new Build\Parse\Scanner($source, $index);
 	$scanner->scanFolder('wp-includes/');
 	// $scanner->scanFolder('');
+
+	echo "\nFiles: ", count( $index->getFiles() ), " found.\n";
+	echo "\nPackages: ", count( $index->getPackages() ), " found.\n";
+	echo "\nFunctions: ", count( $index->getFunctions() ), " found.\n";
 }
 
 if (in_array('build', $argv))
