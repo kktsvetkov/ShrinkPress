@@ -61,7 +61,7 @@
 * extract core parts as plugins
 * plugins dependencies
 * alternative updates/downloads
-* composer dependencies downloads 
+* composer dependencies downloads
 
 ## Types of PHP files in WordPress
 
@@ -83,6 +83,26 @@ file-based process would seem to work on different versions of the project.
 * wp-includes/compat.php: polyfills for different PHP versions
 * wp-includes/widgets/ widget definitions
 * deprecated file
+
+## Types of operations
+
+When starting to shrink, what type of operations will be needed
+
+* define a package: create composer package inside the project for hosting moved classes, migrated functions into class methods, and migrated globals into static vars
+
+* replace class: replace a class name with a new one for all original class occurrences; files will receive "use" statements for the class so that only the basic className is used inside the code
+
+* move class: out of wp-includes or wp-admin/wp-includes, without renaming it, and put it under a package (library) WITHOUT using a new namespace;
+
+* migrate class: like moving a class, but use a new className and put it under a namespace; afterwards replace all class occurrences in the code
+
+* replace function: replace a function with a new static method in all direct call occurrences and all hook references.
+
+* migrate function: replace a function with a static class method in all original function occurrences; files will receive "use" statements for the class hosting the static method, so that only the basic className is used along with the method in the code
+
+* migrate global: replace a global var with a static class property in all original global var occurrences; files will receive "use" statements for the class hosting the static property to make it so that only the basic className is used inside the code
+
+* drop include: after all the migration check the modified files to find if there are empty ones, and if there are, remove all include/include_once/require/require_once occurences for these files
 
 ## Shrinking: Classes
 
