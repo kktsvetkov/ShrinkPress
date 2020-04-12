@@ -41,6 +41,15 @@ abstract class Index_Abstract
 	abstract function getClasses();
 	abstract function readClass( $className );
 	abstract function writeClass( Entity\Classes\Class_Entity $entity );
+	function getClass( $className )
+	{
+		if ($entity = $this->readClass( $className ))
+		{
+			return $entity;
+		}
+
+		return new Entity\Classes\WordPress_Class( $className );
+	}
 
 	abstract function getIncludes();
 	abstract function readIncludes( $includedFile );

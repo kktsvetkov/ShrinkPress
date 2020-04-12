@@ -143,12 +143,23 @@ class Index_Stash extends Index_Abstract
 
 	function readClass( $className )
 	{
-		return false;
+		$data = $this->stashLoad(
+			$this->stashEntityFilename('classes', $className)
+			);
+		if (!empty($data[':class']))
+		{
+			$entity = new $data[':class']( $className );
+		} else
+		{
+			$entity = new Entity\Classes\WordPress_Class( $className );
+		}
+
+		return $entity->load( $data );
 	}
 
 	function writeClass( Entity\Classes\Class_Entity $entity )
 	{
-
+		return $this->stashSave( 'classes', $entity->className(), $entity);
 	}
 
 	function getIncludes()
