@@ -2,6 +2,8 @@
 
 namespace ShrinkPress\Build\Parse;
 
+use ShrinkPress\Build\Assist;
+use ShrinkPress\Build\Entity;
 use ShrinkPress\Build\Storage;
 use ShrinkPress\Build\Source;
 use ShrinkPress\Build\Verbose;
@@ -88,10 +90,17 @@ class Scanner
 	{
 		Verbose::log("Scan: {$filename}", 1);
 
+		$code = $this->source->read( $filename );
+
+		$entity_file = Entity\Files\WordPress_PHP::factory( $filename );
+		$entity_file->size = strlen($code);
+		Assist\Code::extractPackage($code, $entity_file);
+		Entity\Register\Files::instance()->addFile($entity_file);
+
 		$traverser = $this->traverser;
 		$traverser->traverse(
 			$filename,
-			$nodes = $traverser->parse( $this->source->read( $filename ) ),
+			$nodes = $traverser->parse( $code ),
 			$this->storage
 			);
 
