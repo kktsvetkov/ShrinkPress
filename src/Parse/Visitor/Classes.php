@@ -72,6 +72,7 @@ class Classes extends VisitorAbstract
 			//
 			$class_entity = new Entity\Classes\WordPress_Class( $found_class );
 			$class_entity->load(array(
+				'filename' => $this->filename,
 				'extends' => $found['extends'],
 				'startLine' => $found['startLine'],
 				'endLine' => $found['endLine'],

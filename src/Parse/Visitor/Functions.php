@@ -5,6 +5,7 @@ namespace ShrinkPress\Build\Parse\Visitor;
 use PhpParser\Node;
 use ShrinkPress\Build\Verbose;
 use ShrinkPress\Build\Storage;
+use ShrinkPress\Build\Entity;
 
 class Functions extends VisitorAbstract
 {
@@ -40,6 +41,19 @@ class Functions extends VisitorAbstract
 					. $found['startLine'],
 				1);
 
+			// new function entity
+			//
+			$func_entity = new Entity\Funcs\WordPress_Func( $found['functionName'] );
+			$func_entity->load(array(
+				'filename' => $this->filename,
+				'startLine' => $found['startLine'],
+				'endLine' => $found['endLine'],
+				'docCommentLine' => $found['docCommentLine'],
+			));
+			$this->getFile()->addFunction( $func_entity );
+
+			// old function entity
+			//
 			$entity = $storage->readFunction( $found['functionName'] );
 
 			$entity->filename = $this->filename;
