@@ -15,7 +15,16 @@ class PHP_File Extends File_Abstract
 		$class->filename = $this->filename();
 		$this->classes[ $class->className() ] = $class->startLine;
 
-		$entity_classes_register = Entity\Register\Classes::instance();
-		$entity_classes_register->addClass($class)->save();
+		Entity\Register\Classes::instance()->addClass($class)->save();
+	}
+
+	protected $functions = array();
+
+	function addFunction(Entity\Funcs\Function_Entity $func)
+	{
+		$func->filename = $this->filename();
+		$this->functions[ $func->functionName() ] = $func->startLine;
+
+		Entity\Register\Functions::instance()->addFunction($func)->save();
 	}
 }
