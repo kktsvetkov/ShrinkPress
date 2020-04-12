@@ -13,7 +13,7 @@ class PHP_File Extends File_Abstract
 		$class->filename = $this->filename();
 		$this->classes[ $class->className() ] = $class->startLine;
 
-		Entity\Register\Classes::instance()->addClass($class)->save();
+		return $this;
 	}
 
 	protected $functions = array();
@@ -23,6 +23,6 @@ class PHP_File Extends File_Abstract
 		$func->filename = $this->filename();
 		$this->functions[ $func->functionName() ] = $func->startLine;
 
-		Entity\Register\Functions::instance()->addFunction($func)->save();
+		return $this;
 	}
 }

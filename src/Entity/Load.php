@@ -13,6 +13,8 @@ trait Load
 				$this->$k = $v;
 			}
 		}
+
+		return $this;
 	}
 
 	function jsonSerialize()
