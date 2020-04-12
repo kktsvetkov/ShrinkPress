@@ -8,7 +8,7 @@ class Source Extends Assist\Umbrella
 {
 	function read($filename)
 	{
-		Verbose::log("Read: {$filename}", 3);
+		Assist\Verbose::log("Read: {$filename}", 3);
 		return parent::read($filename);
 	}
 
