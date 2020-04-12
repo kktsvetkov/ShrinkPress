@@ -84,12 +84,18 @@ class Scanner
 	function scanFile($filename)
 	{
 		Assist\Verbose::log("Scan: {$filename}", 1);
-		$entity_file = Entity\Files\WordPress_PHP::factory( $filename );
+		$entity = Entity\Files\WordPress_PHP::factory( $filename );
 
 		$code = $this->source->read( $filename );
-		Assist\Code::extractPackage($code, $entity_file);
+		Assist\Code::extractPackage($code, $entity);
 
-		$this->index->writeFile($entity_file);
+		$this->index->writeFile( $entity );
+		if ($fullPackageName = $this->index->fullPackageName($entity))
+		{
+			$package = $this->index->getPackage( $fullPackageName );
+			$package->addFile( $entity );
+			$this->index->writePackage( $package );
+		}
 
 		$traverser = Traverser::instance();
 		$traverser->traverse(
