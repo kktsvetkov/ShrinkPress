@@ -36,7 +36,7 @@ $index4->addNested($index1);
 $index4->addNested($index2);
 $index4->addNested($index3);
 
-$index = $index2;
+$index = $index3;
 
 if (in_array('scan', $argv))
 {
