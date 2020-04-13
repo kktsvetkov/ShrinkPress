@@ -169,12 +169,23 @@ class Index_Stash extends Index_Abstract
 
 	function readIncludes( $includedFile )
 	{
-		return false;
+		$data = $this->stashLoad(
+			$this->stashEntityFilename('includes', $includedFile)
+			);
+		if (!empty($data[':class']))
+		{
+			$entity = new $data[':class']( $includedFile );
+		} else
+		{
+			$entity = new Entity\Includes\WordPress_Include( $includedFile );
+		}
+
+		return $entity->load( $data );
 	}
 
 	function writeInclude( Entity\Includes\Include_Entity $entity )
 	{
-
+		return $this->stashSave( 'includes', $entity->includedFile(), $entity);
 	}
 
 	function getGlobals()
