@@ -10,9 +10,7 @@ class PHP_File Extends File_Abstract
 
 	function addClass(Entity\Classes\Class_Entity $class)
 	{
-		$class->filename = $this->filename();
 		$this->classes[ $class->className() ] = $class->startLine;
-
 		return $this;
 	}
 
@@ -20,9 +18,15 @@ class PHP_File Extends File_Abstract
 
 	function addFunction(Entity\Funcs\Function_Entity $func)
 	{
-		$func->filename = $this->filename();
 		$this->functions[ $func->functionName() ] = $func->startLine;
+		return $this;
+	}
 
+	protected $globals = array();
+
+	function addGlobal(Entity\Globals\Global_Entity $global, $line)
+	{
+		$this->globals[ $global->globalName() ] = (int) $line;
 		return $this;
 	}
 }
