@@ -50,10 +50,11 @@ if (in_array('scan', $argv))
 	$scanner->scanFolder('wp-includes/');
 	// $scanner->scanFolder('');
 
-	echo "Files: ", count( $index->getFiles() ), " found.\n";
-	echo "Packages: ", count( $index->getPackages() ), " found.\n";
-	echo "Functions: ", count( $index->getFunctions() ), " found.\n";
-	echo "Classes: ", count( $index->getClasses() ), " found.\n";
+	echo "Files: ", count( $index->getFiles() ), " found\n";
+	echo "Packages: ", count( $index->getPackages() ), " found\n";
+	echo "Functions: ", count( $index->getFunctions() ), " found\n";
+	echo "Classes: ", count( $index->getClasses() ), " found\n";
+	echo "Globals: ", count( $index->getGlobals() ), " found\n";
 }
 
 if (in_array('build', $argv))
