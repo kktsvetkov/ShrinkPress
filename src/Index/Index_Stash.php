@@ -184,12 +184,23 @@ class Index_Stash extends Index_Abstract
 
 	function readGlobal( $globalName )
 	{
-		return false;
+		$data = $this->stashLoad(
+			$this->stashEntityFilename('globals', $globalName)
+			);
+		if (!empty($data[':class']))
+		{
+			$entity = new $data[':class']( $globalName );
+		} else
+		{
+			$entity = new Entity\Globals\WordPress_Global( $globalName );
+		}
+
+		return $entity->load( $data );
 	}
 
 	function writeGlobal( Entity\Globals\Global_Entity $entity )
 	{
-
+		return $this->stashSave( 'globals', $entity->globalName(), $entity);
 	}
 
 	function getFunctions()
