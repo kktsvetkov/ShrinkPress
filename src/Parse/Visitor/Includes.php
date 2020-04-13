@@ -3,11 +3,11 @@
 namespace ShrinkPress\Build\Parse\Visitor;
 
 use PhpParser\Node;
-use ShrinkPress\Build\Verbose;
-use ShrinkPress\Build\Storage;
-use ShrinkPress\Build\Parse\Entity\WpInclude;
 
-class Includes extends VisitorAbstract
+use ShrinkPress\Build\Index;
+use ShrinkPress\Build\Assist;
+
+class Includes extends Visitor_Abstract
 {
 	const include_type = array(
 		Node\Expr\Include_::TYPE_INCLUDE => 'include',
@@ -136,26 +136,28 @@ class Includes extends VisitorAbstract
 		return $includeFolder;
 	}
 
-	function flush(array $result, Storage\StorageAbstract $storage)
+	function flush(array $result, Index\Index_Abstract $index)
 	{
+		$file = $index->readFile( $this->filename );
+
 		foreach($result as $found)
 		{
-			Verbose::log(
+			Assist\Verbose::log(
 				"Included ({$found['includeType']}): {$found['includedFile']} at "
 				 	. $this->filename . ':'
 					. $found['startLine'],
 				1);
 
-			$entity = new WpInclude( $found['includedFile'] );
-
-			$entity->filename = $this->filename;
-			$entity->line = $found['startLine'];
-
-			$entity->includedFile = ltrim($found['includedFile'], '/');
-			$entity->includeType = $found['includeType'];
-			$entity->docCommentLine = $found['docCommentLine'];
-
-			$storage->writeInclude( $entity );
+			$entity = $index->readIncludes( $found['includedFile'] );
+			$entity->addInclude(
+				$file,
+				$found['startLine'],
+				$found['docCommentLine'],
+				$found['includeType']
+				);
+			$index->writeInclude($entity);
 		}
+
+		$index->writeFile( $file );
 	}
 }

@@ -6,7 +6,6 @@ use PhpParser\Node;
 
 use ShrinkPress\Build\Index;
 use ShrinkPress\Build\Assist;
-use ShrinkPress\Build\Entity;
 
 class Globals extends Visitor_Abstract
 {
