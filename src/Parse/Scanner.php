@@ -92,7 +92,7 @@ class Scanner
 		$this->index->writeFile( $entity );
 		if ($fullPackageName = $this->index->fullPackageName($entity))
 		{
-			$package = $this->index->getPackage( $fullPackageName );
+			$package = $this->index->readPackage( $fullPackageName );
 			$package->addFile( $entity );
 			$this->index->writePackage( $package );
 		}

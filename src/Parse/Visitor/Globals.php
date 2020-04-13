@@ -3,12 +3,18 @@
 namespace ShrinkPress\Build\Parse\Visitor;
 
 use PhpParser\Node;
-use ShrinkPress\Build\Storage;
-use ShrinkPress\Build\Verbose;
-use ShrinkPress\Build\Parse\Entity\WpGlobal;
 
-class Globals extends VisitorAbstract
+use ShrinkPress\Build\Index;
+use ShrinkPress\Build\Assist;
+use ShrinkPress\Build\Entity;
+
+class Globals extends Visitor_Abstract
 {
+	const ignore = array(
+		'HTTP_RAW_POST_DATA',
+		'PHP_SELF',
+		);
+
 	function leaveNode(Node $node)
 	{
 		if ($node instanceof Node\Expr\ArrayDimFetch)
@@ -32,10 +38,8 @@ class Globals extends VisitorAbstract
 	{
 		foreach ($node->vars as $global)
 		{
-			$this->result[] = array(
-				'globalName' => (string) $global->name,
+			$this->result[ (string) $global->name ][] = array(
 				'globalType' => 'keyword',
-				'filename' => $this->filename,
 				'startLine' => $global->getStartLine(),
 			);
 		}
@@ -53,36 +57,42 @@ class Globals extends VisitorAbstract
 			$globalName = (string) $node->dim->value;
 		}
 
-		if (!$globalName)
-		{
-			var_dump($node);exit;
-		}
-
-		$this->result[] = array(
-			'globalName' => $globalName,
+		$this->result[ $globalName ][] = array(
 			'globalType' => 'array',
-			'filename' => $this->filename,
 			'startLine' => $node->dim->getStartLine(),
 			);
 	}
 
-	function flush(array $result, Storage\StorageAbstract $storage)
+	function flush(array $result, Index\Index_Abstract $index)
 	{
-		foreach($result as $found)
+		$file = $index->readFile( $this->filename );
+
+		foreach($result as $globalName => $mentions)
 		{
-			Verbose::log(
-				"Global: \${$found['globalName']} at "
-				 	. $this->filename . ':'
-					. $found['startLine'],
-				1);
+			if (in_array($globalName, self::ignore))
+			{
+				continue;
+			}
 
-			$entity = new WpGlobal( $found['globalName'] );
+			$entity = $index->readGlobal( $globalName );
+			foreach ($mentions as $found)
+			{
+				Assist\Verbose::log(
+					"Global: \${$globalName} at "
+					 	. $this->filename . ':'
+						. $found['startLine'],
+					1);
 
-			$entity->filename = $this->filename;
-			$entity->line = $found['startLine'];
-			$entity->globalType = $found['globalType'];
+				$entity->addMention(
+					$file,
+					$found['startLine'],
+					$found['globalType']
+					);
+			}
 
-			$storage->writeGlobal( $entity );
+			$index->writeGlobal( $entity );
 		}
+
+		$index->writeFile( $file );
 	}
 }

@@ -58,6 +58,8 @@ class Classes extends Visitor_Abstract
 
 	function flush(array $result, Index\Index_Abstract $index)
 	{
+		$file = $index->readFile( $this->filename );
+
 		foreach($result as $className => $found)
 		{
 			$fullClassName = (!empty($found['namespace'])
@@ -70,11 +72,11 @@ class Classes extends Visitor_Abstract
 					. $found['startLine'],
 				1);
 
-			$entity = $index->getClass( $fullClassName )->load( $found );
+			$entity = $index->readClass( $fullClassName )->load( $found );
 			$index->writeClass( $entity );
-
-			$file = $index->readFile( $this->filename )->addClass( $entity );
-			$index->writeFile( $file );
+			$file->addClass( $entity );
 		}
+
+		$index->writeFile( $file );
 	}
 }

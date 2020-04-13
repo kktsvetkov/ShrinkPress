@@ -33,6 +33,8 @@ class Functions extends Visitor_Abstract
 
 	function flush(array $result, Index\Index_Abstract $index)
 	{
+		$file = $index->readFile( $this->filename );
+
 		foreach($result as $functionName => $found)
 		{
 			Assist\Verbose::log(
@@ -41,11 +43,11 @@ class Functions extends Visitor_Abstract
 					. $found['startLine'],
 				1);
 
-			$entity = $index->getFunction( $functionName )->load( $found );
+			$entity = $index->readFunction( $functionName )->load( $found );
 			$index->writeFunction( $entity );
-
-			$file = $index->readFile( $this->filename )->addFunction( $entity );
-			$index->writeFile( $file );
+			$file->addFunction( $entity );
 		}
+
+		$index->writeFile( $file );
 	}
 }
