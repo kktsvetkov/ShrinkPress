@@ -29,4 +29,12 @@ class PHP_File Extends File_Abstract
 		$this->globals[ $global->globalName() ] = (int) $line;
 		return $this;
 	}
+
+	protected $includes = array();
+
+	function addInclude(Entity\Includes\Include_Entity $include, $line)
+	{
+		$this->includes[ $include->includedFile() ] = (int) $line;
+		return $this;
+	}
 }
