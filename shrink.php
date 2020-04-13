@@ -55,6 +55,7 @@ if (in_array('scan', $argv))
 	echo "Functions: ", count( $index->getFunctions() ), " found\n";
 	echo "Classes: ", count( $index->getClasses() ), " found\n";
 	echo "Globals: ", count( $index->getGlobals() ), " found\n";
+	echo "Included: ", count( $index->getIncludes() ), " found\n";
 }
 
 if (in_array('build', $argv))
