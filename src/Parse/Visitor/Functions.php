@@ -18,6 +18,7 @@ class Functions extends Visitor_Abstract
 
 		$functionName = (string) $node->name;
 		$found = array(
+			'filename' => $this->filename,
 			'startLine' => $node->getStartLine(),
 			'endLine' => $node->getEndLine(),
 			'docCommentLine' => 0,

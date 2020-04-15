@@ -3,13 +3,11 @@
 namespace ShrinkPress\Build\Parse\Visitor;
 
 use PhpParser\Node;
-use ShrinkPress\Build\Verbose;
-use ShrinkPress\Build\Storage;
+use ShrinkPress\Build\Assist;
 use ShrinkPress\Build\Entity;
-use ShrinkPress\Build\Assist\Internal;
-use ShrinkPress\Build\Parse\Entity\WpCall;
+use ShrinkPress\Build\Index;
 
-class Calls extends VisitorAbstract
+class Calls extends Visitor_Abstract
 {
 	function leaveNode(Node $node)
 	{
@@ -24,7 +22,7 @@ class Calls extends VisitorAbstract
 		}
 
 		$functionName = (string) $node->name;
-		if (Internal::isInternal( $functionName ))
+		if (Assist\Internal::isInternal( $functionName ))
 		{
 			return;
 		}
@@ -32,24 +30,21 @@ class Calls extends VisitorAbstract
 		$this->result[ $functionName ][] = $node->getLine();
 	}
 
-	function flush(array $result, Storage\StorageAbstract $storage)
+	function flush(array $result, Index\Index_Abstract $index)
 	{
 		foreach($result as $functionName => $lines)
 		{
-			$entity = new WpCall( $functionName );
-			$entity->filename = $this->filename;
-
-			$entity_func = Entity\Register\Functions::instance()->getFunction($functionName);
+			$entity = $index->readFunction( $functionName );
 
 			foreach ($lines as $line)
 			{
-				Verbose::log("Calls {$functionName}() at {$this->filename}:{$line}", 2);
-
-				$entity_func->addCall($this->filename, $line);
-
-				$entity->line = $line;
-				$storage->writeCall( $entity );
+				Assist\Verbose::log(
+					"Calls {$functionName}() at {$this->filename}:{$line}",
+					2);
+				$entity->addCall($this->filename, $line);
 			}
+
+			$index->writeFunction($entity);
 		}
 	}
 }
