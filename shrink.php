@@ -47,8 +47,8 @@ if (in_array('scan', $argv))
 
 	$source = new Build\Parse\Source($wp_source);
 	$scanner = new Build\Parse\Scanner($source, $index);
-	$scanner->scanFolder('wp-includes/');
-	// $scanner->scanFolder('');
+	// $scanner->scanFolder('wp-includes/');
+	$scanner->scanFolder('');
 
 	echo "Files: ", count( $index->getFiles() ), " found\n";
 	echo "Packages: ", count( $index->getPackages() ), " found\n";
