@@ -34,7 +34,7 @@
 
 * is it possible to make plugins have composer.json dependencies ? and install them upon installing the plugins.
 
-* collect @package and @subpackage values! those will help to organise the package
+* create a shrinkpress_pudding plugin for reporting number of included files, declared classes and functions 
 
 ## Phase 1
 
