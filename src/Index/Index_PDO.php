@@ -28,7 +28,9 @@ class Index_PDO extends Index_Abstract
 	static function all(\PDO $pdo, $key, $table)
 	{
 		$q = $pdo->query(
-			'SELECT ' . $key . ' FROM ' . $table . ' ORDER BY ' . $key
+			'SELECT ' . $key . ' FROM ' . $table
+				. ' GROUP BY ' . $key
+				. ' ORDER BY ' . $key
 			);
 
 		return $q->fetchAll($pdo::FETCH_COLUMN, 0);
@@ -109,7 +111,8 @@ class Index_PDO extends Index_Abstract
 
 	function writeGlobal( Entity\Globals\Global_Entity $entity )
 	{
-		return PDO\Globals::write($entity, $this->pdo);
+		PDO\Globals::write($entity, $this->pdo);
+		return $this;
 	}
 
 	function getFunctions()
@@ -144,18 +147,19 @@ class Index_PDO extends Index_Abstract
 
 	function writeCallbacks( Entity\Funcs\Function_Entity $entity )
 	{
-		return PDO\Callbacks::write($entity, $this->pdo);
+		PDO\Callbacks::write($entity, $this->pdo);
+		return $this;
 	}
 
 	function clean()
 	{
-		PDO\Files::clean($this->pdo);
-		PDO\Functions::clean($this->pdo);
+		// PDO\Files::clean($this->pdo);
+		// PDO\Functions::clean($this->pdo);
 		// PDO\Calls::clean($this->pdo);
 		// PDO\Callbacks::clean($this->pdo);
-		PDO\Classes::clean($this->pdo);
+		// PDO\Classes::clean($this->pdo);
 		// PDO\Includes::clean($this->pdo);
-		// PDO\Globals::clean($this->pdo);
+		PDO\Globals::clean($this->pdo);
 
 	}
 }
