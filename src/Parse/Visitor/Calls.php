@@ -44,7 +44,7 @@ class Calls extends Visitor_Abstract
 				$entity->addCall($this->filename, $line);
 			}
 
-			$index->writeFunction($entity);
+			$index->writeCalls($entity);
 		}
 	}
 }

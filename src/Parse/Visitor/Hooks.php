@@ -3,12 +3,11 @@
 namespace ShrinkPress\Build\Parse\Visitor;
 
 use PhpParser\Node;
-use ShrinkPress\Build\Verbose;
-use ShrinkPress\Build\Storage;
-use ShrinkPress\Build\Assist\Internal;
-use ShrinkPress\Build\Parse\Entity\WpCallback;
+use ShrinkPress\Build\Assist;
+use ShrinkPress\Build\Index;
+use ShrinkPress\Build\Entity;
 
-class Hooks extends VisitorAbstract
+class Hooks extends Visitor_Abstract
 {
 	const callback_functions = array(
 		'add_filter' => 1,
@@ -51,40 +50,43 @@ class Hooks extends VisitorAbstract
 		}
 
 		$callback = $node->args[ $arg_pos ]->value->value;
-		if (Internal::isInternal( $callback ))
+		if (Assist\Internal::isInternal( $callback ))
 		{
 			return;
 		}
 
-		$this->result[] = array(
+		$this->result[ $callback ][] = array(
+			'line' => $node->getLine(),
 			'hookName' => !empty($node->args[ 0 ]->value->value)
 				? $node->args[ 0 ]->value->value
 				: json_encode( $node->args[ 0 ] ),
-			'functionName' => $callback,
-			'line' => $node->getLine(),
 			'hookFunction' => $caller,
 			);
 	}
 
-	function flush(array $result, Storage\StorageAbstract $storage)
+	function flush(array $result, Index\Index_Abstract $index)
 	{
-		foreach($result as $found)
+		foreach($result as $callback => $calls)
 		{
-			Verbose::log(
-				"Callback: {$found['functionName']}() at "
-				 	. $this->filename . ':'
-					. $found['line'],
-				1);
+			$entity = $index->readFunction( $callback );
 
-			$entity = new WpCallback( $found['functionName'] );
+			foreach ($calls as $found)
+			{
+				Assist\Verbose::log(
+					"Callback: {$callback}() from '{$found['hookName']}' at "
+					 	. $this->filename . ':'
+						. $found['line'],
+					1);
 
-			$entity->filename = $this->filename;
-			$entity->line = $found['line'];
+				$entity->addCallback(
+					$this->filename,
+					$found['line'],
+					$found['hookName'],
+					$found['hookFunction']
+					);
+			}
 
-			$entity->hookName = $found['hookName'];
-			$entity->hookFunction = $found['hookFunction'];
-
-			$storage->writeCallback( $entity );
+			$index->writeCallbacks($entity);
 		}
 	}
 }
