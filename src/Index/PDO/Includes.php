@@ -1,57 +1,83 @@
 <?php
 
-namespace ShrinkPress\Build\Storage\PDO;
+namespace ShrinkPress\Build\Index\PDO;
 
-use ShrinkPress\Build\Parse\Entity;
-use ShrinkPress\Build\Storage;
+use ShrinkPress\Build\Entity;
+use ShrinkPress\Build\Index;
 
-class WpInclude
+class Includes
 {
-	static function write( Entity\WpInclude $entity, \PDO $pdo )
+	static function write( Entity\Includes\Include_Entity $entity, \PDO $pdo )
 	{
-		$sql = 'INSERT IGNORE INTO pdo_shrinkpress_includes
-			(includedFile, filename, line, includeType, docCommentLine)
-			VALUES (?, ?, ?, ?, ?); ';
+		$sql = 'INSERT IGNORE INTO shrinkpress_includes
+			(_class, includedFile, filename, line, docCommentLine, includeType)
+			VALUES (?, ?, ?, ?, ?, ?); ';
 
 		$q = $pdo->prepare($sql);
-		$q->execute([
-			$entity->includedFile,
-			$entity->filename,
-			$entity->line,
-			$entity->includeType,
-			$entity->docCommentLine,
-		]);
+		$data = $entity->jsonSerialize();
+
+		if (!empty($entity->pdo_includes_count))
+		{
+			$data['includes'] = array_slice(
+				$data['includes'],
+				$entity->pdo_includes_count
+				);
+		}
+
+		foreach ($data['includes'] as $include)
+		{
+			$q->execute([
+				get_class($entity),
+				$entity->includedFile(),
+				$include[0],
+				$include[1],
+				$include[2],
+				$include[3],
+			]);
+		}
 	}
 
 	static function read( $includedFile, \PDO $pdo )
 	{
-		$sql = 'SELECT * FROM pdo_shrinkpress_includes WHERE includedFile = ? ';
-
-		$q = $pdo->prepare( $sql );
+		$sql = 'SELECT * FROM shrinkpress_includes WHERE includedFile = ? ';
+		$q = $pdo->prepare($sql);
 		$q->execute([ (string) $includedFile ]);
 
-		$calls = $q->fetchAll($pdo::FETCH_ASSOC);
-		$result = array();
+		$includes = $q->rowCount()
+			? $q->fetchAll( $pdo::FETCH_ASSOC )
+			: array();
 
-		foreach ($calls as $call)
+		if (!empty($includes[0]['_class']))
 		{
-			$entity = new Entity\WpInclude( $call['includedFile'] );
-			$entity->filename = $call['filename'];
-			$entity->line = $call['line'];
-
-			$entity->includeType = $call['includeType'];
-			$entity->docCommentLine = $call['docCommentLine'];
-
-			$result[] = $entity;
+			$entity = new $includes[0]['_class']( $includedFile );
+		} else
+		{
+			$entity = new Entity\Includes\WordPress_Include( $includedFile );
 		}
 
-		return $result;
+		foreach ($includes as $include)
+		{
+			$file_entity = new Entity\Files\PHP_File( $include['filename'] );
+			$entity->addInclude($file_entity,
+				$include['line'],
+				$include['docCommentLine'],
+				$include['includeType']
+				);
+		}
+		$entity->pdo_includes_count = count( $includes );
+
+		return $entity;
+	}
+
+	static function all(\PDO $pdo)
+	{
+		return Index\Index_PDO::all( $pdo, 'includedFile', 'shrinkpress_includes' );
 	}
 
 	static function clean(\PDO $pdo)
 	{
-		$pdo->prepare(' DROP TABLE IF EXISTS pdo_shrinkpress_includes; ')->execute();
-		$pdo->prepare('CREATE TABLE pdo_shrinkpress_includes (
+		$pdo->prepare(' DROP TABLE IF EXISTS shrinkpress_includes; ')->execute();
+		$pdo->prepare('CREATE TABLE shrinkpress_includes (
 				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				includedFile varchar(255) NOT NULL,
 				filename varchar(255) NOT NULL DEFAULT "",
@@ -62,6 +88,7 @@ class WpInclude
 					"include_once",
 					"require",
 					"require_once") NOT NULL DEFAULT "require_once",
+				_class varchar(255) NOT NULL DEFAULT "",
 			PRIMARY KEY (id),
 			UNIQUE KEY origin (includedFile, filename, line),
 			KEY includedFile (includedFile)

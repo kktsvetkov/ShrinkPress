@@ -158,8 +158,8 @@ class Index_PDO extends Index_Abstract
 		// PDO\Calls::clean($this->pdo);
 		// PDO\Callbacks::clean($this->pdo);
 		// PDO\Classes::clean($this->pdo);
-		// PDO\Includes::clean($this->pdo);
-		PDO\Globals::clean($this->pdo);
+		PDO\Includes::clean($this->pdo);
+		// PDO\Globals::clean($this->pdo);
 
 	}
 }
