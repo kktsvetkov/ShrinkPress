@@ -14,25 +14,45 @@ class Index_PDO extends Index_Abstract
 		$this->pdo = $pdo;
 	}
 
+	static function exists(\PDO $pdo, $key, $value, $table )
+	{
+		$sql = 'SELECT * FROM ' . $table . ' WHERE ' . $key . ' = ? LIMIT 0, 1';
+		$q = $pdo->prepare($sql);
+		$q->execute([ (string) $value ]);
+
+		return $q->rowCount()
+			? $q->fetch( $pdo::FETCH_ASSOC )
+			: array();
+	}
+
+	static function all(\PDO $pdo, $key, $table)
+	{
+		$q = $pdo->query(
+			'SELECT ' . $key . ' FROM ' . $table . ' ORDER BY ' . $key
+			);
+
+		return $q->fetchAll($pdo::FETCH_COLUMN, 0);
+	}
 
 	function getFiles()
 	{
-		return [];
+		return PDO\Files::all($this->pdo);
 	}
 
 	function readFile( $filename )
 	{
-		return false;
+		return PDO\Files::read($filename, $this->pdo);
 	}
 
 	function writeFile( Entity\Files\File_Entity $entity )
 	{
-
+		PDO\Files::write($entity, $this->pdo);
+		return $this;
 	}
 
 	function getPackages()
 	{
-		return [];
+		return PDO\Files::packages($this->pdo);
 	}
 
 	function readPackage( $packageName )
@@ -42,91 +62,100 @@ class Index_PDO extends Index_Abstract
 
 	function writePackage( Entity\Packages\Package_Entity $entity )
 	{
-
+		// packages are stored in the files table
+		//
+		return $this;
 	}
 
 	function getClasses()
 	{
-		return [];
+		return PDO\Classes::all($this->pdo);
 	}
 
 	function readClass( $className )
 	{
-		return false;
+		return PDO\Classes::read($className, $this->pdo);
 	}
 
 	function writeClass( Entity\Classes\Class_Entity $entity )
 	{
-
+		return PDO\Classes::write($entity, $this->pdo);
 	}
 
 	function getIncludes()
 	{
-		return [];
+		return PDO\Includes::all($this->pdo);
 	}
 
 	function readIncludes( $includedFile )
 	{
-		return false;
+		return PDO\Includes::read($includedFile, $this->pdo);
 	}
 
 	function writeInclude( Entity\Includes\Include_Entity $entity )
 	{
-
+		return PDO\Includes::write($entity, $this->pdo);
 	}
 
 	function getGlobals()
 	{
-		return [];
+		return PDO\Globals::all($this->pdo);
 	}
 
 	function readGlobal( $globalName )
 	{
-		return false;
+		return PDO\Globals::read($globalName, $this->pdo);
 	}
 
 	function writeGlobal( Entity\Globals\Global_Entity $entity )
 	{
-
+		return PDO\Globals::write($entity, $this->pdo);
 	}
 
 	function getFunctions()
 	{
-		return [];
+		return PDO\Functions::all($this->pdo);
 	}
 
 	function readFunction( $functionName )
 	{
-		return false;
+		return PDO\Functions::read($functionName, $this->pdo);
 	}
 
 	function writeFunction( Entity\Funcs\Function_Entity $entity )
 	{
-
+		return PDO\Functions::write($entity, $this->pdo);
 	}
 
 	function readCalls( $functionName )
 	{
-		return false;
+		return PDO\Calls::read($functionName, $this->pdo);
 	}
 
-	function writeCall( Entity\Calls\Call_Entity $entity )
+	function writeCalls( Entity\Funcs\Function_Entity $entity )
 	{
-
+		return PDO\Calls::write($entity, $this->pdo);
 	}
 
 	function readCallbacks( $functionName )
 	{
-		return false;
+		return PDO\Callbacks::read($functionName, $this->pdo);
 	}
 
-	function writeCallback( Entity\Callbacks\Callback_Entity $entity )
+	function writeCallbacks( Entity\Funcs\Function_Entity $entity )
 	{
-
+		return PDO\Callbacks::write($entity, $this->pdo);
 	}
 
 	function clean()
 	{
+		PDO\Files::clean($this->pdo);
+		PDO\Functions::clean($this->pdo);
+		// PDO\Calls::clean($this->pdo);
+		// PDO\Callbacks::clean($this->pdo);
+		PDO\Classes::clean($this->pdo);
+		// PDO\Includes::clean($this->pdo);
+		// PDO\Globals::clean($this->pdo);
 
 	}
 }

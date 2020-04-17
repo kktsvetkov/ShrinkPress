@@ -101,7 +101,7 @@ class Index_Dummy extends Index_Abstract
 		return false;
 	}
 
-	function writeCall( Entity\Calls\Call_Entity $entity )
+	function writeCalls( Entity\Funcs\Function_Entity $entity )
 	{
 
 	}
@@ -111,7 +111,7 @@ class Index_Dummy extends Index_Abstract
 		return false;
 	}
 
-	function writeCallback( Entity\Callbacks\Callback_Entity $entity )
+	function writeCallbacks( Entity\Funcs\Function_Entity $entity )
 	{
 
 	}
