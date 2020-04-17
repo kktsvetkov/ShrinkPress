@@ -35,6 +35,7 @@ class Calls extends Visitor_Abstract
 		foreach($result as $functionName => $lines)
 		{
 			$entity = $index->readFunction( $functionName );
+			$index->readCalls($entity);
 
 			foreach ($lines as $line)
 			{

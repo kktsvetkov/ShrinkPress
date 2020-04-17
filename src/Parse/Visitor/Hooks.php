@@ -69,6 +69,7 @@ class Hooks extends Visitor_Abstract
 		foreach($result as $callback => $calls)
 		{
 			$entity = $index->readFunction( $callback );
+			$index->readCallbacks($entity);
 
 			foreach ($calls as $found)
 			{
