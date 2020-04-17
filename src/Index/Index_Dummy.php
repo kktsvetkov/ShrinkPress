@@ -18,7 +18,7 @@ class Index_Dummy extends Index_Abstract
 
 	function writeFile( Entity\Files\File_Entity $entity )
 	{
-
+		return $this;
 	}
 
 	function getPackages()
@@ -33,7 +33,7 @@ class Index_Dummy extends Index_Abstract
 
 	function writePackage( Entity\Packages\Package_Entity $entity )
 	{
-
+		return $this;
 	}
 
 	function getClasses()
@@ -43,12 +43,12 @@ class Index_Dummy extends Index_Abstract
 
 	function readClass( $className )
 	{
-		return false;
+		return new Entity\Classes\WordPress_Class( $className );
 	}
 
 	function writeClass( Entity\Classes\Class_Entity $entity )
 	{
-
+		return $this;
 	}
 
 	function getIncludes()
@@ -58,12 +58,12 @@ class Index_Dummy extends Index_Abstract
 
 	function readIncludes( $includedFile )
 	{
-		return false;
+		return new Entity\Includes\WordPress_Include( $includedFile );
 	}
 
 	function writeInclude( Entity\Includes\Include_Entity $entity )
 	{
-
+		return $this;
 	}
 
 	function getGlobals()
@@ -73,12 +73,12 @@ class Index_Dummy extends Index_Abstract
 
 	function readGlobal( $globalName )
 	{
-		return false;
+		return new Entity\Globals\WordPress_Global( $globalName );
 	}
 
 	function writeGlobal( Entity\Globals\Global_Entity $entity )
 	{
-
+		return $this;
 	}
 
 	function getFunctions()
@@ -88,32 +88,32 @@ class Index_Dummy extends Index_Abstract
 
 	function readFunction( $functionName )
 	{
-		return false;
+		return new Entity\Funcs\WordPress_Func( $functionName );
 	}
 
 	function writeFunction( Entity\Funcs\Function_Entity $entity )
 	{
-
+		return $this;
 	}
 
-	function readCalls( $functionName )
+	function readCalls( Entity\Funcs\Function_Entity $entity )
 	{
-		return false;
+		return $entity;
 	}
 
 	function writeCalls( Entity\Funcs\Function_Entity $entity )
 	{
-
+		return $this;
 	}
 
-	function readCallbacks( $functionName )
+	function readCallbacks( Entity\Funcs\Function_Entity $entity )
 	{
-		return false;
+		return $entity;
 	}
 
 	function writeCallbacks( Entity\Funcs\Function_Entity $entity )
 	{
-
+		return $this;
 	}
 
 	function clean()

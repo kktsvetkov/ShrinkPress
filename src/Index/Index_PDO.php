@@ -127,22 +127,24 @@ class Index_PDO extends Index_Abstract
 
 	function writeFunction( Entity\Funcs\Function_Entity $entity )
 	{
-		return PDO\Functions::write($entity, $this->pdo);
+		PDO\Functions::write($entity, $this->pdo);
+		return $this;
 	}
 
-	function readCalls( $functionName )
+	function readCalls( Entity\Funcs\Function_Entity $entity )
 	{
 		return PDO\Calls::read($functionName, $this->pdo);
 	}
 
 	function writeCalls( Entity\Funcs\Function_Entity $entity )
 	{
-		return PDO\Calls::write($entity, $this->pdo);
+		PDO\Calls::write($entity, $this->pdo);
+		return $this;
 	}
 
-	function readCallbacks( $functionName )
+	function readCallbacks( Entity\Funcs\Function_Entity $entity )
 	{
-		return PDO\Callbacks::read($functionName, $this->pdo);
+		return PDO\Callbacks::read($entity, $this->pdo);
 	}
 
 	function writeCallbacks( Entity\Funcs\Function_Entity $entity )
@@ -153,13 +155,13 @@ class Index_PDO extends Index_Abstract
 
 	function clean()
 	{
-		// PDO\Files::clean($this->pdo);
-		// PDO\Functions::clean($this->pdo);
-		// PDO\Calls::clean($this->pdo);
-		// PDO\Callbacks::clean($this->pdo);
-		// PDO\Classes::clean($this->pdo);
+		PDO\Files::clean($this->pdo);
+		PDO\Functions::clean($this->pdo);
+		PDO\Calls::clean($this->pdo);
+		PDO\Callbacks::clean($this->pdo);
+		PDO\Classes::clean($this->pdo);
 		PDO\Includes::clean($this->pdo);
-		// PDO\Globals::clean($this->pdo);
+		PDO\Globals::clean($this->pdo);
 
 	}
 }

@@ -240,7 +240,7 @@ class Index_Stash extends Index_Abstract
 		return $this->stashSave( 'functions', $entity->functionName(), $entity);
 	}
 
-	function readCalls( $functionName )
+	function readCalls( Entity\Funcs\Function_Entity $entity )
 	{
 		return false;
 	}
@@ -250,7 +250,7 @@ class Index_Stash extends Index_Abstract
 		return $this->stashSave( 'functions', $entity->functionName(), $entity);
 	}
 
-	function readCallbacks( $functionName )
+	function readCallbacks( Entity\Funcs\Function_Entity $entity )
 	{
 		return false;
 	}

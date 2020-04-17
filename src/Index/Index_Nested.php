@@ -142,9 +142,9 @@ class Index_Nested extends Index_Abstract
 		return $this->nestedAll( __FUNCTION__, $entity );
 	}
 
-	function readCalls( $functionName )
+	function readCalls( Entity\Funcs\Function_Entity $entity )
 	{
-		return $this->nestedFirst( __FUNCTION__, $functionName );
+		return $this->nestedFirst( __FUNCTION__, $entity );
 	}
 
 	function writeCalls( Entity\Funcs\Function_Entity $entity )
@@ -152,9 +152,9 @@ class Index_Nested extends Index_Abstract
 		return $this->nestedAll( __FUNCTION__, $entity );
 	}
 
-	function readCallbacks( $functionName )
+	function readCallbacks( Entity\Funcs\Function_Entity $entity )
 	{
-		return $this->nestedFirst( __FUNCTION__, $functionName );
+		return $this->nestedFirst( __FUNCTION__, $entity );
 	}
 
 	function writeCallbacks( Entity\Funcs\Function_Entity $entity )

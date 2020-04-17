@@ -46,10 +46,10 @@ abstract class Index_Abstract
 	abstract function readFunction( $functionName );
 	abstract function writeFunction( Entity\Funcs\Function_Entity $entity );
 
-	abstract function readCalls( $functionName );
+	abstract function readCalls( Entity\Funcs\Function_Entity $entity );
 	abstract function writeCalls( Entity\Funcs\Function_Entity $entity );
 
-	abstract function readCallbacks( $functionName );
+	abstract function readCallbacks( Entity\Funcs\Function_Entity $entity );
 	abstract function writeCallbacks( Entity\Funcs\Function_Entity $entity );
 
 	abstract function clean();
