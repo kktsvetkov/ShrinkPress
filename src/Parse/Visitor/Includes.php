@@ -142,6 +142,8 @@ class Includes extends Visitor_Abstract
 
 		foreach($result as $found)
 		{
+			$found['includedFile'] = trim($found['includedFile'], '/');
+
 			Assist\Verbose::log(
 				"Included ({$found['includeType']}): {$found['includedFile']} at "
 				 	. $this->filename . ':'
