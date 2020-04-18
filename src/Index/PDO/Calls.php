@@ -33,26 +33,23 @@ class Calls
 		}
 	}
 
-	static function read( $functionName, \PDO $pdo )
+	static function read( Entity\Funcs\Function_Entity $entity, \PDO $pdo )
 	{
 		$sql = 'SELECT * FROM shrinkpress_calls WHERE functionName = ? ';
 
 		$q = $pdo->prepare( $sql );
-		$q->execute([ (string) $functionName ]);
+		$q->execute([ (string) $entity->functionName() ]);
 
-		$calls = $q->fetchAll($pdo::FETCH_ASSOC);
-		$result = array();
-
+		$calls = $q->rowCount()
+			? $q->fetchAll( $pdo::FETCH_ASSOC )
+			: array();
 		foreach ($calls as $call)
 		{
-			$entity = new Entity\WpCall( $call['functionName'] );
-			$entity->filename = $call['filename'];
-			$entity->line = $call['line'];
-
-			$result[] = $entity;
+			$entity->addCall($call['filename'], $call['line']);
 		}
+		$entity->pdo_calls_count = count($calls);
 
-		return $result;
+		return $entity;
 	}
 
 	static function clean(\PDO $pdo)

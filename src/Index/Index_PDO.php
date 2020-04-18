@@ -133,7 +133,7 @@ class Index_PDO extends Index_Abstract
 
 	function readCalls( Entity\Funcs\Function_Entity $entity )
 	{
-		return PDO\Calls::read($functionName, $this->pdo);
+		return PDO\Calls::read($entity, $this->pdo);
 	}
 
 	function writeCalls( Entity\Funcs\Function_Entity $entity )

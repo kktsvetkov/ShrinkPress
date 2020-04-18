@@ -1,57 +1,69 @@
 <?php
 
-namespace ShrinkPress\Build\Storage\PDO;
+namespace ShrinkPress\Build\Index\PDO;
 
-use ShrinkPress\Build\Parse\Entity;
-use ShrinkPress\Build\Storage;
+use ShrinkPress\Build\Entity;
+use ShrinkPress\Build\Index;
 
-class WpCallback
+class Callbacks
 {
-	static function write( Entity\WpCallback $entity, \PDO $pdo )
+	static function write( Entity\Funcs\Function_Entity $entity, \PDO $pdo )
 	{
-		$sql = 'INSERT IGNORE INTO pdo_shrinkpress_functions_hooks
-			(functionName, hookName, hookFunction, filename, line)
+		$sql = 'INSERT IGNORE INTO shrinkpress_callbacks
+			(functionName, filename, line, hookName, hookFunction)
 			VALUES (?, ?, ?, ?, ?); ';
 
 		$q = $pdo->prepare($sql);
-		$q->execute([
-			$entity->functionName,
-			$entity->hookName,
-			$entity->hookFunction,
-			$entity->filename,
-			$entity->line,
-		]);
-	}
+		$data = $entity->jsonSerialize();
 
-	static function read( $functionName, \PDO $pdo )
-	{
-		$sql = 'SELECT * FROM pdo_shrinkpress_functions_hooks WHERE functionName = ? ';
-
-		$q = $pdo->prepare( $sql );
-		$q->execute([ (string) $functionName ]);
-
-		$calls = $q->fetchAll($pdo::FETCH_ASSOC);
-		$result = array();
-
-		foreach ($calls as $call)
+		if (!empty($entity->pdo_callbacks_count))
 		{
-			$entity = new Entity\WpCallback( $call['functionName'] );
-			$entity->filename = $call['filename'];
-			$entity->line = $call['line'];
-
-			$entity->hookName = $call['hookName'];
-			$entity->hookFunction = $call['hookFunction'];
-
-			$result[] = $entity;
+			$data['callbacks'] = array_slice(
+				$data['callbacks'],
+				$entity->pdo_callbacks_count
+				);
 		}
 
-		return $result;
+		foreach ($data['callbacks'] as $callback)
+		{
+			$q->execute([
+				$entity->functionName(),
+				$callback[0],
+				$callback[1],
+				$callback[2],
+				$callback[3],
+			]);
+		}
+	}
+
+	static function read( Entity\Funcs\Function_Entity $entity, \PDO $pdo )
+	{
+		$sql = 'SELECT * FROM shrinkpress_callbacks WHERE functionName = ? ';
+
+		$q = $pdo->prepare( $sql );
+		$q->execute([ (string) $entity->functionName() ]);
+
+		$callbacks = $q->rowCount()
+			? $q->fetchAll( $pdo::FETCH_ASSOC )
+			: array();
+		foreach ($callbacks as $callback)
+		{
+			$entity->addCall(
+				$callback['filename'],
+				$callback['line'],
+				$callback['hookName'],
+				$callback['hookFunction']
+				);
+		}
+		$entity->pdo_callbacks_count = count($callbacks);
+
+		return $entity;
 	}
 
 	static function clean(\PDO $pdo)
 	{
-		$pdo->prepare(' DROP TABLE IF EXISTS pdo_shrinkpress_functions_hooks; ')->execute();
-		$pdo->prepare('CREATE TABLE pdo_shrinkpress_functions_hooks (
+		$pdo->prepare(' DROP TABLE IF EXISTS shrinkpress_callbacks; ')->execute();
+		$pdo->prepare('CREATE TABLE shrinkpress_callbacks (
 				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				functionName varchar(255) NOT NULL,
 				hookName varchar(255) NOT NULL,

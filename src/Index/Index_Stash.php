@@ -39,7 +39,7 @@ class Index_Stash extends Index_Abstract
 
 		if (empty($this->keys[ $entityType ][ $entityName ]))
 		{
-			$this->keys[ $entityType ][ $entityName ] = time();
+			$this->keys[ $entityType ][ $entityName ] = strlen($entityName);
 		}
 
 		return $entityType . '/' . $entityName . '.json';
