@@ -1,8 +1,8 @@
 <?php
 
-namespace ShrinkPress\Build\Entity\Funcs;
+namespace ShrinkPress\Reframe\Entity\Funcs;
 
-use ShrinkPress\Build\Entity;
+use ShrinkPress\Reframe\Entity;
 
 abstract class Function_Abstract implements Function_Entity
 {

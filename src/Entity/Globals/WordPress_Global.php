@@ -1,8 +1,8 @@
 <?php
 
-namespace ShrinkPress\Build\Entity\Globals;
+namespace ShrinkPress\Reframe\Entity\Globals;
 
-use ShrinkPress\Build\Entity;
+use ShrinkPress\Reframe\Entity;
 
 class WordPress_Global implements Global_Entity
 {

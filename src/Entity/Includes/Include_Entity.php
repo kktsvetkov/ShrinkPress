@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build\Entity\Includes;
+namespace ShrinkPress\Reframe\Entity\Includes;
 
 interface Include_Entity extends \JsonSerializable
 {

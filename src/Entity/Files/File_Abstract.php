@@ -1,8 +1,8 @@
 <?php
 
-namespace ShrinkPress\Build\Entity\Files;
+namespace ShrinkPress\Reframe\Entity\Files;
 
-use ShrinkPress\Build\Entity;
+use ShrinkPress\Reframe\Entity;
 
 abstract class File_Abstract implements File_Entity
 {

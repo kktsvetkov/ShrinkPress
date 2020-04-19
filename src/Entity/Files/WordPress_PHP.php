@@ -1,9 +1,9 @@
 <?php
 
-namespace ShrinkPress\Build\Entity\Files;
+namespace ShrinkPress\Reframe\Entity\Files;
 
-use ShrinkPress\Build\Assist;
-use ShrinkPress\Build\Entity;
+use ShrinkPress\Reframe\Assist;
+use ShrinkPress\Reframe\Entity;
 
 class WordPress_PHP Extends PHP_File
 {

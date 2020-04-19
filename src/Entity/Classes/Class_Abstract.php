@@ -1,8 +1,8 @@
 <?php
 
-namespace ShrinkPress\Build\Entity\Classes;
+namespace ShrinkPress\Reframe\Entity\Classes;
 
-use ShrinkPress\Build\Entity;
+use ShrinkPress\Reframe\Entity;
 
 abstract class Class_Abstract implements Class_Entity
 {

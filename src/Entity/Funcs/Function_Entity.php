@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build\Entity\Funcs;
+namespace ShrinkPress\Reframe\Entity\Funcs;
 
 interface Function_Entity extends \JsonSerializable
 {

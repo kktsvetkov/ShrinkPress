@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build\Entity\Files;
+namespace ShrinkPress\Reframe\Entity\Files;
 
 interface File_Entity extends \JsonSerializable
 {

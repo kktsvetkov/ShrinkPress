@@ -1,8 +1,8 @@
 <?php
 
-namespace ShrinkPress\Build\Entity\Includes;
+namespace ShrinkPress\Reframe\Entity\Includes;
 
-use ShrinkPress\Build\Entity;
+use ShrinkPress\Reframe\Entity;
 
 class WordPress_Include implements Include_Entity
 {

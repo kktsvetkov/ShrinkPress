@@ -1,8 +1,8 @@
 <?php
 
-namespace ShrinkPress\Build\Entity\Files;
+namespace ShrinkPress\Reframe\Entity\Files;
 
-use ShrinkPress\Build\Assist;
+use ShrinkPress\Reframe\Assist;
 
 class Composer_JSON implements File_Entity
 {

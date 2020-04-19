@@ -1,8 +1,8 @@
 <?php
 
-namespace ShrinkPress\Build\Entity\Packages;
+namespace ShrinkPress\Reframe\Entity\Packages;
 
-use ShrinkPress\Build\Entity;
+use ShrinkPress\Reframe\Entity;
 
 class WordPress_Package extends Package_Abstract
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace ShrinkPress\Build\Entity\Classes;
+namespace ShrinkPress\Reframe\Entity\Classes;
 
-use ShrinkPress\Build\Entity;
+use ShrinkPress\Reframe\Entity;
 
 class WordPress_Class extends Class_Abstract
 {

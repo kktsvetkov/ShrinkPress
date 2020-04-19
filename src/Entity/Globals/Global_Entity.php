@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build\Entity\Globals;
+namespace ShrinkPress\Reframe\Entity\Globals;
 
 interface Global_Entity extends \JsonSerializable
 {

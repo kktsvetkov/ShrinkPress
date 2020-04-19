@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build\Entity;
+namespace ShrinkPress\Reframe\Entity;
 
 trait Load
 {
