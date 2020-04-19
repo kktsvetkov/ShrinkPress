@@ -1,12 +1,12 @@
 <?php
 
-namespace ShrinkPress\Build\Parse\Visitor;
+namespace ShrinkPress\Reframe\Parse\Visitor;
 
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
-use ShrinkPress\Build\Index;
-use ShrinkPress\Build\Entity;
+use ShrinkPress\Reframe\Index;
+use ShrinkPress\Reframe\Entity;
 
 abstract class Visitor_Abstract extends NodeVisitorAbstract
 {

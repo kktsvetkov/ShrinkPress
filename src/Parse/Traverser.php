@@ -1,14 +1,14 @@
 <?php
 
-namespace ShrinkPress\Build\Parse;
+namespace ShrinkPress\Reframe\Parse;
 
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 
-use ShrinkPress\Build\Assist;
-use ShrinkPress\Build\Index;
-use ShrinkPress\Build\Parse\Visitor;
+use ShrinkPress\Reframe\Assist;
+use ShrinkPress\Reframe\Index;
+use ShrinkPress\Reframe\Parse\Visitor;
 
 class Traverser
 {

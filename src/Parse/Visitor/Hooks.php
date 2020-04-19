@@ -1,11 +1,11 @@
 <?php
 
-namespace ShrinkPress\Build\Parse\Visitor;
+namespace ShrinkPress\Reframe\Parse\Visitor;
 
 use PhpParser\Node;
-use ShrinkPress\Build\Assist;
-use ShrinkPress\Build\Index;
-use ShrinkPress\Build\Entity;
+use ShrinkPress\Reframe\Assist;
+use ShrinkPress\Reframe\Index;
+use ShrinkPress\Reframe\Entity;
 
 class Hooks extends Visitor_Abstract
 {

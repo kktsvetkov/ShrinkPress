@@ -1,11 +1,11 @@
 <?php
 
-namespace ShrinkPress\Build\Parse\Visitor;
+namespace ShrinkPress\Reframe\Parse\Visitor;
 
 use PhpParser\Node;
 
-use ShrinkPress\Build\Index;
-use ShrinkPress\Build\Assist;
+use ShrinkPress\Reframe\Index;
+use ShrinkPress\Reframe\Assist;
 
 class Includes extends Visitor_Abstract
 {

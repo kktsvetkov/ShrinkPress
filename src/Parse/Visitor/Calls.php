@@ -1,11 +1,11 @@
 <?php
 
-namespace ShrinkPress\Build\Parse\Visitor;
+namespace ShrinkPress\Reframe\Parse\Visitor;
 
 use PhpParser\Node;
-use ShrinkPress\Build\Assist;
-use ShrinkPress\Build\Entity;
-use ShrinkPress\Build\Index;
+use ShrinkPress\Reframe\Assist;
+use ShrinkPress\Reframe\Entity;
+use ShrinkPress\Reframe\Index;
 
 class Calls extends Visitor_Abstract
 {

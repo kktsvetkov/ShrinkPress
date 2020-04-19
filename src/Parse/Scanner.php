@@ -1,10 +1,10 @@
 <?php
 
-namespace ShrinkPress\Build\Parse;
+namespace ShrinkPress\Reframe\Parse;
 
-use ShrinkPress\Build\Assist;
-use ShrinkPress\Build\Entity;
-use ShrinkPress\Build\Index;
+use ShrinkPress\Reframe\Assist;
+use ShrinkPress\Reframe\Entity;
+use ShrinkPress\Reframe\Index;
 
 class Scanner
 {
@@ -108,7 +108,7 @@ class Scanner
 	}
 
 	/**
-	* @see \ShrinkPress\Build\Parse\Scanner::skipFolder()
+	* @see \ShrinkPress\Reframe\Parse\Scanner::skipFolder()
 	*/
 	const skipFolders = array(
 		'.git',
@@ -138,7 +138,7 @@ class Scanner
 	}
 
 	/**
-	* @see \ShrinkPress\Build\Parse\Scanner::skipFile()
+	* @see \ShrinkPress\Reframe\Parse\Scanner::skipFile()
 	*/
 	const skipFiles = array(
 		'wp-config.php',
