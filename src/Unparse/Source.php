@@ -8,19 +8,19 @@ class Source Extends Assist\Umbrella
 {
 	function read($filename)
 	{
-		Verbose::log("Read: {$filename}", 3);
+		Assist\Verbose::log("Read: {$filename}", 3);
 		return parent::read($filename);
 	}
 
 	function write($filename, $contents)
 	{
-		Verbose::log("Write: {$filename}", 2);
-		return parent::write($filename);
+		Assist\Verbose::log("Write: {$filename}", 2);
+		return parent::write($filename, $contents);
 	}
 
        function unlink($filename)
        {
-		Verbose::log("Delete: {$filename}", 1);
+		Assist\Verbose::log("Delete: {$filename}", 1);
 		return parent::unlink($filename);
        }
 }

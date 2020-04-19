@@ -1,15 +1,15 @@
 <?php
 
-namespace ShrinkPress\Build\Unparse\Task;
+namespace ShrinkPress\Build\Unparse\Task\Start;
 
-use ShrinkPress\Build\Assist;
+use ShrinkPress\Build\Unparse;
+use ShrinkPress\Build\Index;
 use ShrinkPress\Build\Entity;
-use ShrinkPress\Build\Storage;
-use ShrinkPress\Build\Source;
+use ShrinkPress\Build\Assist;
 
-class CreateComposer extends TaskAbstract
+class CreateComposer implements Unparse\Task\Task
 {
-	function build(Source $source, Storage\StorageAbstract $storage)
+	function build(Unparse\Source $source, Index\Index_Abstract $index )
 	{
 		// start with composer.json ...
 		//

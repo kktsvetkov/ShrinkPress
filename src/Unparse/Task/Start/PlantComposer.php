@@ -1,12 +1,13 @@
 <?php
 
-namespace ShrinkPress\Build\Unparse\Task;
+namespace ShrinkPress\Build\Unparse\Task\Start;
 
-use ShrinkPress\Build\Storage;
-use ShrinkPress\Build\Source;
+use ShrinkPress\Build\Unparse;
+use ShrinkPress\Build\Index;
 
-class PlantComposer extends TaskAbstract
+class PlantComposer implements Unparse\Task\Task
 {
+
 	const find_WPINC = array(
 		'define', '(', "'WPINC'", ',', "'wp-includes'", ')', ';'
 		);
@@ -17,7 +18,7 @@ class PlantComposer extends TaskAbstract
 		"\n"
 		);
 
-	function build(Source $source, Storage\StorageAbstract $storage)
+	function build(Unparse\Source $source, Index\Index_Abstract $index )
 	{
 		$code = $source->read($wp_settings = 'wp-settings.php');
 

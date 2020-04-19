@@ -1,11 +1,11 @@
 <?php
 
-namespace ShrinkPress\Build\Unparse\Task;
+namespace ShrinkPress\Build\Unparse\Task\Start;
 
-use ShrinkPress\Build\Storage;
-use ShrinkPress\Build\Source;
+use ShrinkPress\Build\Unparse;
+use ShrinkPress\Build\Index;
 
-class DotGit extends TaskAbstract
+class DotGit implements Unparse\Task\Task
 {
 	const gitignore = array(
 		'/composer.lock',
@@ -14,7 +14,7 @@ class DotGit extends TaskAbstract
 
 	const gitattributes = array();
 
-	function build(Source $source, Storage\StorageAbstract $storage)
+	function build(Unparse\Source $source, Index\Index_Abstract $index )
 	{
 		if ($gitignore = join("\n", self::gitignore))
 		{

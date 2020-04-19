@@ -1,12 +1,12 @@
 <?php
 
-namespace ShrinkPress\Build\Unparse\Task;
+namespace ShrinkPress\Build\Unparse\Task\Start;
 
 use ShrinkPress\Build\Entity\Files\Composer_JSON;
-use ShrinkPress\Build\Storage;
-use ShrinkPress\Build\Source;
+use ShrinkPress\Build\Unparse;
+use ShrinkPress\Build\Index;
 
-class Wipe extends TaskAbstract
+class Wipe implements Unparse\Task\Task
 {
 	const purge = array(
 		'composer.json',
@@ -14,7 +14,7 @@ class Wipe extends TaskAbstract
 		'.gitattributes',
 		);
 
-	function build( Source $source, Storage\StorageAbstract $storage )
+	function build( Unparse\Source $source, Index\Index_Abstract $index )
 	{
 		foreach (self::purge as $file)
 		{
