@@ -45,7 +45,7 @@ if (in_array('scan', $argv))
 		$index->clean();
 	}
 
-	$source = new Build\Parse\Source($wp_source);
+	$source = new Build\Parse\Source(__DIR__ . '/wordpress');
 	$scanner = new Build\Parse\Scanner($source, $index);
 	// $scanner->scanFolder('wp-includes/');
 	$scanner->scanFolder('');
@@ -60,7 +60,7 @@ if (in_array('scan', $argv))
 
 if (in_array('build', $argv))
 {
-	$source = new Build\Unparse\Source($wp_source);
+	$source = new Build\Unparse\Source(__DIR__ . '/reduced');
 	$process = new Build\Unparse\Builder;
 	$process->build($source, $index);
 }
