@@ -1,8 +1,8 @@
 <?php
 
-namespace ShrinkPress\Build\Unparse;
+namespace ShrinkPress\Reframe\Unparse;
 
-use ShrinkPress\Build\Assist;
+use ShrinkPress\Reframe\Assist;
 
 class Source Extends Assist\Umbrella
 {

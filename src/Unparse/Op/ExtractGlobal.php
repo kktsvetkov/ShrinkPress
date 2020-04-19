@@ -1,8 +1,8 @@
 <?php
 
-namespace ShrinkPress\Build\Unparse\Op;
+namespace ShrinkPress\Reframe\Unparse\Op;
 
-use ShrinkPress\Build\Verbose;
+use ShrinkPress\Reframe\Verbose;
 
 class ExtractGlobal
 {

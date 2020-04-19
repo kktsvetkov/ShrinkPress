@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build\Unparse;
+namespace ShrinkPress\Reframe\Unparse;
 
 class Builder extends Build\Group
 {

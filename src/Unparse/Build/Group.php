@@ -1,9 +1,9 @@
 <?php
 
-namespace ShrinkPress\Build\Unparse\Build;
+namespace ShrinkPress\Reframe\Unparse\Build;
 
-use ShrinkPress\Build\Index;
-use ShrinkPress\Build\Unparse;
+use ShrinkPress\Reframe\Index;
+use ShrinkPress\Reframe\Unparse;
 
 class Group implements Task
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace ShrinkPress\Build\Unparse\Build\Start;
+namespace ShrinkPress\Reframe\Unparse\Build\Start;
 
-use ShrinkPress\Build\Entity\Files\Composer_JSON;
-use ShrinkPress\Build\Unparse;
-use ShrinkPress\Build\Index;
+use ShrinkPress\Reframe\Entity\Files\Composer_JSON;
+use ShrinkPress\Reframe\Unparse;
+use ShrinkPress\Reframe\Index;
 
 class Wipe implements Unparse\Build\Task
 {
