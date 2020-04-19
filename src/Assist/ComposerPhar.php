@@ -1,8 +1,8 @@
 <?php
 
-namespace ShrinkPress\Build\Assist;
+namespace ShrinkPress\Reframe\Assist;
 
-use ShrinkPress\Build\Verbose;
+use ShrinkPress\Reframe\Verbose;
 
 class ComposerPhar
 {

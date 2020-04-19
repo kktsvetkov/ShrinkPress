@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build\Assist;
+namespace ShrinkPress\Reframe\Assist;
 
 class Internal
 {

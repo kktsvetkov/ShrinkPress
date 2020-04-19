@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build\Assist;
+namespace ShrinkPress\Reframe\Assist;
 
 /**
 * Umbrella, folder proxy: reads and writes files and folders
