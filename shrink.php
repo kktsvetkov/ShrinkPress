@@ -11,12 +11,12 @@ set_error_handler(function($severity, $message, $file, $line)
 
 /////////////////////////////////////////////////////////////////////////////
 
-use ShrinkPress\Build;
+use ShrinkPress\Reframe;
 
 $wp_source = __DIR__ . '/wordpress';
-Build\Assist\Verbose::level(4);
+Reframe\Assist\Verbose::level(4);
 
-$index1 = new Build\Index\Index_PDO(
+$index1 = new Reframe\Index\Index_PDO(
 	new PDO("mysql:host=127.0.0.1;dbname=wordpress;charset=utf8mb4",
 		'username',
 		'password',
@@ -25,13 +25,13 @@ $index1 = new Build\Index\Index_PDO(
 		PDO::ATTR_EMULATE_PREPARES => false,
 	)));
 
-$index2 = new Build\Index\Index_Stash(
-	new Build\Assist\Umbrella(__DIR__ . '/entities')
+$index2 = new Reframe\Index\Index_Stash(
+	new Reframe\Assist\Umbrella(__DIR__ . '/entities')
 );
 
-$index3 = new Build\Index\Index_Dummy;
+$index3 = new Reframe\Index\Index_Dummy;
 
-$index4 = new Build\Index\Index_Nested;
+$index4 = new Reframe\Index\Index_Nested;
 $index4->addNested($index1);
 $index4->addNested($index2);
 $index4->addNested($index3);
@@ -45,8 +45,8 @@ if (in_array('scan', $argv))
 		$index->clean();
 	}
 
-	$source = new Build\Parse\Source(__DIR__ . '/wordpress');
-	$scanner = new Build\Parse\Scanner($source, $index);
+	$source = new Reframe\Parse\Source(__DIR__ . '/wordpress');
+	$scanner = new Reframe\Parse\Scanner($source, $index);
 	// $scanner->scanFolder('wp-includes/');
 	$scanner->scanFolder('');
 
@@ -60,8 +60,8 @@ if (in_array('scan', $argv))
 
 if (in_array('build', $argv))
 {
-	$source = new Build\Unparse\Source(__DIR__ . '/reduced');
-	$process = new Build\Unparse\Builder;
+	$source = new Reframe\Unparse\Source(__DIR__ . '/reduced');
+	$process = new Reframe\Unparse\Builder;
 	$process->build($source, $index);
 }
 
