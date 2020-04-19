@@ -92,6 +92,9 @@ class shrinkpress_git
 
 		$this->shell('rm -rf *.html *.txt *.php wp-admin/ wp-content/ wp-includes/');
 		$this->shell('cp -R ' . $source . '* .');
+		$this->shell('git add *');
+		$this->shell('git add .gitignore');
+		$this->shell('git commit -m "Exporting from ' . $tag . '"');
 	}
 }
 
