@@ -1,9 +1,9 @@
 <?php
 
-namespace ShrinkPress\Build\Index;
+namespace ShrinkPress\Reframe\Index;
 
-use ShrinkPress\Build\Assist;
-use ShrinkPress\Build\Entity;
+use ShrinkPress\Reframe\Assist;
+use ShrinkPress\Reframe\Entity;
 
 class Index_Stash extends Index_Abstract
 {

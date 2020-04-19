@@ -1,9 +1,9 @@
 <?php
 
-namespace ShrinkPress\Build\Index\PDO;
+namespace ShrinkPress\Reframe\Index\PDO;
 
-use ShrinkPress\Build\Entity;
-use ShrinkPress\Build\Index;
+use ShrinkPress\Reframe\Entity;
+use ShrinkPress\Reframe\Index;
 
 class Classes
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace ShrinkPress\Build\Index;
+namespace ShrinkPress\Reframe\Index;
 
-use ShrinkPress\Build\Entity;
+use ShrinkPress\Reframe\Entity;
 
 abstract class Index_Abstract
 {
