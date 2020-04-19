@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Build\Unparse\Task;
+namespace ShrinkPress\Build\Unparse\Build;
 
 use ShrinkPress\Build\Index;
 use ShrinkPress\Build\Unparse;

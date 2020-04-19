@@ -1,13 +1,14 @@
 <?php
 
-namespace ShrinkPress\Build\Unparse\Task\Start;
+namespace ShrinkPress\Build\Unparse\Build\Start;
 
 use ShrinkPress\Build\Unparse;
 use ShrinkPress\Build\Index;
+
 use ShrinkPress\Build\Entity;
 use ShrinkPress\Build\Assist;
 
-class CreateComposer implements Unparse\Task\Task
+class CreateComposer implements Unparse\Build\Task
 {
 	function build(Unparse\Source $source, Index\Index_Abstract $index )
 	{

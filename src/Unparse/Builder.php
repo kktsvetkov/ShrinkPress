@@ -2,10 +2,10 @@
 
 namespace ShrinkPress\Build\Unparse;
 
-class Builder extends Task\Group
+class Builder extends Build\Group
 {
 	function __construct()
 	{
-		$this->addTask( new Task\Start\Task );
+		$this->addTask( new Build\Start );
 	}
 }

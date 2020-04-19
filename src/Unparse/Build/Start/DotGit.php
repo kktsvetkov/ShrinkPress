@@ -1,11 +1,11 @@
 <?php
 
-namespace ShrinkPress\Build\Unparse\Task\Start;
+namespace ShrinkPress\Build\Unparse\Build\Start;
 
 use ShrinkPress\Build\Unparse;
 use ShrinkPress\Build\Index;
 
-class DotGit implements Unparse\Task\Task
+class DotGit implements Unparse\Build\Task
 {
 	const gitignore = array(
 		'/composer.lock',

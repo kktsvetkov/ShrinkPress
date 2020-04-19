@@ -1,12 +1,12 @@
 <?php
 
-namespace ShrinkPress\Build\Unparse\Task\Start;
+namespace ShrinkPress\Build\Unparse\Build\Start;
 
 use ShrinkPress\Build\Entity\Files\Composer_JSON;
 use ShrinkPress\Build\Unparse;
 use ShrinkPress\Build\Index;
 
-class Wipe implements Unparse\Task\Task
+class Wipe implements Unparse\Build\Task
 {
 	const purge = array(
 		'composer.json',

@@ -1,11 +1,11 @@
 <?php
 
-namespace ShrinkPress\Build\Unparse\Task\Start;
+namespace ShrinkPress\Build\Unparse\Build\Start;
 
 use ShrinkPress\Build\Unparse;
 use ShrinkPress\Build\Index;
 
-class PlantComposer implements Unparse\Task\Task
+class PlantComposer implements Unparse\Build\Task
 {
 
 	const find_WPINC = array(
