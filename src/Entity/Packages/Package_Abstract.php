@@ -30,4 +30,9 @@ abstract class Package_Abstract implements Package_Entity
 	}
 
 	protected $files = array();
+
+	function files()
+	{
+		return $this->files;
+	}
 }
