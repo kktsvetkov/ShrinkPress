@@ -59,7 +59,7 @@ class Index_PDO extends Index_Abstract
 
 	function readPackage( $packageName )
 	{
-		return new Entity\Packages\WordPress_Package( $packageName );
+		return PDO\Files::readPackage($packageName, $this->pdo);
 	}
 
 	function writePackage( Entity\Packages\Package_Entity $entity )

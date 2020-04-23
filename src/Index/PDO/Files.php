@@ -79,6 +79,29 @@ class Files
 		return $q->fetchAll($pdo::FETCH_COLUMN, 0);
 	}
 
+	static function readPackage($packageName, \PDO $pdo)
+	{
+		$packageName = (string) $packageName;
+		$entity = new Entity\Packages\WordPress_Package($packageName);
+
+		$sql = 'SELECT filename '
+			. ' FROM shrinkpress_files '
+			. ' WHERE ? = '
+				. (false !== strpos('.', $packageName)
+				 	? 'concat(docPackage, ".", docSubPackage) '
+					: 'docPackage'
+				);
+
+		$q = $pdo->prepare($sql);
+		$q->execute([ $packageName ]);
+
+		$entity->load( array(
+			'files' => $q->fetchAll($pdo::FETCH_COLUMN, 0)
+			));
+
+		return $entity;
+	}
+
 	static function clean(\PDO $pdo)
 	{
 		$pdo->prepare(' DROP TABLE IF EXISTS shrinkpress_files; ')->execute();
