@@ -64,11 +64,3 @@ if (in_array('build', $argv))
 	$process = new Reframe\Unparse\Builder;
 	$process->build($source, $index);
 }
-
-/////////////////////////////////////////////////////////////////////////////
-
-// register_shutdown_function(function()
-// {
-// 	echo '<pre style="background:khaki">';
-// 	print_r(get_included_files());
-// });
