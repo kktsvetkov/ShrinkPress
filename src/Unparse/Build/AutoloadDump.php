@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Reframe\Unparse\Build\Start;
+namespace ShrinkPress\Reframe\Unparse\Build;
 
 use ShrinkPress\Reframe\Unparse;
 use ShrinkPress\Reframe\Index;
@@ -8,9 +8,14 @@ use ShrinkPress\Reframe\Index;
 use ShrinkPress\Reframe\Entity;
 use ShrinkPress\Reframe\Assist;
 
-class CreateComposer implements Unparse\Build\Task
+class AutoloadDump implements Task
 {
 	function build(Unparse\Source $source, Index\Index_Abstract $index )
+	{
+		return self::dumpautoload( $source );
+	}
+
+	static function dumpautoload(Unparse\Source $source)
 	{
 		// start with composer.json ...
 		//

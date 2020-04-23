@@ -18,13 +18,13 @@ class Start extends Group
 		// write down composer.json and do
 		// the initial dumpautoload
 		//
-		$this->addTask( new Start\CreateComposer );
+		$this->addTask( new AutoloadDump );
 
 		// insert the "vendor/autoload.php" include
 		//
 		$this->addTask( new Start\PlantComposer );
 
-		// development only, include a test.php file 
+		// development only, include a test.php file
 		//
 		$this->addTask( new Start\PlantTestPHP );
 	}

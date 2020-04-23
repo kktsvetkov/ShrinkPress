@@ -8,7 +8,6 @@ use ShrinkPress\Reframe\Entity;
 
 class PlantComposer implements Unparse\Build\Task
 {
-
 	const find_WPINC = array(
 		'define', '(', "'WPINC'", ',', "'wp-includes'", ')', ';'
 		);
