@@ -14,9 +14,38 @@
 
 * Load default-filters only when they are needed, not always; perhaps add a "DefaultFilters" class in each package ?
 
-* write manifest/roadmap with the goals you want to meet with this project
-
 * create list of bundled libs/packages and their versions in each WP release
+```
+<exclude>
+	<!-- Third party library exclusions. -->
+	<directory suffix=".php">src/wp-includes/ID3</directory>
+	<directory suffix=".php">src/wp-includes/IXR</directory>
+	<directory suffix=".php">src/wp-includes/random_compat</directory>
+	<directory suffix=".php">src/wp-includes/Requests</directory>
+	<directory suffix=".php">src/wp-includes/SimplePie</directory>
+	<directory suffix=".php">src/wp-includes/Text</directory>
+
+	<file>src/wp-admin/includes/class-ftp*</file>
+	<file>src/wp-admin/includes/class-pclzip.php</file>
+	<file>src/wp-admin/includes/deprecated.php</file>
+	<file>src/wp-admin/includes/ms-deprecated.php</file>
+
+	<file>src/wp-includes/atomlib.php</file>
+	<file>src/wp-includes/class-IXR.php</file>
+	<file>src/wp-includes/class-json.php</file>
+	<file>src/wp-includes/class-phpass.php</file>
+	<file>src/wp-includes/class-phpmailer.php</file>
+	<file>src/wp-includes/class-pop3.php</file>
+	<file>src/wp-includes/class-requests.php</file>
+	<file>src/wp-includes/class-simplepie.php</file>
+	<file>src/wp-includes/class-smtp.php</file>
+	<file>src/wp-includes/class-snoopy.php</file>
+	<file>src/wp-includes/deprecated.php</file>
+	<file>src/wp-includes/ms-deprecated.php</file>
+	<file>src/wp-includes/pluggable-deprecated.php</file>
+	<file>src/wp-includes/rss.php</file>
+</exclude>
+```
 
 * WTF?! there are require/require_once from inside functions, like require_wp_db()
 
@@ -34,7 +63,9 @@
 
 * is it possible to make plugins have composer.json dependencies ? and install them upon installing the plugins.
 
-* create a shrinkpress_pudding plugin for reporting number of included files, declared classes and functions 
+* create a shrinkpress_pudding plugin for reporting number of included files, declared classes and functions
+
+* https://github.com/magento/composer -- Magento's own composer extension
 
 ## Phase 1
 
