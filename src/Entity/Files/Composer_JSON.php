@@ -23,7 +23,7 @@ class Composer_JSON implements File_Entity
 		}
 	}
 
-	const vendors = 'wp-includes/vendor';
+	const vendors = 'shrinkpress-vendors';
 
 	const source = array(
 		'name' => 'shrinkpress/shrinkpress',
