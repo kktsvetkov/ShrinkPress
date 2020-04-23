@@ -4,6 +4,7 @@ namespace ShrinkPress\Reframe\Unparse\Build\Start;
 
 use ShrinkPress\Reframe\Unparse;
 use ShrinkPress\Reframe\Index;
+use ShrinkPress\Reframe\Entity;
 
 class PlantComposer implements Unparse\Build\Task
 {
@@ -14,7 +15,7 @@ class PlantComposer implements Unparse\Build\Task
 
 	const after_WPINC = array(
 		"\n/** @see shrinkpress */",
-		"\nrequire ABSPATH . WPINC . '/vendor/autoload.php';",
+		"\nrequire ABSPATH . '/" . Entity\Files\Composer_JSON::vendors . "/autoload.php';",
 		"\n"
 		);
 

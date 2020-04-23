@@ -23,5 +23,9 @@ class Start extends Group
 		// insert the "vendor/autoload.php" include
 		//
 		$this->addTask( new Start\PlantComposer );
+
+		// development only, include a test.php file 
+		//
+		$this->addTask( new Start\PlantTestPHP );
 	}
 }
