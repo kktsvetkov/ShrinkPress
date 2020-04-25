@@ -39,7 +39,7 @@ class FileLines
 		// phantom empty lines later;
 		//
 		$found = '';
-		for ($i = $fromLine; $i < $toLine; $i++)
+		for ($i = $fromLine; $i < $toLine+1; $i++)
 		{
 			$found .= $this->lines[ $i - 1 ] . "\n";
 			$this->lines[ $i - 1 ] = '';

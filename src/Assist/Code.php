@@ -142,18 +142,6 @@ class Code
 		return $code;
 	}
 
-	/**
-	* Ident with one tab
-	* @param string $code
-	* @return string
-	*/
-	static function tabify($code)
-	{
-		$code = str_replace("\n", "\n\t" , $code);
-		$code = "\t" . rtrim($code, "\t");
-		return $code;
-	}
-
 	static function extractPackage($code, $entity)
 	{
 		$doccomment = substr($code, 0, 1024);
@@ -169,5 +157,39 @@ class Code
 		}
 
 		return $entity;
+	}
+
+	static function addUse($code, $classOrNamespace, $as = '')
+	{
+		$seek = array(379, 378, 382);
+		$tokens = token_get_all($code);
+
+		$modified = array();
+		$last = array();
+		foreach ($tokens as $i => $token)
+		{
+			$oken = is_scalar($token) ? $token : $token[1];
+			$modified[] = $oken;
+
+			array_push($last, $token[0]);
+			if (count($last) > count($seek))
+			{
+				array_shift($last);
+			}
+
+			if ($seek == $last)
+			{
+				$space = array_pop($modified);
+
+				$modified[] = "\n" . 'use '
+					. $classOrNamespace
+					. ($as ? " as {$as}" : '')
+					. ';';
+
+				$modified[] = $space;
+			}
+		}
+
+		return join('', $modified);
 	}
 }
