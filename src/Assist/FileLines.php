@@ -42,7 +42,7 @@ class FileLines
 		for ($i = $fromLine; $i < $toLine+1; $i++)
 		{
 			$found .= $this->lines[ $i - 1 ] . "\n";
-			$this->lines[ $i - 1 ] = '';
+			$this->lines[ $i - 1 ] = '// SHRINKPRESS-WAS-HERE!';
 		}
 
 		return $found;
