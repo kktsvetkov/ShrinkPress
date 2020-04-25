@@ -32,3 +32,4 @@ Use [wp-dev tests](https://github.com/WordPress/wordpress-develop/tree/master/te
 Let's try and list libraries bundled inside WordPress:
 
 * **Requests** https://github.com/rmccue/Requests
+* **AtomLib** this is not even used internally, it is only left for backwards compatibility
