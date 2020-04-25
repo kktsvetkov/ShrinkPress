@@ -8,6 +8,8 @@ use ShrinkPress\Reframe\Index;
 use ShrinkPress\Reframe\Entity;
 use ShrinkPress\Reframe\Assist;
 
+use ShrinkPress\Reframe\Unparse\Build\UseClasses;
+
 class PhpMailer implements Unparse\Build\Task
 {
 	function build(Unparse\Source $source, Index\Index_Abstract $index )
@@ -32,19 +34,9 @@ class PhpMailer implements Unparse\Build\Task
 			}
 		}
 
-		/*
-		1. get package name
-		2. add package to composer
-		3. add class to package "AS IS" without changing its class name;
-			must be as "classmap" option, or PSR4 with empty namespace
-
-		4. find the file where the class is declared
-		5. remove require\include references to that original file
-		*/
-
 		$composer = Entity\Files\Composer_JSON::instance();
 
-		$classNamespace = 'ShrinkPress\\PhpMailer';
+		$classNamespace = 'ShrinkPress\\Mail';
 		$namespace = $classNamespace . '\\';
 		$folder = $composer::vendors . '/shrinkpress/mail/src';
 
@@ -113,8 +105,6 @@ class PhpMailer implements Unparse\Build\Task
 
 			foreach ($includes->getIncludes() as $include)
 			{
-				$code = $source->read( $include[0] );
-
 				foreach ($classes as $className => $classOriginFile)
 				{
 					if ($filename != $classOriginFile)
@@ -122,22 +112,18 @@ class PhpMailer implements Unparse\Build\Task
 						continue;
 					}
 
-					// $code = Assist\Code::addUse(
-					// 	$code,
-					// 	$namespace . $className,
-					// 	$className
-					// );
-
-					$code .= "use {$namespace}{$className} as {$className};\n";
+					UseClasses::toUse(
+						$include[0],
+						"{$namespace}{$className}",
+						$className
+						);
 				}
-
-				$source->write( $include[0] , $code);
 			}
 		}
 
 		foreach ($files as $filename)
 		{
-			// $source->unlink($filename);
+			$source->unlink($filename);
 		}
 	}
 
