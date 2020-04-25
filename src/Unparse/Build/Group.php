@@ -4,6 +4,7 @@ namespace ShrinkPress\Reframe\Unparse\Build;
 
 use ShrinkPress\Reframe\Index;
 use ShrinkPress\Reframe\Unparse;
+use ShrinkPress\Reframe\Assist;
 
 class Group implements Task
 {
@@ -19,7 +20,7 @@ class Group implements Task
 	{
 		foreach ($this->tasks as $task)
 		{
-			echo get_class($task), "\n";
+			Assist\Verbose::log( 'Task: ' . get_class($task), 4);
 			$task->build($source, $index);
 		}
 	}
