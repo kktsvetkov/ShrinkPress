@@ -22,6 +22,11 @@ class WordPress_Include implements Include_Entity
 
 	protected $includes = array();
 
+	function getIncludes()
+	{
+		return array_values($this->includes);
+	}
+
 	const TYPE_INCLUDE = 'include';
 	const TYPE_INCLUDE_ONCE = 'include_once';
 	const TYPE_REQUIRE = 'require';

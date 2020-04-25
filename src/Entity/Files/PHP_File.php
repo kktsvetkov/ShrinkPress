@@ -14,6 +14,11 @@ class PHP_File Extends File_Abstract
 		return $this;
 	}
 
+	function getClasses()
+	{
+		return array_keys($this->classes);
+	}
+
 	protected $functions = array();
 
 	function addFunction(Entity\Funcs\Function_Entity $func)
