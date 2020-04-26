@@ -29,10 +29,18 @@ class Composer
 		$this->psr4[ $namespace ] = $folder;
 	}
 
-	function jsonSerialize()
+	function updateComposer()
 	{
 		$data = self::source;
 		$data['autoload']['psr-4'] = (object) $this->psr4;
-		return $data;
+
+		file_put_contents(
+			'composer.json',
+			json_encode(
+       				$data,
+       				JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+       			));
+
+		ComposerPhar::dumpautoload();
 	}
 }

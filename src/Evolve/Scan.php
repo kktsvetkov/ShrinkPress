@@ -43,7 +43,7 @@ BREAK;
 
 		$this->removeIncludes();
 		$this->deleteOldFiles();
-		$this->dotGit();
+		Git::dotGit();
 	}
 
 	function scanFolder($folder)
@@ -132,7 +132,7 @@ BREAK;
 
 				$f = Code::extractDefinition($code, $f);
 				Move::moveFunction($m, $f);
-				$this->updateComposer();
+				$this->composer->updateComposer();
 				Git::commit("{$f['function']}() moved to {$m['full']}()");
 
 				$replace = new Replace($this->wordPressFolder);
@@ -251,31 +251,6 @@ BREAK;
 			)));
 		file_put_contents($wp_settings, $code);
 
-		$this->updateComposer();
-	}
-
-	function updateComposer()
-	{
-		file_put_contents(
-			$this->wordPressFolder . '/composer.json',
-			json_encode(
-       				$this->composer->jsonSerialize(),
-       				JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
-       			));
-		ComposerPhar::dumpautoload();
-	}
-
-	function dotGit()
-	{
-		// .gitignore
-		//
-		file_put_contents('.gitignore', join("\n", array(
-			'/composer.lock',
-			'/wp-config.php',
-		)));
-		Git::commit('Adding .gitignore');
-
-		// .gitattributes
-		//
+		$this->composer->updateComposer();
 	}
 }
