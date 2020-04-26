@@ -57,6 +57,6 @@ function vendor_lint($folder)
 	closedir($dir);
 }
 
-vendor_lint(__DIR__ . '/reduced/wp-includes/vendor/shrinkpress');
+vendor_lint(__DIR__ . '/reduced/shrinkpress-vendors');
 
 echo "\n";
