@@ -34,6 +34,15 @@ class Composer
 		$data = self::source;
 		$data['autoload']['psr-4'] = (object) self::$psr4;
 
+		// not changed since last update ?
+		//
+		static $last;
+		if (!empty($last) && $last == $data)
+		{
+			return false;
+		}
+		$last = $data;
+
 		file_put_contents(
 			'composer.json',
 			json_encode(
@@ -42,6 +51,7 @@ class Composer
        			));
 
 		ComposerPhar::dumpautoload();
+		return true;
 	}
 
 	static function plantComposer()

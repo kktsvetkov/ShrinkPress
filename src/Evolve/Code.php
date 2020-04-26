@@ -4,6 +4,13 @@ namespace ShrinkPress\Reframe\Evolve;
 
 class Code
 {
+	static function tabify($code)
+	{
+		$code = str_replace("\n", "\n\t" , $code);
+		$code = "\t" . rtrim($code, "\t");
+		return $code;
+	}
+
 	static function extractByLines($code, $fromLine, $toLine)
 	{
 		$lines = explode("\n", $code);
@@ -81,5 +88,44 @@ class Code
 		}
 
 		return join('', $modified);
+	}
+
+	static function renameMethod($code, $from, $to)
+	{
+		if ($from == $to)
+		{
+			return $code;
+		}
+
+		$tokens = token_get_all( '<?php ' . $code);
+		array_shift($tokens);
+		$code = '';
+
+		$seek = array( 'function', (string) $from );
+		$last = array();
+		foreach ($tokens as $i => $token)
+		{
+			$oken = is_scalar($token) ? $token : $token[1];
+
+			// ignore whitespace
+			//
+			if (382 != $token[0])
+			{
+				array_push($last, $oken);
+				if (count($last) > count($seek))
+				{
+					array_shift($last);
+				}
+			}
+
+			if ($seek == $last)
+			{
+				$oken = (string) $to;
+			}
+
+			$code .= $oken;
+		}
+
+		return $code;
 	}
 }

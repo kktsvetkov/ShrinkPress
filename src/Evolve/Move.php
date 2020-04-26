@@ -20,7 +20,30 @@ class Move
 
 	static function createClass(array $s, $classFilename)
 	{
+		if (file_exists($classFilename))
+		{
+			throw new \RuntimeException(
+				'Class file already exists: '
+					. $classFilename
+			);
+		}
 
+		if (!file_exists($dir = dirname($classFilename)))
+		{
+			mkdir($dir, 02777, true);
+		}
+
+		$code = array(
+			'<?php ',
+			'',
+			'namespace ' . $s['namespace'] . ';',
+			'',
+			'class ' . $s['class'],
+			'{',
+			'}',
+			''
+			);
+		file_put_contents($classFilename, join("\n", $code));
 	}
 
 	static function moveFunction(array $f, array $m)
@@ -32,10 +55,34 @@ class Move
 			self::createClass($m, $classFilename);
 		}
 
-		print_r($m);var_dump($classFilename); // exit;
-
+		$renamed = Code::renameMethod($f['code'], $f['function'], $m['method']);
+		self::insertMethod(
+			$f['docComment'] . $renamed,
+			$classFilename);
 
 		Composer::updateComposer();
 		Git::commit("{$f['function']}() moved to {$m['full']}()");
+	}
+
+	static function insertMethod($methodCode, $classFilename)
+	{
+		if (!file_exists($classFilename))
+		{
+			throw new \InvalidArgumentException(
+				'Class file not found: '
+					. $classFilename
+			);
+		}
+
+		$code = file_get_contents($classFilename);
+		$methodCode = Code::tabify($methodCode);
+
+		$className = pathinfo($classFilename, PATHINFO_FILENAME);
+		$code = Code::injectCode($code,
+			array('class', $className, '{'),
+			"\n" . $methodCode . "\n"
+			);
+
+		file_put_contents($classFilename, $code);
 	}
 }
