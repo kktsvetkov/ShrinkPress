@@ -143,7 +143,10 @@ class Scan
 
 				$f = Code::extractDefinition($code, $f);
 				Move::moveFunction($f, $m);
-				Replace::replaceFunction($f, $m);
+
+				// $this->replaceFunction($f, $m);
+				new Replace($this, 'replaceFunction', $f, $m);
+				Git::commit("{$f['function']}() replaced with {$m['full']}()");
 
 				file_put_contents($filename, $code);
 				Git::commit("drop {$f['function']}()");
@@ -154,10 +157,6 @@ class Scan
 					FILE_APPEND
 					);
 				return 1;
-			} else
-			{
-				echo "UNKNOWN ?\n";
-				print_r($f);exit;
 			}
 		}
 
@@ -189,6 +188,32 @@ class Scan
 		}
 
 		return $this->findFunctions->extract($node);
+	}
+
+	function replaceFunction($filename, array $f, array $m)
+	{
+		echo "\t* {$filename}\n";
+
+		$code = file_get_contents( $filename );
+		$nodes = $this->parser->parse($code);
+
+		// calls ?
+		//
+		$this->traverser->addVisitor( $this->findCalls );
+		$this->traverser->traverse( [$node] );
+		$this->traverser->removeVisitor( $this->findCalls );
+
+		if ($this->findCalls->result)
+		{
+			print_r($result);
+		}
+
+		// hooks ?
+		//
+		;
+		;
+
+		;
 	}
 
 	function classFound($code, $nodes)
