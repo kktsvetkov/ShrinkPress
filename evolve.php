@@ -14,3 +14,5 @@ set_error_handler(function($severity, $message, $file, $line)
 use ShrinkPress\Reframe;
 
 new Reframe\Evolve\Scan(__DIR__ . '/reduced');
+
+include __DIR__ . '/lint.php';
