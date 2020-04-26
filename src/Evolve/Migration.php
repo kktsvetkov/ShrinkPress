@@ -6,7 +6,9 @@ class Migration
 {
 	static function getFunction(array $f)
 	{
-		return array($f['function'], 'Uno', 'Due', 'full' => 'Uno\\Due::' . $f['function']);
+		// return array($f['function'], 
+		// 'Uno', 'Due', 'full' =>
+		// 'Uno\\Due::' . $f['function']);
 
 		$function = (string) $f['function'];
 		if (empty(self::migrateFunctions[ $function ]))

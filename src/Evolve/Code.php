@@ -4,7 +4,7 @@ namespace ShrinkPress\Reframe\Evolve;
 
 class Code
 {
-	static function extract($code, $fromLine, $toLine)
+	static function extractByLines($code, $fromLine, $toLine)
 	{
 		$lines = explode("\n", $code);
 		$total = count($lines);
@@ -32,4 +32,54 @@ class Code
 		return array($found, join("\n", $lines));
 	}
 
+	static function extractDefinition(&$code, array $e)
+	{
+		$c = self::extractByLines($code, $e['startLine'], $e['endLine']);
+		$e['code'] = $c[0];
+		$code = $c[1];
+
+		if ($e['docCommentLine'])
+		{
+			$b = self::extractByLines($code,
+				$e['docCommentLine'], $e['startLine']-1);
+
+			$e['docComment'] = $b[0];
+			$code = $b[1];
+		}
+
+		return $e;
+	}
+
+	static function injectCode($code, array $seek, $inject)
+	{
+		$tokens = token_get_all($code);
+
+		$modified = array();
+		$last = array();
+		foreach ($tokens as $token)
+		{
+			$oken = is_scalar($token) ? $token : $token[1];
+			$modified[] = $oken;
+
+			// skip T_WHITESPACE
+			//
+			if (382 == $token[0])
+			{
+				continue;
+			}
+
+			array_push($last, $oken);
+			if (count($last) > count($seek))
+			{
+				array_shift($last);
+			}
+
+			if ($seek == $last)
+			{
+				$modified[] = $inject;
+			}
+		}
+
+		return join('', $modified);
+	}
 }

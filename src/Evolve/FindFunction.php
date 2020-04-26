@@ -33,13 +33,11 @@ class FindFunction extends NodeVisitorAbstract
 			'function' => (string) $node->name,
 			'startLine' => $node->getStartLine(),
 			'endLine' => $node->getEndLine(),
-			'docComment' => '',
 			'docCommentLine' => 0,
 		);
 
 		if ($docComment = $node->getDocComment())
 		{
-			$f['docComment'] = $docComment->getText();
 			$f['docCommentLine'] = $docComment->getLine();
 		}
 

@@ -16,6 +16,8 @@ class Scan
 	protected $findFunctions;
 	protected $findCalls;
 
+	protected $composer;
+
 	function __construct($wordPressFolder)
 	{
 		$this->traverser = new NodeTraverser;
@@ -25,18 +27,23 @@ class Scan
 		$this->findFunctions = new FindFunction;
 		$this->findCalls = new FindCalls;
 
+		$this->composer = new Composer;
+
 		chdir($this->wordPressFolder = $wordPressFolder);
 		Git::checkout();
+
+		$this->plantComposer();
 
 		$try = 0;
 		do {
 			echo "Try: ", ++$try, "\n";
 			$changes = $this->scanFolder('');
-// BREAK;
+BREAK;
 		} while ($changes);
 
 		$this->removeIncludes();
 		$this->deleteOldFiles();
+		$this->dotGit();
 	}
 
 	function scanFolder($folder)
@@ -98,7 +105,7 @@ class Scan
 		'wp-admin/images',
 		'wp-admin/js',
 		'wp-includes/js',
-		'wp-includes/vendor',
+		Composer::vendors,
 		);
 
 	const skipFiles = array(
@@ -114,24 +121,18 @@ class Scan
 		$code = file_get_contents( $this->wordPressFolder . '/' . $filename );
 		$nodes = $this->parser->parse($code);
 
+		// function ?
+		//
 		if ($f = $this->functionFound($code, $nodes))
 		{
 			$f['filename'] = $filename;
 			if ($m = Migration::getFunction($f))
 			{
-				$c = Code::extract($code, $f['startLine'], $f['endLine']);
-				$func = $c[0];
-				$code = $c[1];
-
-				if ($f['docCommentLine'])
-				{
-					$b = Code::extract($code, $f['docCommentLine'], $f['startLine']-1);
-					$code = $b[1];
-				}
-
 				print_r($f);
 
+				$f = Code::extractDefinition($code, $f);
 				Move::moveFunction($m, $f);
+				$this->updateComposer();
 				Git::commit("{$f['function']}() moved to {$m['full']}()");
 
 				$replace = new Replace($this->wordPressFolder);
@@ -149,8 +150,13 @@ class Scan
 			}
 		}
 
+		// class ?
+		//
 		;
 		;
+
+		// global ?
+		//
 		;
 		;
 	}
@@ -170,11 +176,7 @@ class Scan
 		// are about to change inside it ?
 		//
 		$node = $this->findFunctions->result;
-		$this->traverser->addVisitor( $this->findCalls );
-		$this->traverser->traverse( [$node] );
-		$this->traverser->removeVisitor( $this->findCalls );
-
-		if ($this->findCalls->result)
+		if ($this->hasMoreInside($node))
 		{
 			return false;
 		}
@@ -192,6 +194,35 @@ class Scan
 
 	}
 
+	/**
+	* Check if there are any references to other things that are about to change
+	*/
+	function hasMoreInside(Node $node)
+	{
+		// calls ?
+		//
+		$this->traverser->addVisitor( $this->findCalls );
+		$this->traverser->traverse( [$node] );
+		$this->traverser->removeVisitor( $this->findCalls );
+
+		if ($this->findCalls->result)
+		{
+			return true;
+		}
+
+		// hooks ?
+		//
+		;
+		;
+
+		// globals ?
+		//
+		;
+		;
+
+		return false;
+	}
+
 	function removeIncludes()
 	{
 
@@ -200,5 +231,51 @@ class Scan
 	function deleteOldFiles()
 	{
 
+	}
+
+	function plantComposer()
+	{
+		$code = file_get_contents(
+			$wp_settings = $this->wordPressFolder . '/wp-settings.php'
+			);
+
+		$code = Code::injectCode($code, array(
+			'define', '(', "'WPINC'", ',', "'wp-includes'", ')', ';'
+			), join("\n", array(
+			'',
+			'',
+			'/** @see shrinkpress */',
+			'require ABSPATH . \'/'
+				. $this->composer::vendors
+				. '/autoload.php\';',
+			)));
+		file_put_contents($wp_settings, $code);
+
+		$this->updateComposer();
+	}
+
+	function updateComposer()
+	{
+		file_put_contents(
+			$this->wordPressFolder . '/composer.json',
+			json_encode(
+       				$this->composer->jsonSerialize(),
+       				JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+       			));
+		ComposerPhar::dumpautoload();
+	}
+
+	function dotGit()
+	{
+		// .gitignore
+		//
+		file_put_contents('.gitignore', join("\n", array(
+			'/composer.lock',
+			'/wp-config.php',
+		)));
+		Git::commit('Adding .gitignore');
+
+		// .gitattributes
+		//
 	}
 }
