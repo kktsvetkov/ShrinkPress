@@ -4,15 +4,9 @@ namespace ShrinkPress\Reframe\Evolve;
 
 class Replace
 {
-	protected $wordPressFolder = '';
-
-	function __construct($wordPressFolder)
-	{
-		$this->wordPressFolder = $wordPressFolder;
-	}
-
-	function replaceFunction(array $f, array $m)
+	static function replaceFunction(array $f, array $m)
 	{
 
+		Git::commit("{$f['function']}() replaced with {$m['full']}()");
 	}
 }

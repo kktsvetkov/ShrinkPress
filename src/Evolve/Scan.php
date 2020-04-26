@@ -131,15 +131,11 @@ BREAK;
 				print_r($f);
 
 				$f = Code::extractDefinition($code, $f);
-				Move::moveFunction($m, $f);
-				$this->composer->updateComposer();
-				Git::commit("{$f['function']}() moved to {$m['full']}()");
+				Move::moveFunction($f, $m, $this->composer);
 
-				$replace = new Replace($this->wordPressFolder);
-				$replace->replaceFunction($m, $f);
-				Git::commit("{$f['function']}() replaced with {$m['full']}()");
+				Replace::replaceFunction($f, $m);
 
-				file_put_contents($this->wordPressFolder . '/' . $filename, $code);
+				file_put_contents($filename, $code);
 				Git::commit("drop {$f['function']}()");
 
 				return 1;
