@@ -6,14 +6,12 @@ class Migration
 {
 	static function getFunction(array $f)
 	{
-		// return array($f['function'],
-		// 'Uno', 'Due', 'full' =>
-		// 'Uno\\Due::' . $f['function']);
-
 		$function = (string) $f['function'];
 		if (empty(self::migrateFunctions[ $function ]))
 		{
-			return false;
+			// dummy proto packages based on filename
+			//
+			return Proto::getFunction($f);
 		}
 
 		$m = self::migrateFunctions[ $function ];
@@ -30,6 +28,8 @@ class Migration
 	*/
 	const migrateFunctions = array(
 		'export_add_js' => array('add_js', 'Export', 'ShrinkPress\\Admin'),
+		'get_cli_args' => array('get_cli_args', 'Console', 'ShrinkPress\\Admin'),
+		'wp_nav_menu_max_depth' => array('max_depth', 'Menu', 'ShrinkPress\\Admin'),
 		'do_activate_header' => array('activate_header', 'Activate', 'ShrinkPress\\Activate'),
 	);
 }

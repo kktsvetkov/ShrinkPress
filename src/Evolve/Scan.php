@@ -31,6 +31,7 @@ class Scan
 		//
 		Git::checkout();
 		Composer::wipeComposer();
+		shell_exec('rm functions.csv');
 
 		// fresh copy of composer
 		//
@@ -40,7 +41,7 @@ class Scan
 		do {
 			echo "Try: ", ++$try, "\n";
 			$changes = $this->scanFolder('');
-BREAK;
+// BREAK;
 		} while ($changes);
 
 		$this->removeIncludes();
@@ -112,6 +113,7 @@ BREAK;
 		'wp-admin/js',
 		'wp-includes/js',
 		Composer::vendors,
+		'wp-includes/sodium_compat',
 		);
 
 	const skipFiles = array(
@@ -125,6 +127,11 @@ BREAK;
 		$code = file_get_contents( $filename );
 		$nodes = $this->parser->parse($code);
 
+		// global ?
+		//
+		;
+		;
+
 		// function ?
 		//
 		if ($f = $this->functionFound($code, $nodes))
@@ -136,12 +143,16 @@ BREAK;
 
 				$f = Code::extractDefinition($code, $f);
 				Move::moveFunction($f, $m);
-
 				Replace::replaceFunction($f, $m);
 
 				file_put_contents($filename, $code);
 				Git::commit("drop {$f['function']}()");
 
+				file_put_contents(
+					'functions.csv',
+					"{$f['function']}, {$m['full']}, {$filename}:{$f['startLine']}\n",
+					FILE_APPEND
+					);
 				return 1;
 			} else
 			{
@@ -155,10 +166,6 @@ BREAK;
 		;
 		;
 
-		// global ?
-		//
-		;
-		;
 	}
 
 	function functionFound($code, $nodes)

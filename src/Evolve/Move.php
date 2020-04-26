@@ -57,7 +57,9 @@ class Move
 
 		$renamed = Code::renameMethod($f['code'], $f['function'], $m['method']);
 		self::insertMethod(
-			$f['docComment'] . $renamed,
+			(!empty($f['docComment'])
+				? $f['docComment']
+				: '') . $renamed,
 			$classFilename);
 
 		Composer::updateComposer();
