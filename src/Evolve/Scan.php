@@ -28,7 +28,9 @@ class Scan extends Inspect
 	protected $parser;
 
 	protected $findFunctions;
-	protected $findCalls;
+
+	protected $hasCalls;
+	protected $hasHooks;
 
 	function __construct($wordPressFolder)
 	{
@@ -36,7 +38,12 @@ class Scan extends Inspect
 
 		$this->parser = new Parse;
 		$this->findFunctions = new FindFunction;
-		$this->findCalls = new FindCalls;
+
+		$this->hasCalls = new HasCalls;
+		$this->hasCalls->exitOnFirstMatch = true;
+
+		$this->hasHooks = new HasHooks;
+		$this->hasHooks->exitOnFirstMatch = true;
 
 		chdir($this->wordPressFolder = $wordPressFolder);
 
@@ -82,9 +89,8 @@ class Scan extends Inspect
 				$f = Code::extractDefinition($code, $f);
 				Move::moveFunction($f, $m);
 
-				// $this->replaceFunction($f, $m);
-				new ReplaceFunction($f, $m, $this->parser);
-				Git::commit("{$f['function']}() replaced with {$m['full']}()");
+				// new ReplaceFunction($f, $m, $this->parser);
+				// Git::commit("{$f['function']}() replaced with {$m['full']}()");
 
 				file_put_contents($filename, $code);
 				Git::commit("drop {$f['function']}()");
@@ -120,6 +126,7 @@ class Scan extends Inspect
 		//
 		if ($this->hasMoreInside($node))
 		{
+			echo "SKIP {$node->name}()\n";
 			return false;
 		}
 
@@ -143,15 +150,17 @@ class Scan extends Inspect
 	{
 		// calls ?
 		//
-		if ($this->parser->traverse($this->findCalls, [$node]))
+		if ($this->parser->traverse($this->hasCalls, [$node]))
 		{
 			return true;
 		}
 
 		// hooks ?
 		//
-		;
-		;
+		if ($this->parser->traverse($this->hasHooks, [$node]))
+		{
+			return true;
+		}
 
 		// globals ?
 		//
