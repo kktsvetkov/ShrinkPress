@@ -63,7 +63,6 @@ class Move
 			$classFilename);
 
 		Composer::updateComposer();
-		Git::commit("{$f['function']}() moved to {$m['full']}()");
 	}
 
 	static function insertMethod($methodCode, $classFilename)

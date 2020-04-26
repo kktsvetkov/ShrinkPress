@@ -30,13 +30,17 @@ class HasInside extends Inspect
 		} else
 		{
 			$this->inspectFolder('');
-		}
 
-		file_put_contents('inside.json', json_encode([
-			'calls' => self::$calls,
-			'hooks' => self::$hooks,
-			'globals' => self::$globals,
-		], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+			file_put_contents(
+				'inside.json',
+				json_encode([
+					'calls' => self::$calls,
+					'hooks' => self::$hooks,
+					'globals' => self::$globals,
+					],
+					JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+				));
+		}
 	}
 
 	static $calls = array();

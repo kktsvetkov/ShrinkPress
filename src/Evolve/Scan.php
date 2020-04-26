@@ -57,6 +57,10 @@ class Scan extends Inspect
 		//
 		Composer::plantComposer();
 
+		// learn what is inside
+		//
+		new HasInside($this->parser);
+
 		$try = 0;
 		do {
 			echo "Try: ", ++$try, "\n";
@@ -88,10 +92,18 @@ class Scan extends Inspect
 
 				$f = Code::extractDefinition($code, $f);
 				Move::moveFunction($f, $m);
+				Git::commit("{$f['function']}() moved to {$m['full']}()");
 
-				// new ReplaceFunction($f, $m, $this->parser);
-				// Git::commit("{$f['function']}() replaced with {$m['full']}()");
+				Replace::replaceFunction($this->parser, $f, $m, 'replaceCall');
+				Replace::replaceFunction($this->parser, $f, $m, 'replaceHook');
+				Git::commit("{$f['function']}() replaced with {$m['full']}()");
 
+				// read the source code again, file might
+				// have been changed in the mean time when
+				// the hooks and calls were being converted
+				//
+				$code = file_get_contents( $filename );
+				Code::extractDefinition($code, $f);
 				file_put_contents($filename, $code);
 				Git::commit("drop {$f['function']}()");
 
