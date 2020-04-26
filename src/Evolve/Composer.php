@@ -22,17 +22,17 @@ class Composer
 			),
 	);
 
-	public $psr4 = array();
+	static $psr4 = array();
 
-	function addPsr4($namespace, $folder)
+	static function addPsr4($namespace, $folder)
 	{
-		$this->psr4[ $namespace ] = $folder;
+		self::$psr4[ $namespace ] = $folder;
 	}
 
-	function updateComposer()
+	static function updateComposer()
 	{
 		$data = self::source;
-		$data['autoload']['psr-4'] = (object) $this->psr4;
+		$data['autoload']['psr-4'] = (object) self::$psr4;
 
 		file_put_contents(
 			'composer.json',
@@ -42,5 +42,29 @@ class Composer
        			));
 
 		ComposerPhar::dumpautoload();
+	}
+
+	static function plantComposer()
+	{
+		self::updateComposer();
+
+		$code = file_get_contents('wp-settings.php');
+		$code = Code::injectCode($code, array(
+			'define', '(', "'WPINC'", ',', "'wp-includes'", ')', ';'
+			), join("\n", array(
+			'',
+			'',
+			'/** @see shrinkpress */',
+			'require ABSPATH . \'/'
+				. self::vendors
+				. '/autoload.php\';',
+			)));
+		file_put_contents('wp-settings.php', $code);
+	}
+
+	static function wipeComposer()
+	{
+		shell_exec('rm composer.json');
+		shell_exec('rm -rf ' . self::vendors);
 	}
 }

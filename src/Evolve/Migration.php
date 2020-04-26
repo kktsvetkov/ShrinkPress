@@ -6,7 +6,7 @@ class Migration
 {
 	static function getFunction(array $f)
 	{
-		// return array($f['function'], 
+		// return array($f['function'],
 		// 'Uno', 'Due', 'full' =>
 		// 'Uno\\Due::' . $f['function']);
 
@@ -19,7 +19,7 @@ class Migration
 		$m = self::migrateFunctions[ $function ];
 		return array(
 			'method' => $m[0],
-			'classs' => $m[1],
+			'class' => $m[1],
 			'namespace' => $m[2],
 			'full' => "{$m[2]}\\{$m[1]}::{$m[0]}"
 		);

@@ -16,8 +16,6 @@ class Scan
 	protected $findFunctions;
 	protected $findCalls;
 
-	protected $composer;
-
 	function __construct($wordPressFolder)
 	{
 		$this->traverser = new NodeTraverser;
@@ -27,12 +25,16 @@ class Scan
 		$this->findFunctions = new FindFunction;
 		$this->findCalls = new FindCalls;
 
-		$this->composer = new Composer;
-
 		chdir($this->wordPressFolder = $wordPressFolder);
-		Git::checkout();
 
-		$this->plantComposer();
+		// wipe the slate clean before starting
+		//
+		Git::checkout();
+		Composer::wipeComposer();
+
+		// fresh copy of composer
+		//
+		Composer::plantComposer();
 
 		$try = 0;
 		do {
@@ -65,7 +67,11 @@ BREAK;
 				continue;
 			}
 
-			$local = str_replace($this->wordPressFolder . '/', '', $found->getPathname() );
+			$local = str_replace(
+				$this->wordPressFolder . '/',
+				'',
+				$found->getPathname()
+				);
 			if ($found->isDir())
 			{
 				if (!in_array( $local, static::skipFolders ))
@@ -116,9 +122,7 @@ BREAK;
 
 	function scanFile($filename)
 	{
-		// echo $filename, "\n";
-
-		$code = file_get_contents( $this->wordPressFolder . '/' . $filename );
+		$code = file_get_contents( $filename );
 		$nodes = $this->parser->parse($code);
 
 		// function ?
@@ -131,7 +135,7 @@ BREAK;
 				print_r($f);
 
 				$f = Code::extractDefinition($code, $f);
-				Move::moveFunction($f, $m, $this->composer);
+				Move::moveFunction($f, $m);
 
 				Replace::replaceFunction($f, $m);
 
@@ -227,26 +231,5 @@ BREAK;
 	function deleteOldFiles()
 	{
 
-	}
-
-	function plantComposer()
-	{
-		$code = file_get_contents(
-			$wp_settings = $this->wordPressFolder . '/wp-settings.php'
-			);
-
-		$code = Code::injectCode($code, array(
-			'define', '(', "'WPINC'", ',', "'wp-includes'", ')', ';'
-			), join("\n", array(
-			'',
-			'',
-			'/** @see shrinkpress */',
-			'require ABSPATH . \'/'
-				. $this->composer::vendors
-				. '/autoload.php\';',
-			)));
-		file_put_contents($wp_settings, $code);
-
-		$this->composer->updateComposer();
 	}
 }
