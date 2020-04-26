@@ -66,13 +66,6 @@ class ReplaceHooks extends NodeVisitorAbstract
 			return;
 		}
 
-		// $this->result[] = array(
-		// 	'line' => $node->getLine(),
-		// 	'hookName' => !empty($node->args[ 0 ]->value->value)
-		// 		? $node->args[ 0 ]->value->value
-		// 		: json_encode( $node->args[ 0 ] ),
-		// 	);
-
 		$this->result[] = $node->getLine();
 	}
 

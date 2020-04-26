@@ -13,11 +13,6 @@ abstract class Inspect
 		$this->skipFiles = $skipFiles;
 	}
 
-	function inspect()
-	{
-		return $this->inspectFolder('');
-	}
-
 	function inspectFolder($folder)
 	{
 		$full = getcwd() . '/' . $folder;

@@ -25,6 +25,7 @@ class Proto
 		$string = str_replace('Wp_', '', $string);
 		$string = str_replace('Class_', '', $string);
 		$string = str_replace('Wordpress', 'WordPress', $string);
+		$string = str_replace('.', '\\', $string);
 
 		return $string;
 	}

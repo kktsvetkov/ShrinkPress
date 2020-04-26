@@ -5,13 +5,20 @@ namespace ShrinkPress\Reframe\Evolve;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
-class FindCalls extends NodeVisitorAbstract
+class ReplaceCalls extends NodeVisitorAbstract
 {
-	public $result;
+	public $find = '';
+
+	function __construct($find)
+	{
+		$this->find = (string) $find;
+	}
+
+	public $result = array();
 
 	function beforeTraverse(array $nodes)
 	{
-		$this->result = null;
+		$this->result = array();
 	}
 
 	function leaveNode(Node $node)
@@ -27,14 +34,16 @@ class FindCalls extends NodeVisitorAbstract
 		}
 
 		$functionName = (string) $node->name;
-		if (Core::isCoreFunction( $functionName ))
+		if ($this->find != $functionName)
 		{
 			return;
 		}
 
-		$this->result = $node;
+		$this->result[] = $node->getLine();
+	}
 
-		// return NodeTraverser::STOP_TRAVERSAL;
-		return 2;
+	function afterTraverse(array $nodes)
+	{
+		rsort($this->result);
 	}
 }

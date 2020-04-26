@@ -128,4 +128,90 @@ class Code
 
 		return $code;
 	}
+
+	static function addUse($code, $classOrNamespace, $as = '')
+	{
+		$seek = array(379, 378, 382);
+		$tokens = token_get_all($code);
+
+		$modified = array();
+		$last = array();
+		foreach ($tokens as $i => $token)
+		{
+			$oken = is_scalar($token) ? $token : $token[1];
+			$modified[] = $oken;
+
+			array_push($last, $token[0]);
+			if (count($last) > count($seek))
+			{
+				array_shift($last);
+			}
+
+			if ($seek == $last)
+			{
+				$space = array_pop($modified);
+
+				$modified[] = "\n" . 'use '
+					. $classOrNamespace
+					. ($as ? " as {$as}" : '')
+					. ';';
+
+				$modified[] = $space;
+			}
+		}
+
+		return join('', $modified);
+	}
+
+	static function replaceHook($code, $function, $method)
+	{
+		$tokens = token_get_all( '<?php ' . $code);
+		array_shift($tokens);
+
+		$modified = array();
+		foreach ($tokens as $i => $token)
+		{
+			$oken = is_scalar($token) ? $token : $token[1];
+
+			if (323 == $token[0])
+			{
+				if ($oken == "'{$function}'")
+				{
+					$oken = "'{$method}'";
+				} else
+				if ($oken == "\"{$function}\"")
+				{
+					$oken = "\"{$method}\"";
+				}
+			}
+
+			$modified[] = $oken;
+		}
+
+		return join('', $modified);
+	}
+
+	static function replaceCall($code, $function, $method)
+	{
+		$tokens = token_get_all( '<?php ' . $code);
+		array_shift($tokens);
+
+		$modified = array();
+		foreach ($tokens as $i => $token)
+		{
+			$oken = is_scalar($token) ? $token : $token[1];
+
+			if (319 == $token[0])
+			{
+				if ($function == $oken)
+				{
+					$oken = $method;
+				}
+			}
+
+			$modified[] = $oken;
+		}
+
+		return join('', $modified);
+	}
 }

@@ -3,25 +3,38 @@
 namespace ShrinkPress\Reframe\Evolve;
 
 use PhpParser\Node;
-use PhpParser\NodeTraverser;
-use PhpParser\ParserFactory;
 
-class Scan
+class Scan extends Inspect
 {
-	protected $parser;
-	protected $traverser;
+	const skipFolders = array(
+		'.git',
+		'wp-content',
+		'wp-admin/css',
+		'wp-admin/images',
+		'wp-admin/js',
+		'wp-includes/js',
+		Composer::vendors,
+		'wp-includes/sodium_compat',
+		);
+
+	const skipFiles = array(
+		'wp-config.php',
+		'wp-config-sample.php',
+		'wp-admin/includes/noop.php',
+		);
 
 	protected $wordPressFolder = '';
+
+	protected $parser;
 
 	protected $findFunctions;
 	protected $findCalls;
 
 	function __construct($wordPressFolder)
 	{
-		$this->traverser = new NodeTraverser;
-		$this->parser = (new ParserFactory)
-			->create(ParserFactory::PREFER_PHP7);
+		parent::__construct(self::skipFolders, self::skipFiles);
 
+		$this->parser = new Parse;
 		$this->findFunctions = new FindFunction;
 		$this->findCalls = new FindCalls;
 
@@ -40,8 +53,7 @@ class Scan
 		$try = 0;
 		do {
 			echo "Try: ", ++$try, "\n";
-			$changes = $this->scanFolder('');
-// BREAK;
+			$changes = $this->inspectFolder('');
 		} while ($changes);
 
 		$this->removeIncludes();
@@ -49,83 +61,9 @@ class Scan
 		Git::dotGit();
 	}
 
-	function scanFolder($folder)
-	{
-		$full = $this->wordPressFolder . '/' . $folder;
-		if (!is_dir($full))
-		{
-			throw new \InvalidArgumentException(
-				'Argument $folder must be an existing folder,'
-					. " '{$folder}' is not ({$full})"
-			);
-		}
-
-		$dir = new \DirectoryIterator( $full );
-		foreach ($dir as $found)
-		{
-			if ($found->isDot())
-			{
-				continue;
-			}
-
-			$local = str_replace(
-				$this->wordPressFolder . '/',
-				'',
-				$found->getPathname()
-				);
-			if ($found->isDir())
-			{
-				if (!in_array( $local, static::skipFolders ))
-				{
-					if ($changes = $this->scanFolder($local))
-					{
-						return $changes;
-					}
-				}
-
-				continue;
-			}
-
-			if (in_array( $local, static::skipFiles ))
-			{
-				continue;
-			}
-
-			if ('php' != \pathinfo($local, PATHINFO_EXTENSION))
-			{
-				continue;
-			}
-
-			if ($changes = $this->scanFile($local))
-			{
-				return $changes;
-			}
-		}
-
-		return 0;
-	}
-
-	const skipFolders = array(
-		'.git',
-		'wp-content',
-		'wp-admin/css',
-		'wp-admin/images',
-		'wp-admin/js',
-		'wp-includes/js',
-		Composer::vendors,
-		'wp-includes/sodium_compat',
-		);
-
-	const skipFiles = array(
-		'wp-config.php',
-		'wp-config-sample.php',
-		'wp-admin/includes/noop.php',
-		);
-
-	function scanFile($filename)
+	function inspectFile($filename)
 	{
 		$code = file_get_contents( $filename );
-		$nodes = $this->parser->parse($code);
 
 		// global ?
 		//
@@ -134,7 +72,7 @@ class Scan
 
 		// function ?
 		//
-		if ($f = $this->functionFound($code, $nodes))
+		if ($f = $this->functionFound($code))
 		{
 			$f['filename'] = $filename;
 			if ($m = Migration::getFunction($f))
@@ -145,7 +83,7 @@ class Scan
 				Move::moveFunction($f, $m);
 
 				// $this->replaceFunction($f, $m);
-				new Replace($this, 'replaceFunction', $f, $m);
+				new ReplaceFunction($f, $m, $this->parser);
 				Git::commit("{$f['function']}() replaced with {$m['full']}()");
 
 				file_put_contents($filename, $code);
@@ -156,7 +94,8 @@ class Scan
 					"{$f['function']}, {$m['full']}, {$filename}:{$f['startLine']}\n",
 					FILE_APPEND
 					);
-				return 1;
+
+				return Inspect::INSPECT_STOP;
 			}
 		}
 
@@ -167,13 +106,11 @@ class Scan
 
 	}
 
-	function functionFound($code, $nodes)
+	function functionFound($code)
 	{
-		$this->traverser->addVisitor( $this->findFunctions );
-		$this->traverser->traverse( $nodes );
-		$this->traverser->removeVisitor( $this->findFunctions );
-
-		if (!$this->findFunctions->result)
+		$nodes = $this->parser->parse($code);
+		$node = $this->parser->traverse($this->findFunctions, $nodes);
+		if (!$node)
 		{
 			return false;
 		}
@@ -181,7 +118,6 @@ class Scan
 		// does it have other things that
 		// are about to change inside it ?
 		//
-		$node = $this->findFunctions->result;
 		if ($this->hasMoreInside($node))
 		{
 			return false;
@@ -190,38 +126,12 @@ class Scan
 		return $this->findFunctions->extract($node);
 	}
 
-	function replaceFunction($filename, array $f, array $m)
-	{
-		echo "\t* {$filename}\n";
-
-		$code = file_get_contents( $filename );
-		$nodes = $this->parser->parse($code);
-
-		// calls ?
-		//
-		$this->traverser->addVisitor( $this->findCalls );
-		$this->traverser->traverse( [$node] );
-		$this->traverser->removeVisitor( $this->findCalls );
-
-		if ($this->findCalls->result)
-		{
-			print_r($result);
-		}
-
-		// hooks ?
-		//
-		;
-		;
-
-		;
-	}
-
-	function classFound($code, $nodes)
+	function classFound($code)
 	{
 
 	}
 
-	function globalFound($code, $nodes)
+	function globalFound($code)
 	{
 
 	}
@@ -233,11 +143,7 @@ class Scan
 	{
 		// calls ?
 		//
-		$this->traverser->addVisitor( $this->findCalls );
-		$this->traverser->traverse( [$node] );
-		$this->traverser->removeVisitor( $this->findCalls );
-
-		if ($this->findCalls->result)
+		if ($this->parser->traverse($this->findCalls, [$node]))
 		{
 			return true;
 		}
