@@ -9,10 +9,10 @@ class Linter
 	static function getLintError($php)
 	{
 		$file = trim($php);
-		$output = shell_exec('php -l ' . $f);
+		$output = shell_exec('php -l ' . $file);
 
 		$no_syntax_errors = sprintf(self::no_syntax_errors, $file);
-		if (trim($o) != $no)
+		if (trim($output) != $no_syntax_errors)
 		{
 			throw new \RuntimeException($output);
 		}
