@@ -19,7 +19,7 @@ class Migration
 			'method' => $m[0],
 			'class' => $m[1],
 			'namespace' => $m[2],
-			'full' => '{$m[2]}\\{$m[1]}::{$m[0]}'
+			'full' => "{$m[2]}\\{$m[1]}::{$m[0]}"
 		);
 	}
 

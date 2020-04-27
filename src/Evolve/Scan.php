@@ -89,6 +89,7 @@ class Scan extends Inspect
 			if ($m = Migration::getFunction($f))
 			{
 				print_r($f);
+				print_r($m);
 
 				$f = Code::extractDefinition($code, $f);
 				Move::moveFunction($f, $m);
