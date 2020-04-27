@@ -21,26 +21,23 @@ class Proto
 
 		$string = join('_', array_map('ucfirst', explode('-', $string)));
 		$string = join('\\', array_map('ucfirst', explode('\\', $string)));
+		$string = join('\\', array_map('ucfirst', explode('.', $string)));
 
 		$string = str_replace('Wp_', '', $string);
 		$string = str_replace('Class_', '', $string);
 		$string = str_replace('Wordpress', 'WordPress', $string);
-		$string = str_replace('.', '\\', $string);
 
 		return $string;
 	}
 
 	private static function protoPackage($file)
 	{
-		$class = self::classify(basename($file));
-
-		$dir = 'wordpress/' . dirname($file);
-		$dir = str_replace('/', '\\', $dir);
-		$namespace = self::classify($dir);
+		$full = self::classify( 'wordpress/' . $file );
+		$chunks = explode('\\', $full);
 
 		return array(
-			'ns' => $namespace,
-			'class' => $class,
+			'class' => array_pop($chunks),
+			'ns' => join('\\', $chunks),
 		);
 	}
 }

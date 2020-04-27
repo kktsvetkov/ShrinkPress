@@ -4,6 +4,7 @@ namespace ShrinkPress\Reframe\Evolve;
 
 class Replace
 {
+	const marker = '%SHRINKPRESSREPLACE%';
 	static function replaceFunction(Parse $parser, array $f, array $m, $replaceFunc)
 	{
 		$inside = ('replaceCall' == $replaceFunc)
@@ -35,13 +36,14 @@ class Replace
 					$lines[ $line-1 ] = Code::$replaceFunc(
 						$lines[ $line-1 ],
 						$f['function'],
-						'\\' . $m['full']
+						self::marker
 					);
 				}
 
 				$code = join("\n", $lines);
 			}
 
+			$code = str_replace(self::marker, '\\' . $m['full'], $code);
 			file_put_contents($filename, $code);
 		}
 

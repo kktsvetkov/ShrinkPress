@@ -11,6 +11,8 @@ class Git
 
 	static function commit($msg)
 	{
+		Linter::all();
+
 		echo "Git: {$msg}\n";
 	}
 
