@@ -11,7 +11,8 @@ class Migration
 		{
 			// dummy proto packages based on filename
 			//
-			return Proto::getFunction($f);
+			// return Proto::getFunction($f);
+			return phpDocPackages::getFunction($f);
 		}
 
 		$m = self::migrateFunctions[ $function ];
@@ -31,6 +32,9 @@ class Migration
 		'get_cli_args' => array('get_cli_args', 'Console', 'ShrinkPress\\Admin'),
 		'wp_nav_menu_max_depth' => array('max_depth', 'Menu', 'ShrinkPress\\Admin'),
 		'do_activate_header' => array('activate_header', 'Activate', 'ShrinkPress\\Activate'),
+
+		// wp-admin/includes/class-pclzip.php
+		// 'PclZipUtilPathReduction' => array('UtilPathReduction', 'Paths', 'ShrinkPress\\PclZip'),
 
 		// wp-includes/l10n.php
 		'get_locale' => array('get_locale', 'L10N', 'ShrinkPress\\I18N'),

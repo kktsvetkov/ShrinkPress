@@ -25,15 +25,19 @@ class Proto
 
 		$string = str_replace('Wp_', '', $string);
 		$string = str_replace('Class_', '', $string);
-		$string = str_replace('Wordpress', 'WordPress', $string);
 
-		return $string;
+		return 'WordPress\\' . $string;
 	}
 
 	private static function protoPackage($file)
 	{
-		$full = self::classify( 'wordpress/' . $file );
+		$full = self::classify( $file );
 		$chunks = explode('\\', $full);
+
+		if (2 == count($chunks))
+		{
+			$chunks[2] = $chunks[1];
+		}
 
 		return array(
 			'class' => array_pop($chunks),

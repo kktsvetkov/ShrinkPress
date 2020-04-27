@@ -26,6 +26,11 @@ class Composer
 
 	static function addPsr4($namespace, $folder)
 	{
+		if ($ns = rtrim($namespace, '\\'))
+		{
+			$namespace = $ns . '\\';
+		}
+
 		self::$psr4[ $namespace ] = $folder;
 	}
 
@@ -39,7 +44,7 @@ class Composer
 		static $last;
 		if (!empty($last) && $last == $data)
 		{
-			return false;
+			// return false;
 		}
 		$last = $data;
 

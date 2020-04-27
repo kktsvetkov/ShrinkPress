@@ -44,6 +44,9 @@ class Move
 			''
 			);
 		file_put_contents($classFilename, join("\n", $code));
+
+		$d = explode('/src/', $dir);
+		Composer::addPsr4($s['namespace'], $d['0']);
 	}
 
 	static function moveFunction(array $f, array $m)
