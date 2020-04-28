@@ -30,7 +30,7 @@ class phpDocPackages
 			return self::$known[ $filename ];
 		}
 
-		$result = array('WordPress', 'Unknown');
+		$result = array('WordPress', 'Core');
 		$doccomment = substr(file_get_contents($filename), 0, 1024);
 
 		if (preg_match('~\s*\*\s+@package\s+(.+)\s+\*~Uis', $doccomment, $R))
