@@ -6,6 +6,8 @@ class Linter
 {
 	const no_syntax_errors = 'No syntax errors detected in %s';
 
+	static $ok = '';
+
 	static function getLintError($php)
 	{
 		$file = trim($php);
@@ -16,6 +18,8 @@ class Linter
 		{
 			throw new \RuntimeException($output);
 		}
+
+		echo self::$ok;
 	}
 
 	static function lintVendors($folder)
