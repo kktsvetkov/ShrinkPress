@@ -13,6 +13,7 @@ class Scan extends Inspect
 		'wp-admin/images',
 		'wp-admin/js',
 		'wp-includes/js',
+		// Composer::vendors . '/composer',
 		Composer::vendors,
 		'wp-includes/sodium_compat',
 		);
@@ -21,6 +22,7 @@ class Scan extends Inspect
 		'wp-config.php',
 		'wp-config-sample.php',
 		'wp-admin/includes/noop.php',
+		// Composer::vendors . '/autoload.php',
 		);
 
 	protected $wordPressFolder = '';
@@ -53,6 +55,10 @@ class Scan extends Inspect
 		Composer::wipeComposer();
 		shell_exec('rm functions.csv');
 
+		// start with .gitignore and .gitattributes
+		//
+		Git::dotGit();
+
 		// fresh copy of composer
 		//
 		Composer::plantComposer();
@@ -69,7 +75,6 @@ class Scan extends Inspect
 
 		$this->removeIncludes();
 		$this->deleteOldFiles();
-		Git::dotGit();
 	}
 
 	function inspectFile($filename)

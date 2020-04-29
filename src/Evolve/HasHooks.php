@@ -3,9 +3,8 @@
 namespace ShrinkPress\Reframe\Evolve;
 
 use PhpParser\Node;
-use PhpParser\NodeVisitorAbstract;
 
-class HasHooks extends NodeVisitorAbstract
+class HasHooks extends VisitorAbstract
 {
 	const callback_functions = array(
 		'add_filter' => 1,
@@ -16,15 +15,6 @@ class HasHooks extends NodeVisitorAbstract
 		'has_action' => 1,
 		'remove_action' => 1,
 	);
-
-	public $exitOnFirstMatch = false;
-
-	public $result = array();
-
-	function beforeTraverse(array $nodes)
-	{
-		$this->result = array();
-	}
 
 	function leaveNode(Node $node)
 	{
@@ -61,12 +51,6 @@ class HasHooks extends NodeVisitorAbstract
 			return;
 		}
 
-		$this->result[] = $callback;
-
-		if ($this->exitOnFirstMatch)
-		{
-			// return NodeTraverser::STOP_TRAVERSAL;
-			return 2;
-		}
+		return $this->push($callback);
 	}
 }

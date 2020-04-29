@@ -3,19 +3,9 @@
 namespace ShrinkPress\Reframe\Evolve;
 
 use PhpParser\Node;
-use PhpParser\NodeVisitorAbstract;
 
-class HasCalls extends NodeVisitorAbstract
+class HasCalls extends VisitorAbstract
 {
-	public $exitOnFirstMatch = false;
-
-	public $result = array();
-
-	function beforeTraverse(array $nodes)
-	{
-		$this->result = array();
-	}
-
 	function leaveNode(Node $node)
 	{
 		if (!$node instanceof Node\Expr\FuncCall)
@@ -34,12 +24,6 @@ class HasCalls extends NodeVisitorAbstract
 			return;
 		}
 
-		$this->result[] = $functionName;
-
-		if ($this->exitOnFirstMatch)
-		{
-			// return NodeTraverser::STOP_TRAVERSAL;
-			return 2;
-		}
+		return $this->push($functionName);
 	}
 }

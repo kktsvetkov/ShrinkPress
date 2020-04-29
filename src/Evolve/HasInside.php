@@ -6,9 +6,10 @@ class HasInside extends Inspect
 {
 	protected $parser;
 
-	protected $hasCalls;
-	protected $hasHooks;
-	protected $hasGlobals;
+	protected $inspectors = array();
+	static $has = array();
+
+	const inside_json = 'inside.json';
 
 	function __construct(Parse $parser)
 	{
@@ -16,38 +17,30 @@ class HasInside extends Inspect
 
 		$this->parser = $parser;
 
-		$this->hasCalls = new HasCalls;
-		$this->hasHooks = new HasHooks;
-		// $this->hasGlobals = new HasGlobals;
+		$this->inspectors = array(
+			'calls' => new HasCalls,
+			'hooks' => new HasHooks,
+			'super_globals' => new HasSuperGlobals,
+			'globals' => new HasGlobalsStatements,
+			);
 
-		if (file_exists('inside.json'))
+		if (file_exists(self::inside_json))
 		{
-			$json = json_decode(file_get_contents('inside.json'), true);
-			self::$calls = $json['calls'];
-			self::$hooks = $json['hooks'];
-			self::$globals = $json['globals'];
-			unset($json);
+			self::$has = json_decode(
+				file_get_contents(self::inside_json),
+				true
+			);
 		} else
 		{
 			$this->inspectFolder('');
 
 			file_put_contents(
-				'inside.json',
-				json_encode([
-					'calls' => self::$calls,
-					'hooks' => self::$hooks,
-					'globals' => self::$globals,
-					],
+				self::inside_json,
+				json_encode(self::$has,
 					JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
 				));
 		}
 	}
-
-	static $calls = array();
-
-	static $hooks = array();
-
-	static $globals = array();
 
 	function inspectFile($filename)
 	{
@@ -56,30 +49,21 @@ class HasInside extends Inspect
 		$code = file_get_contents( $filename );
 		$nodes = $this->parser->parse($code);
 
-		if ($calls = $this->parser->traverse($this->hasCalls, $nodes))
+		foreach ($this->inspectors as $type => $inspector)
 		{
-			foreach($calls as $call)
+			if (!$found = $this->parser->traverse($inspector, $nodes))
 			{
-				if (empty(self::$calls[$call][$filename]))
-				{
-					self::$calls[$call][$filename] = 1;
-				} else
-				{
-					self::$calls[$call][$filename]++;
-				}
+				continue;
 			}
-		}
 
-		if ($hooks = $this->parser->traverse($this->hasHooks, $nodes))
-		{
-			foreach($hooks as $hook)
+			foreach ($found as $match)
 			{
-				if (empty(self::$hooks[$hook][$filename]))
+				if (empty(self::$has[$type][$match][$filename]))
 				{
-					self::$hooks[$hook][$filename] = 1;
+					self::$has[$type][$match][$filename] = 1;
 				} else
 				{
-					self::$hooks[$hook][$filename]++;
+					self::$has[$type][$match][$filename]++;
 				}
 			}
 		}

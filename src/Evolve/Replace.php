@@ -5,11 +5,12 @@ namespace ShrinkPress\Reframe\Evolve;
 class Replace
 {
 	const marker = '%SHRINKPRESSREPLACE%';
+
 	static function replaceFunction(Parse $parser, array $f, array $m, $replaceFunc)
 	{
 		$inside = ('replaceCall' == $replaceFunc)
-			? HasInside::$calls
-			: HasInside::$hooks;
+			? HasInside::$has['calls']
+			: HasInside::$has['hooks'];
 
 		if (empty($inside[ $f['function'] ]))
 		{
