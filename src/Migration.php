@@ -1,19 +1,18 @@
 <?php
 
-namespace ShrinkPress\Reframe\Evolve;
+namespace ShrinkPress\Evolve;
 
-class Reframe_Migrate extends Reframe
+class Migration
 {
-	function reframeFunction($function, $filename)
+	static function getFunction(array $f)
 	{
+		$function = (string) $f['function'];
 		if (empty(self::migrateFunctions[ $function ]))
 		{
-			return array(
-				'method' => $function,
-				'class' => 'Functions',
-				'namespace' => 'ShrinkPress\\Orphanage',
-				'full' => "ShrinkPress\\Orphanage\\Functions::{$function}"
-			);
+			// dummy proto packages based on filename
+			//
+			// return Proto::getFunction($f);
+			return phpDocPackages::getFunction($f);
 		}
 
 		$m = self::migrateFunctions[ $function ];
@@ -22,25 +21,6 @@ class Reframe_Migrate extends Reframe
 			'class' => $m[1],
 			'namespace' => $m[2],
 			'full' => "{$m[2]}\\{$m[1]}::{$m[0]}"
-		);
-	}
-
-	function reframeClass($class, $filename)
-	{
-		return array(
-			'method' => $class,
-			'namespace' => 'ShrinkPress\\Orphanage\\Classes',
-			'full' => "ShrinkPress\\Orphanage\\Classes\\{$class}"
-		);
-	}
-
-	function reframeGlobal($global, $filename)
-	{
-		return array(
-			'global' => $global,
-			'class' => 'Globals',
-			'namespace' => 'ShrinkPress\\Orphanage',
-			'full' => "ShrinkPress\\Orphanage\\Functions::\${$global}"
 		);
 	}
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Reframe\Evolve;
+namespace ShrinkPress\Evolve;
 
 class ComposerPhar
 {
@@ -8,7 +8,7 @@ class ComposerPhar
 
 	static function get()
 	{
-		$local = __DIR__ . '/../../composer.phar';
+		$local = __DIR__ . '/../composer.phar';
 		if (!file_exists($local))
 		{
 			shell_exec(

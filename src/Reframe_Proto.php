@@ -1,6 +1,6 @@
 <?php
 
-namespace ShrinkPress\Reframe\Evolve;
+namespace ShrinkPress\Evolve;
 
 class Reframe_Proto extends Reframe
 {
