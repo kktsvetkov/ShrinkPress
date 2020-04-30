@@ -86,12 +86,19 @@ class Scan extends Inspect
 		;
 		;
 
+
+		// class ?
+		//
+		;
+		;
+
 		// function ?
 		//
 		if ($f = $this->functionFound($code))
 		{
 			$f['filename'] = $filename;
-			if ($m = Migration::getFunction($f))
+			// if ($m = Migration::getFunction($f))
+			if ($m = Reframe::getFunction($f))
 			{
 				print_r($f);
 				print_r($m);
@@ -122,12 +129,6 @@ class Scan extends Inspect
 				return Inspect::INSPECT_STOP;
 			}
 		}
-
-		// class ?
-		//
-		;
-		;
-
 	}
 
 	function functionFound($code)
