@@ -6,6 +6,8 @@ use PhpParser\Node;
 
 class HasGlobalsStatements extends VisitorAbstract
 {
+	public $pushNode = false;
+
 	protected $is_global = false;
 
 	function enterNode(Node $node)
@@ -30,7 +32,11 @@ class HasGlobalsStatements extends VisitorAbstract
 				$globalName = (string) $node->name;
 				if (!in_array($globalName, HasSuperGlobals::ignore))
 				{
-					$this->push( $globalName );
+					$this->push(
+						$this->pushNode
+							? $node
+							: $globalName
+					);
 				}
 			}
 		}
