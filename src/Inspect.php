@@ -5,12 +5,36 @@ namespace ShrinkPress\Evolve;
 abstract class Inspect
 {
 	protected $skipFolders = array();
+
+	const skipFolders = array(
+		'.git',
+		'wp-content',
+		'wp-admin/css',
+		'wp-admin/images',
+		'wp-admin/js',
+		'wp-includes/js',
+		// Composer::vendors . '/composer',
+		Composer::vendors,
+		'wp-includes/sodium_compat',
+		);
+
 	protected $skipFiles = array();
 
-	function __construct(array $skipFolders, array $skipFiles)
+	const skipFiles = array(
+		'wp-config.php',
+		'wp-config-sample.php',
+		'wp-admin/includes/noop.php',
+		// Composer::vendors . '/autoload.php',
+		);
+
+	function __construct(array $skipFolders = null, array $skipFiles = null)
 	{
-		$this->skipFolders = $skipFolders;
-		$this->skipFiles = $skipFiles;
+		$this->skipFolders = $skipFolders
+			? $skipFolders
+			: self::skipFolders;
+		$this->skipFiles = $skipFiles
+			? $skipFiles
+			: self::skipFiles;
 	}
 
 	function inspectFolder($folder)

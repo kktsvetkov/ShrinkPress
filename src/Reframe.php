@@ -4,9 +4,9 @@ namespace ShrinkPress\Evolve;
 
 abstract class Reframe
 {
-	// const reframeClass = Reframe_Proto::class;
+	const reframeClass = Reframe_Proto::class;
 	// const reframeClass = Reframe_Migrate::class;
-	const reframeClass = Reframe_PhpDoc::class;
+	// const reframeClass = Reframe_PhpDoc::class;
 
 	static private $instance;
 

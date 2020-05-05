@@ -21,10 +21,7 @@ class FindFunction extends NodeVisitorAbstract
 			return;
 		}
 
-		$this->result = $node;
-
-		// return NodeTraverser::STOP_TRAVERSAL;
-		return 2;
+		$this->result[] = $node;
 	}
 
 	function extract(Node $node)

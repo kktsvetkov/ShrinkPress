@@ -13,7 +13,7 @@ class HasInside extends Inspect
 
 	function __construct(Parse $parser)
 	{
-		parent::__construct(Scan::skipFolders, Scan::skipFiles);
+		parent::__construct(Inspect::skipFolders, Inspect::skipFiles);
 
 		$this->parser = $parser;
 
@@ -26,12 +26,14 @@ class HasInside extends Inspect
 
 		if (file_exists(self::inside_json))
 		{
+			echo "* Restoring from ", self::inside_json, "\n";
 			self::$has = json_decode(
 				file_get_contents(self::inside_json),
 				true
 			);
 		} else
 		{
+			echo "* Generating ", self::inside_json, "\n";
 			$this->inspectFolder('');
 
 			file_put_contents(
