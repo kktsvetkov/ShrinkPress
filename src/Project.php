@@ -36,7 +36,9 @@ class Project
 		//
 		Git::checkout();
 		Composer::wipeComposer();
-		shell_exec('rm functions.csv');
+
+		CsvLog::clean('functions.csv');
+		CsvLog::clean('globals.csv');
 	}
 
 	function task_0100_load()
@@ -64,7 +66,7 @@ class Project
 
 	function task_0400_globals()
 	{
-
+		new ScanGlobals($this->parser);
 	}
 
 	function task_0500_classes()
@@ -74,7 +76,7 @@ class Project
 
 	function task_0600_functions()
 	{
-		new ScanFunctions($this->parser);
+		// new ScanFunctions($this->parser);
 	}
 
 	function task_0700_remove_includes()
