@@ -51,4 +51,8 @@ class Replace
 		return true;
 	}
 
+	static function replaceGlobalStatement(Parse $parser, array $g, array $m, $code)
+	{
+		return $code;
+	}
 }
