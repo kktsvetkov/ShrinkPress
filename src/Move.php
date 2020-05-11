@@ -47,6 +47,7 @@ class Move
 
 		$d = explode('/src/', $dir);
 		Composer::addPsr4($s['namespace'], $d['0']);
+		Composer::updateComposer();
 	}
 
 	static function moveFunction(array $f, array $m)
@@ -64,8 +65,6 @@ class Move
 				? $f['docComment']
 				: '') . $renamed,
 			$classFilename);
-
-		Composer::updateComposer();
 	}
 
 	static function insertMethod($methodCode, $classFilename)
@@ -86,6 +85,25 @@ class Move
 			array('class', $className, '{'),
 			"\n" . $methodCode . "\n"
 			);
+
+		file_put_contents($classFilename, $code);
+	}
+
+	static function moveGlobalStatement(array $g, array $m)
+	{
+		$fullClassName = $m['namespace'] . '\\' . $m['class'];
+		$classFilename = self::classNameToFilename($fullClassName);
+		if (!file_exists($classFilename))
+		{
+			self::createClass($m, $classFilename);
+		}
+
+		$code = file_get_contents( $classFilename );
+		$code = Code::injectCode(
+			$code,
+			array('class', $m['class'], '{'),
+			"\n\tstatic \${$m['global']};\n"
+		);
 
 		file_put_contents($classFilename, $code);
 	}
